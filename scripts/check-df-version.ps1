@@ -21,6 +21,8 @@ if ($req.StatusCode -eq 'NotModified') {
 	return
 }
 
+write-verbose $req
+
 $etag = $req.Headers.Item('ETag')
 $modified = $req.Headers.Item('Last-Modified')
 
