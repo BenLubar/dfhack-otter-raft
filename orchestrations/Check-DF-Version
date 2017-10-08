@@ -74,7 +74,7 @@ rm -rf temp>>
             Credentials: ProGet,
             Feed: DwarfFortress,
             FilePath: $ActualFileName,
-            Group: core,
+            Group: dwarffortress/core,
             Name: $Suffix,
             Version: $VersionNumber,
             Description: "Dwarf Fortress version $VersionNumber, released on $Date"
