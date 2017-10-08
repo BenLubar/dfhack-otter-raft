@@ -4,7 +4,7 @@ if ($lastModified -eq '') {
 	$lastModified = [DateTime]::MinValue
 }
 
-@{'If-None-Match' = $lastETag, 'If-Modified-Since' = $lastModified} | Export-Clixml input.xml
+@{'If-None-Match' = $lastETag; 'If-Modified-Since' = $lastModified} | Export-Clixml input.xml
 
 powershell -version 5 -command {
 	$input = Import-Clixml input.xml
