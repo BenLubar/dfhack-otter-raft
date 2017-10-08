@@ -33,7 +33,10 @@ powershell -version 5 -command '& {
 	$output[''etag''] = $req.Headers[''ETag'']
 	$output[''modified''] = $req.Headers[''Last-Modified'']
 
-	$latestVersion = ($req.ParsedHtml.getElementsByTagName(''p'') | where className -eq ''menu'')[0]
+	$parsedHtml = New-Object -Com ''HTMLFile''
+	$parsedHtml.IHTMLDocument2_write($req.Content)
+
+	$latestVersion = ($parsedHtml.getElementsByTagName(''p'') | where className -eq ''menu'')[0]
 
 	if ($latestVersion.firstChild.textContent -match ''^DF ([0-9]+\.[0-9]+\.[0-9]+) \(([A-Z][a-z]+ [1-9][0-9]?, [2-9][0-9]{3,})\)$'') {
 		$output[''version''] = $matches[1];
