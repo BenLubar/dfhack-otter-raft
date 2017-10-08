@@ -20,7 +20,7 @@ powershell -version 5 -command '& {
 	}
 
 	try {
-		$req = Invoke-WebRequest http://bay12games.com/dwarves/older_versions.html -Headers $input
+		$req = Invoke-WebRequest http://bay12games.com/dwarves/older_versions.html -UseBasicParsing True -Headers $input
 	} catch [Net.WebException] {
 		$req = $_.Exception.Response
 	}
@@ -45,7 +45,7 @@ powershell -version 5 -command '& {
 	$output[''versions''] = $latestVersion.getElementsByTagName(''a'') | where innerText -ne ''Small'' | where innerText -ne ''Legacy Windows'' | foreach-object pathname
 
 	foreach ($v in $output[''versions'']) {
-		Invoke-WebRequest (''http://bay12games.com/dwarves/'' + $v) -OutFile $v
+		Invoke-WebRequest (''http://bay12games.com/dwarves/'' + $v) -UseBasicParsing True -OutFile $v
 	}
 
 	$output | Export-Clixml output.xml
