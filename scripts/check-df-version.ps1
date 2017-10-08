@@ -16,6 +16,8 @@ try {
 	$global:req = $_.Exception.Response
 }
 
+$req = $global:req
+
 if ($req.StatusCode -eq 'NotModified') {
 	return
 }
