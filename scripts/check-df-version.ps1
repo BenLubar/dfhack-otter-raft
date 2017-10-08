@@ -21,10 +21,10 @@ if ($req.StatusCode -eq 'NotModified') {
 	return
 }
 
-$etag = $req.Headers['ETag']
-$modified = $req.Headers['Last-Modified']
+$etag = $req.Headers.Item('ETag')
+$modified = $req.Headers.Item('Last-Modified')
 
-$latestVersion = ($req.ParsedHtml.getElementsByTagName("p") | where className -eq 'menu')[0]
+$latestVersion = ($req.ParsedHtml.getElementsByTagName('p') | where className -eq 'menu')[0]
 
 if ($latestVersion.firstChild.textContent -match '^DF ([0-9]+\.[0-9]+\.[0-9]+) \(([A-Z][a-z]+ [1-9][0-9]?, [2-9][0-9]{3,})\)$') {
 	$version = $matches[1];
