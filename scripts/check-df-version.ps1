@@ -4,6 +4,13 @@ if ($lastModified -eq '') {
 	$lastModified = [DateTime]::MinValue
 }
 
+$req = $null
+$etag = $lastETag
+$modified = $lastModified
+$version = ''
+$date = ''
+$versions = @()
+
 try {
 	$req = Invoke-WebRequest http://bay12games.com/dwarves/older_versions.html -Headers @{"If-None-Match" = $lastETag; "If-Modified-Since" = $lastModified}
 } catch {
@@ -11,11 +18,6 @@ try {
 }
 
 if ($req.StatusCode -eq 'NotModified') {
-	$etag = $lastETag
-	$modified = $lastModified
-	$version = ''
-	$date = ''
-	$versions = @()
 	return
 }
 
