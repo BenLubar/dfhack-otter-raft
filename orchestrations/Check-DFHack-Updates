@@ -34,21 +34,21 @@ PSCall git-current-tag
     tag => $ComplainTag
 );
 
-Log-Information $DFHackCommit;
+Log-Information DFHack commit: $DFHackCommit;
 
-Log-Information $DFHackTag;
+Log-Information DFHack tag: $DFHackTag;
 
-Log-Information $DFAICommit;
+Log-Information df-ai commit: $DFAICommit;
 
-Log-Information $DFAITag;
+Log-Information df-ai tag: $DFAITag;
 
-Log-Information $WeblegendsCommit;
+Log-Information weblegends commit: $WeblegendsCommit;
 
-Log-Information $WeblegendsTag;
+Log-Information weblegends tag: $WeblegendsTag;
 
-Log-Information $ComplainCommit;
+Log-Information complain commit: $ComplainCommit;
 
-Log-Information $ComplainTag;
+Log-Information complain tag: $ComplainTag;
 
 if $DFHackTag != $LastDFHackTag
 {
@@ -86,7 +86,6 @@ if $DFHackTag != $LastDFHackTag
 
         Otter::Set-Variable
         (
-            Credentials: Otter-Variables,
             Name: LastDFHackTag,
             Value: $DFHackTag
         );
@@ -107,7 +106,6 @@ else
 
             Otter::Set-Variable
             (
-                Credentials: Otter-Variables,
                 Name: LastDFHackCommit,
                 Value: $DFHackCommit
             );
@@ -144,7 +142,6 @@ else
 
                 Otter::Set-Variable
                 (
-                    Credentials: Otter-Variables,
                     Name: LastDFAITag,
                     Value: $DFAITag
                 );
@@ -172,7 +169,6 @@ else
 
                     Otter::Set-Variable
                     (
-                        Credentials: Otter-Variables,
                         Name: LastDFAICommit,
                         Value: $DFAICommit
                     );
@@ -209,7 +205,6 @@ else
 
                 Otter::Set-Variable
                 (
-                    Credentials: Otter-Variables,
                     Name: LastWeblegendsTag,
                     Value: $WeblegendsTag
                 );
@@ -237,7 +232,6 @@ else
 
                     Otter::Set-Variable
                     (
-                        Credentials: Otter-Variables,
                         Name: LastWeblegendsCommit,
                         Value: $WeblegendsCommit
                     );
@@ -274,7 +268,6 @@ else
 
                 Otter::Set-Variable
                 (
-                    Credentials: Otter-Variables,
                     Name: LastComplainTag,
                     Value: $ComplainTag
                 );
@@ -302,7 +295,6 @@ else
 
                     Otter::Set-Variable
                     (
-                        Credentials: Otter-Variables,
                         Name: LastComplainCommit,
                         Value: $ComplainCommit
                     );
