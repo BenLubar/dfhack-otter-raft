@@ -1,90 +1,93 @@
-Ensure-Directory $WorkingDirectory;
-
-PSCall dfhack::check-df-version
-(
-    workingDirectory: $WorkingDirectory,
-    lastETag: $LastDFReleaseETag,
-    lastModified: $LastDFReleaseModified,
-    etag => $NewETag,
-    modified => $NewModified,
-    version => $VersionNumber,
-    date => $Date,
-    versions => @VersionFiles
-);
-
-Otter::Set-Variable
-(
-    Name: LastDFReleaseETag,
-    Value: $NewETag
-);
-
-Otter::Set-Variable
-(
-    Name: LastDFReleaseModified,
-    Value: $NewModified
-);
-
-foreach $FileName in @VersionFiles
+for server WindowsBuilder
 {
-    set $ActualFileName = $FileName;
+    Ensure-Directory $WorkingDirectory;
 
-    if $MatchesRegex($FileName, \.tar\.bz2`$)
+    PSCall dfhack::check-df-version
+    (
+        workingDirectory: $WorkingDirectory,
+        lastETag: $LastDFReleaseETag,
+        lastModified: $LastDFReleaseModified,
+        etag => $NewETag,
+        modified => $NewModified,
+        version => $VersionNumber,
+        date => $Date,
+        versions => @VersionFiles
+    );
+
+    Otter::Set-Variable
+    (
+        Name: LastDFReleaseETag,
+        Value: $NewETag
+    );
+
+    Otter::Set-Variable
+    (
+        Name: LastDFReleaseModified,
+        Value: $NewModified
+    );
+
+    foreach $FileName in @VersionFiles
     {
-        set $LinuxWorkingDirectory = "";
+        set $ActualFileName = $FileName;
 
-        for server LinuxBuilder
+        if $MatchesRegex($FileName, \.tar\.bz2`$)
         {
-            set $LinuxWorkingDirectory = $WorkingDirectory;
-        }
+            set $LinuxWorkingDirectory = "";
 
-        set $ActualFileName = $Replace($FileName, .tar.bz2, .zip);
+            for server LinuxBuilder
+            {
+                set $LinuxWorkingDirectory = $WorkingDirectory;
+            }
 
-        Transfer-Files
-        (
-            Include: $FileName,
-            ToDirectory: $LinuxWorkingDirectory,
-            ToServer: LinuxBuilder
-        );
+            set $ActualFileName = $Replace($FileName, .tar.bz2, .zip);
 
-        for server LinuxBuilder
-        {
-            SHExec >>mkdir temp
+            Transfer-Files
+            (
+                Include: $FileName,
+                ToDirectory: $LinuxWorkingDirectory,
+                ToServer: LinuxBuilder
+            );
+
+            for server LinuxBuilder
+            {
+                SHExec >>mkdir temp
 cd temp
 tar  xf ../$FileName --strip-components 1
 zip -r ../$ActualFileName .
 cd ..
 rm -rf temp>>
+                (
+                    Verbose: true
+                );
+            }
+
+            Transfer-Files
             (
-                Verbose: true
+                Include: $ActualFileName,
+                FromDirectory: $LinuxWorkingDirectory,
+                FromServer: LinuxBuilder,
+                ToDirectory: $ServerName,
+                ToServer: WindowsBuilder
             );
         }
 
-        Transfer-Files
+        set $Suffix = $Replace($Replace($ListItem(@Split($ActualFileName, _), 3), .zip, 64), 3264, 32);
+
+        # Bug?
+        set $ApplicationName = "";
+
+        # Bug?
+        set $ReleaseNumber = "";
+
+        ProGet::Push-Package
         (
-            Include: $ActualFileName,
-            FromDirectory: $LinuxWorkingDirectory,
-            FromServer: LinuxBuilder,
-            ToDirectory: $ServerName,
-            ToServer: WindowsBuilder
+            Credentials: ProGet,
+            Feed: DwarfFortress,
+            FilePath: $ActualFileName,
+            Group: core,
+            Name: $Suffix,
+            Version: $VersionNumber,
+            Description: "Dwarf Fortress version $VersionNumber, released on $Date"
         );
     }
-
-    set $Suffix = $Replace($Replace($ListItem(@Split($ActualFileName, _), 3), .zip, 64), 3264, 32);
-
-    # Bug?
-    set $ApplicationName = "";
-
-    # Bug?
-    set $ReleaseNumber = "";
-
-    ProGet::Push-Package
-    (
-        Credentials: ProGet,
-        Feed: DwarfFortress,
-        FilePath: $ActualFileName,
-        Group: core,
-        Name: $Suffix,
-        Version: $VersionNumber,
-        Description: "Dwarf Fortress version $VersionNumber, released on $Date"
-    );
 }
