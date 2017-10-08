@@ -12,16 +12,14 @@ $date = ''
 $versions = @()
 
 try {
-	$req = Invoke-WebRequest http://bay12games.com/dwarves/older_versions.html -Headers @{"If-None-Match" = $lastETag; "If-Modified-Since" = $lastModified}
+	$global:req = Invoke-WebRequest http://bay12games.com/dwarves/older_versions.html -Headers @{"If-None-Match" = $lastETag; "If-Modified-Since" = $lastModified}
 } catch {
-	$req = $_.Exception.Response
+	$global:req = $_.Exception.Response
 }
 
 if ($req.StatusCode -eq 'NotModified') {
 	return
 }
-
-write-verbose $req
 
 $etag = $req.Headers.Item('ETag')
 $modified = $req.Headers.Item('Last-Modified')
