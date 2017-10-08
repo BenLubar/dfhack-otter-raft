@@ -1,5 +1,6 @@
 PSCall dfhack::check-df-version
 (
+    workingDirectory: $WorkingDirectory,
     lastETag: $LastDFReleaseETag,
     lastModified: $LastDFReleaseModified,
     etag => $NewETag,
