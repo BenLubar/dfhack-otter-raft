@@ -8,7 +8,7 @@ if ($lastModified -eq '') {
 
 @{'If-None-Match' = $lastETag; 'If-Modified-Since' = $lastModified} | Export-Clixml input.xml
 
-powershell -version 5 -command {
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -version 5 -command {
 	$input = Import-Clixml input.xml
 
 	$output = @{
