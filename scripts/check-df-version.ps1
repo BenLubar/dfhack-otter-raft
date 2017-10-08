@@ -13,6 +13,9 @@ try {
 if ($req.StatusCode -eq 'NotModified') {
 	$etag = $lastETag
 	$modified = $lastModified
+	$version = ''
+	$date = ''
+	$versions = @()
 	return
 }
 
