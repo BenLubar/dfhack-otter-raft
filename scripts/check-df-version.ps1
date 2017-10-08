@@ -1,4 +1,6 @@
-Param($lastETag, $lastModified)
+Param($workingDirectory, $lastETag, $lastModified)
+
+cd $workingDirectory
 
 if ($lastModified -eq '') {
 	$lastModified = [DateTime]::MinValue
