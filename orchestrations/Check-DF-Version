@@ -1,0 +1,54 @@
+PSCall dfhack::check-df-version
+(
+    lastETag: $LastDFReleaseETag,
+    lastModified: $LastDFReleaseModifed,
+    etag => $NewETag,
+    modified => $NewModified,
+    version => $VersionNumber,
+    date => $Date,
+    versions => @VersionFiles
+);
+
+foreach $FileName in @VersionFiles
+{
+    set $ActualFileName = $FileName;
+
+    if $MatchesRegex($FileName, \.tar\.bz2`$)
+    {
+        InedoCore::Exec
+        (
+            FileName: C:\ProgramData\chocolatey\bin\7z.exe,
+            Arguments: x $FileName
+        );
+
+        InedoCore::Exec
+        (
+            FileName: C:\ProgramData\chocolatey\bin\7z.exe,
+            Arguments: x ../$Replace($FileName, .bz2, ''),
+            WorkingDirectory: $WorkingDirectory/extracted_$FileName
+        );
+
+        set $ActualFileName = $Replace($FileName, .tar.bz2, .zip);
+
+        set $SimpleName = df_$ListItem(@Split($Replace($Replace($FileName, .tar.bz2, ''), 32, ''), _), 3);
+
+        Create-ZipFile
+        (
+            Name: $ActualFileName,
+            Directory: $WorkingDirectory/extracted_$FileName/$SimpleName
+        );
+    }
+
+    set $Suffix = $Replace($ListItem(@Split($ActualFileName, _), 3), .zip, '');
+
+    ProGet::Push-Package
+    (
+        Credentials: ProGet,
+        Feed: DwarfFortress,
+        FilePath: $ActualFileName,
+        Group: core,
+        Name: $Suffix,
+        Version: $VersionNumber,
+        Description: "Dwarf Fortress version $VersionName, released on $Date"
+    );
+}
