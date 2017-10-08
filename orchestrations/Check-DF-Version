@@ -70,6 +70,6 @@ foreach $FileName in @VersionFiles
         Group: core,
         Name: $Suffix,
         Version: $VersionNumber,
-        Description: "Dwarf Fortress version $VersionName, released on $Date"
+        Description: "Dwarf Fortress version $VersionNumber, released on $Date"
     );
 }
