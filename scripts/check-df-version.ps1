@@ -4,7 +4,6 @@ if ($lastModified -eq '') {
 	$lastModified = [DateTime]::MinValue
 }
 
-$req = $null
 $etag = $lastETag
 $modified = $lastModified
 $version = ''
