@@ -69,7 +69,7 @@ rm -rf temp>>
         );
     }
 
-    set $Suffix = $Replace($ListItem(@Split($ActualFileName, _), 3), .zip, '');
+    set $Suffix = $Replace($Replace($ListItem(@Split($ActualFileName, _), 3), .zip, 64), 3264, 32);
 
     # Bug?
     set $ApplicationName = "";
