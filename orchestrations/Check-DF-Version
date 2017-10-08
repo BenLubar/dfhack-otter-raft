@@ -9,6 +9,18 @@ PSCall dfhack::check-df-version
     versions => @VersionFiles
 );
 
+Otter::Set-Variable
+(
+    Name: LastDFReleaseETag,
+    Value: $NewETag
+);
+
+Otter::Set-Variable
+(
+    Name: LastDFReleaseModified,
+    Value: $NewModified
+);
+
 foreach $FileName in @VersionFiles
 {
     set $ActualFileName = $FileName;
