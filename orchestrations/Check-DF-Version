@@ -14,18 +14,6 @@ for server WindowsBuilder
         versions => @VersionFiles
     );
 
-    Otter::Set-Variable
-    (
-        Name: LastDFReleaseETag,
-        Value: $NewETag
-    );
-
-    Otter::Set-Variable
-    (
-        Name: LastDFReleaseModified,
-        Value: $NewModified
-    );
-
     foreach $FileName in @VersionFiles
     {
         set $ActualFileName = $FileName;
@@ -44,6 +32,8 @@ for server WindowsBuilder
             Transfer-Files
             (
                 Include: $FileName,
+                FromDirectory: $WorkingDirectory,
+                FromServer: WindowsBuilder,
                 ToDirectory: $LinuxWorkingDirectory,
                 ToServer: LinuxBuilder
             );
@@ -66,7 +56,7 @@ rm -rf temp>>
                 Include: $ActualFileName,
                 FromDirectory: $LinuxWorkingDirectory,
                 FromServer: LinuxBuilder,
-                ToDirectory: $ServerName,
+                ToDirectory: $WorkingDirectory,
                 ToServer: WindowsBuilder
             );
         }
@@ -90,4 +80,16 @@ rm -rf temp>>
             Description: "Dwarf Fortress version $VersionNumber, released on $Date"
         );
     }
+
+    Otter::Set-Variable
+    (
+        Name: LastDFReleaseETag,
+        Value: $NewETag
+    );
+
+    Otter::Set-Variable
+    (
+        Name: LastDFReleaseModified,
+        Value: $NewModified
+    );
 }
