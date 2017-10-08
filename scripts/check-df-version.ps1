@@ -1,4 +1,4 @@
-params($lastETag, $lastModified)
+Param($lastETag, $lastModified)
 
 if ($lastModified -eq '') {
 	$lastModified = [DateTime]::MinValue
