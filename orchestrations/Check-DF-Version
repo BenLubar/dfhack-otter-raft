@@ -59,6 +59,9 @@ foreach $FileName in @VersionFiles
     # Bug?
     set $ApplicationName = "";
 
+    # Bug?
+    set $ReleaseNumber = "";
+
     ProGet::Push-Package
     (
         Credentials: ProGet,
