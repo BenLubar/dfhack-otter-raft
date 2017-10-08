@@ -1,4 +1,4 @@
-Param($workingDirectory, $lastETag, $lastModified)
+Param($workingDirectory, $lastETag, $lastModified, [ref]$etag, [ref]$modified, [ref]$version, [ref]$date, [ref]$versions)
 
 cd $workingDirectory
 
