@@ -1,3 +1,5 @@
+Ensure-Directory $WorkingDirectory;
+
 PSCall dfhack::check-df-version
 (
     workingDirectory: $WorkingDirectory,
