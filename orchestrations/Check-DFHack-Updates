@@ -56,7 +56,7 @@ if $DFHackTag != $LastDFHackTag
     {
         Post-Http https://buildmaster.local.lubar.me/api/releases/create
         (
-            FormData: %MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: DFHack, releaseNumber: $DFHackTag, pipelineId: 4), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop),
+            FormData: %MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: DFHack, releaseNumber: $DFHackTag, pipelineId: 4), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$DFHackTagged, true),
             LogResponseBody: true
         );
 
@@ -119,7 +119,7 @@ else
             {
                 Post-Http https://buildmaster.local.lubar.me/api/releases/create
                 (
-                    FormData: %MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: df-ai, releaseNumber: $DFAITag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $DFAITag),
+                    FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: df-ai, releaseNumber: $DFAITag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $DFAITag), `$PluginTagged, true),
                     LogResponseBody: true
                 );
 
@@ -182,7 +182,7 @@ else
             {
                 Post-Http https://buildmaster.local.lubar.me/api/releases/create
                 (
-                    FormData: %MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: weblegends, releaseNumber: $WeblegendsTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $WeblegendsTag),
+                    FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: weblegends, releaseNumber: $WeblegendsTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $WeblegendsTag), `$PluginTagged, true),
                     LogResponseBody: true
                 );
 
@@ -245,7 +245,7 @@ else
             {
                 Post-Http https://buildmaster.local.lubar.me/api/releases/create
                 (
-                    FormData: %MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: complain, releaseNumber: $ComplainTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $ComplainTag),
+                    FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: complain, releaseNumber: $ComplainTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $ComplainTag), `$PluginTagged, true),
                     LogResponseBody: true
                 );
 
