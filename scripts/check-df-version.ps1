@@ -40,7 +40,7 @@ powershell -version 5 -command '& {
 
 	if ($latestVersion.firstChild.textContent -match ''^DF ([0-9]+\.[0-9]+\.[0-9]+) \(([A-Z][a-z]+ [1-9][0-9]?, [2-9][0-9]{3,})\)$'') {
 		$output[''version''] = $matches[1];
-		$output[''date''] = [DateTime]::Parse($matches[2]).ToShortDateString()
+		$output[''date''] = [DateTime]::Parse($matches[2]).ToString(''yyyy-MM-dd'')
 	} else {
 		Write-Error ''Could not parse version header: '' + latestVersion.firstChild.textContent;
 	}
