@@ -1,4 +1,4 @@
-PSCall git-current-tag
+PSCall dfhack::git-current-tag
 (
     dir: $DFHackGitCache/check/dfhack,
     repo: https://github.com/DFHack/dfhack.git,
@@ -7,7 +7,7 @@ PSCall git-current-tag
     tag => $DFHackTag
 );
 
-PSCall git-current-tag
+PSCall dfhack::git-current-tag
 (
     dir: $DFHackGitCache/check/df-ai,
     repo: https://github.com/BenLubar/df-ai.git,
@@ -16,7 +16,7 @@ PSCall git-current-tag
     tag => $DFAITag
 );
 
-PSCall git-current-tag
+PSCall dfhack::git-current-tag
 (
     dir: $DFHackGitCache/check/weblegends,
     repo: https://github.com/BenLubar/weblegends.git,
@@ -25,7 +25,7 @@ PSCall git-current-tag
     tag => $WeblegendsTag
 );
 
-PSCall git-current-tag
+PSCall dfhack::git-current-tag
 (
     dir: $DFHackGitCache/check/complain,
     repo: https://github.com/BenLubar/complain.git,
@@ -60,14 +60,14 @@ if $DFHackTag != $LastDFHackTag
             LogResponseBody: true
         );
 
-        PSCall make-dfhack-package
+        PSCall dfhack::make-dfhack-package
         (
             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
             applicationName: DFHack,
             releaseNumber: $DFHackTag
         );
 
-        PSCall mark-dfhack-release-complete
+        PSCall dfhack::mark-dfhack-release-complete
         (
             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
             applicationName: DFHack,
@@ -76,7 +76,7 @@ if $DFHackTag != $LastDFHackTag
 
         foreach $PluginName in @(df-ai, weblegends, complain)
         {
-            PSCall mark-dfhack-release-complete
+            PSCall dfhack::mark-dfhack-release-complete
             (
                 key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                 applicationName: $PluginName,
@@ -97,7 +97,7 @@ else
     {
         # New DFHack Commit
         {
-            PSCall make-dfhack-package
+            PSCall dfhack::make-dfhack-package
             (
                 key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                 applicationName: DFHack,
@@ -123,7 +123,7 @@ else
                     LogResponseBody: true
                 );
 
-                PSCall make-dfhack-package
+                PSCall dfhack::make-dfhack-package
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: df-ai,
@@ -132,7 +132,7 @@ else
 
                 if $LastDFAITag != ""
                 {
-                    PSCall mark-dfhack-release-complete
+                    PSCall dfhack::mark-dfhack-release-complete
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: df-ai,
@@ -153,14 +153,14 @@ else
             {
                 # New df-ai Commit
                 {
-                    PSCall make-dfhack-package
+                    PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: df-ai,
                         releaseNumber: 0.0.0
                     );
 
-                    PSCall make-dfhack-package
+                    PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: df-ai,
@@ -186,7 +186,7 @@ else
                     LogResponseBody: true
                 );
 
-                PSCall make-dfhack-package
+                PSCall dfhack::make-dfhack-package
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: weblegends,
@@ -195,7 +195,7 @@ else
 
                 if $LastWeblegendsTag != ""
                 {
-                    PSCall mark-dfhack-release-complete
+                    PSCall dfhack::mark-dfhack-release-complete
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: weblegends,
@@ -216,14 +216,14 @@ else
             {
                 # New weblegends Commit
                 {
-                    PSCall make-dfhack-package
+                    PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: weblegends,
                         releaseNumber: 0.0.0
                     );
 
-                    PSCall make-dfhack-package
+                    PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: weblegends,
@@ -249,7 +249,7 @@ else
                     LogResponseBody: true
                 );
 
-                PSCall make-dfhack-package
+                PSCall dfhack::make-dfhack-package
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: complain,
@@ -258,7 +258,7 @@ else
 
                 if $LastComplainTag != ""
                 {
-                    PSCall mark-dfhack-release-complete
+                    PSCall dfhack::mark-dfhack-release-complete
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: complain,
@@ -279,14 +279,14 @@ else
             {
                 # New complain Commit
                 {
-                    PSCall make-dfhack-package
+                    PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: complain,
                         releaseNumber: 0.0.0
                     );
 
-                    PSCall make-dfhack-package
+                    PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: complain,
