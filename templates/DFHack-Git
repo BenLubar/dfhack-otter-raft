@@ -78,7 +78,7 @@ module DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "">
 
         # Work around a bug in Git for Windows that causes git submodule foreach to fail when executed without a standard input stream.
         # https://github.com/git-for-windows/git/issues/181
-        Execute-PowerShell >>cd $Directory; & $DefaultGitExePath submodule foreach "git -C '$CacheDir' remote add -f ""`$name"" ""$(git remote get-url origin)"" 2>&1 || :">>
+        Execute-PowerShell >>cd $Directory; '' | & $DefaultGitExePath submodule foreach ('git remote get-url origin | xargs git -C ''' + "$CacheDir" + ''' remote add -f $name 2>&1 || :')>>
         (
             Debug: true,
             Verbose: true
