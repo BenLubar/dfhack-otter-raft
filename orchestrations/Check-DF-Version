@@ -77,7 +77,8 @@ rm -rf temp>>
             Group: dwarffortress/core,
             Name: $Suffix,
             Version: $VersionNumber,
-            Description: "Dwarf Fortress version $VersionNumber, released on $Date"
+            Description: "Dwarf Fortress version $VersionNumber, released on $Date",
+            Title: "Dwarf Fortress ($Suffix)"
         );
     }
 
