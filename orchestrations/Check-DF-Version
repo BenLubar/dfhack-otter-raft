@@ -78,7 +78,8 @@ rm -rf temp>>
             Name: $Suffix,
             Version: $VersionNumber,
             Description: "Dwarf Fortress version $VersionNumber, released on $Date",
-            Title: "Dwarf Fortress ($Suffix)"
+            Title: "Dwarf Fortress ($Suffix)",
+            Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
         );
     }
 
