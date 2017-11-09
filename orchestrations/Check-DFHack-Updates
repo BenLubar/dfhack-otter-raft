@@ -1,303 +1,306 @@
-PSCall dfhack::git-current-tag
-(
-    dir: $DFHackGitCache/check/dfhack,
-    repo: https://github.com/DFHack/dfhack.git,
-    branch: develop,
-    commit => $DFHackCommit,
-    tag => $DFHackTag
-);
-
-PSCall dfhack::git-current-tag
-(
-    dir: $DFHackGitCache/check/df-ai,
-    repo: https://github.com/BenLubar/df-ai.git,
-    branch: master,
-    commit => $DFAICommit,
-    tag => $DFAITag
-);
-
-PSCall dfhack::git-current-tag
-(
-    dir: $DFHackGitCache/check/weblegends,
-    repo: https://github.com/BenLubar/weblegends.git,
-    branch: master,
-    commit => $WeblegendsCommit,
-    tag => $WeblegendsTag
-);
-
-PSCall dfhack::git-current-tag
-(
-    dir: $DFHackGitCache/check/complain,
-    repo: https://github.com/BenLubar/complain.git,
-    branch: master,
-    commit => $ComplainCommit,
-    tag => $ComplainTag
-);
-
-Log-Information DFHack commit: $DFHackCommit;
-
-Log-Information DFHack tag: $DFHackTag;
-
-Log-Information df-ai commit: $DFAICommit;
-
-Log-Information df-ai tag: $DFAITag;
-
-Log-Information weblegends commit: $WeblegendsCommit;
-
-Log-Information weblegends tag: $WeblegendsTag;
-
-Log-Information complain commit: $ComplainCommit;
-
-Log-Information complain tag: $ComplainTag;
-
-if $DFHackTag != $LastDFHackTag
+for server WindowsBuilder
 {
-    # New DFHack Tag
+    PSCall dfhack::git-current-tag
+    (
+        dir: $DFHackGitCache/check/dfhack,
+        repo: https://github.com/DFHack/dfhack.git,
+        branch: develop,
+        commit => $DFHackCommit,
+        tag => $DFHackTag
+    );
+
+    PSCall dfhack::git-current-tag
+    (
+        dir: $DFHackGitCache/check/df-ai,
+        repo: https://github.com/BenLubar/df-ai.git,
+        branch: master,
+        commit => $DFAICommit,
+        tag => $DFAITag
+    );
+
+    PSCall dfhack::git-current-tag
+    (
+        dir: $DFHackGitCache/check/weblegends,
+        repo: https://github.com/BenLubar/weblegends.git,
+        branch: master,
+        commit => $WeblegendsCommit,
+        tag => $WeblegendsTag
+    );
+
+    PSCall dfhack::git-current-tag
+    (
+        dir: $DFHackGitCache/check/complain,
+        repo: https://github.com/BenLubar/complain.git,
+        branch: master,
+        commit => $ComplainCommit,
+        tag => $ComplainTag
+    );
+
+    Log-Information DFHack commit: $DFHackCommit;
+
+    Log-Information DFHack tag: $DFHackTag;
+
+    Log-Information df-ai commit: $DFAICommit;
+
+    Log-Information df-ai tag: $DFAITag;
+
+    Log-Information weblegends commit: $WeblegendsCommit;
+
+    Log-Information weblegends tag: $WeblegendsTag;
+
+    Log-Information complain commit: $ComplainCommit;
+
+    Log-Information complain tag: $ComplainTag;
+
+    if $DFHackTag != $LastDFHackTag
     {
-        Post-Http https://buildmaster.local.lubar.me/api/releases/create
-        (
-            FormData: %MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: DFHack, releaseNumber: $DFHackTag, pipelineId: 4), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$DFHackTagged, true),
-            LogResponseBody: true
-        );
-
-        PSCall dfhack::make-dfhack-package
-        (
-            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-            applicationName: DFHack,
-            releaseNumber: $DFHackTag
-        );
-
-        PSCall dfhack::mark-dfhack-release-complete
-        (
-            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-            applicationName: DFHack,
-            releaseNumber: $LastDFHackTag
-        );
-
-        foreach $PluginName in @(df-ai, weblegends, complain)
+        # New DFHack Tag
         {
-            PSCall dfhack::mark-dfhack-release-complete
+            Post-Http https://buildmaster.local.lubar.me/api/releases/create
             (
-                key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                applicationName: $PluginName,
-                releaseNumber: dfhack-$LastDFHackTag
+                FormData: %MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: DFHack, releaseNumber: $DFHackTag, pipelineId: 4), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$DFHackTagged, true),
+                LogResponseBody: true
             );
-        }
 
-        Otter::Set-Variable
-        (
-            Name: LastDFHackTag,
-            Value: $DFHackTag
-        );
-    }
-}
-else
-{
-    if $DFHackCommit != $LastDFHackCommit
-    {
-        # New DFHack Commit
-        {
             PSCall dfhack::make-dfhack-package
             (
                 key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                 applicationName: DFHack,
-                releaseNumber: 0.0.0
+                releaseNumber: $DFHackTag
             );
+
+            PSCall dfhack::mark-dfhack-release-complete
+            (
+                key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                applicationName: DFHack,
+                releaseNumber: $LastDFHackTag
+            );
+
+            foreach $PluginName in @(df-ai, weblegends, complain)
+            {
+                PSCall dfhack::mark-dfhack-release-complete
+                (
+                    key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                    applicationName: $PluginName,
+                    releaseNumber: dfhack-$LastDFHackTag
+                );
+            }
 
             Otter::Set-Variable
             (
-                Name: LastDFHackCommit,
-                Value: $DFHackCommit
+                Name: LastDFHackTag,
+                Value: $DFHackTag
             );
         }
     }
     else
     {
-        if $DFAITag != $LastDFAITag
+        if $DFHackCommit != $LastDFHackCommit
         {
-            # New df-ai Tag
+            # New DFHack Commit
             {
-                Post-Http https://buildmaster.local.lubar.me/api/releases/create
-                (
-                    FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: df-ai, releaseNumber: $DFAITag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $DFAITag), `$PluginTagged, true),
-                    LogResponseBody: true
-                );
-
                 PSCall dfhack::make-dfhack-package
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                    applicationName: df-ai,
-                    releaseNumber: $DFAITag
+                    applicationName: DFHack,
+                    releaseNumber: 0.0.0
                 );
-
-                if $LastDFAITag != ""
-                {
-                    PSCall dfhack::mark-dfhack-release-complete
-                    (
-                        key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                        applicationName: df-ai,
-                        releaseNumber: $LastDFAITag
-                    );
-                }
 
                 Otter::Set-Variable
                 (
-                    Name: LastDFAITag,
-                    Value: $DFAITag
+                    Name: LastDFHackCommit,
+                    Value: $DFHackCommit
                 );
             }
         }
         else
         {
-            if $DFAICommit != $LastDFAICommit
+            if $DFAITag != $LastDFAITag
             {
-                # New df-ai Commit
+                # New df-ai Tag
                 {
-                    PSCall dfhack::make-dfhack-package
+                    Post-Http https://buildmaster.local.lubar.me/api/releases/create
                     (
-                        key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                        applicationName: df-ai,
-                        releaseNumber: 0.0.0
+                        FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: df-ai, releaseNumber: $DFAITag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $DFAITag), `$PluginTagged, true),
+                        LogResponseBody: true
                     );
 
                     PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: df-ai,
-                        releaseNumber: dfhack-$DFHackTag
+                        releaseNumber: $DFAITag
                     );
+
+                    if $LastDFAITag != ""
+                    {
+                        PSCall dfhack::mark-dfhack-release-complete
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: df-ai,
+                            releaseNumber: $LastDFAITag
+                        );
+                    }
 
                     Otter::Set-Variable
                     (
-                        Name: LastDFAICommit,
-                        Value: $DFAICommit
+                        Name: LastDFAITag,
+                        Value: $DFAITag
                     );
                 }
             }
-        }
-
-        if $WeblegendsTag != $LastWeblegendsTag
-        {
-            # New weblegends Tag
+            else
             {
-                Post-Http https://buildmaster.local.lubar.me/api/releases/create
-                (
-                    FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: weblegends, releaseNumber: $WeblegendsTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $WeblegendsTag), `$PluginTagged, true),
-                    LogResponseBody: true
-                );
-
-                PSCall dfhack::make-dfhack-package
-                (
-                    key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                    applicationName: weblegends,
-                    releaseNumber: $WeblegendsTag
-                );
-
-                if $LastWeblegendsTag != ""
+                if $DFAICommit != $LastDFAICommit
                 {
-                    PSCall dfhack::mark-dfhack-release-complete
-                    (
-                        key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                        applicationName: weblegends,
-                        releaseNumber: $LastWeblegendsTag
-                    );
+                    # New df-ai Commit
+                    {
+                        PSCall dfhack::make-dfhack-package
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: df-ai,
+                            releaseNumber: 0.0.0
+                        );
+
+                        PSCall dfhack::make-dfhack-package
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: df-ai,
+                            releaseNumber: dfhack-$DFHackTag
+                        );
+
+                        Otter::Set-Variable
+                        (
+                            Name: LastDFAICommit,
+                            Value: $DFAICommit
+                        );
+                    }
                 }
-
-                Otter::Set-Variable
-                (
-                    Name: LastWeblegendsTag,
-                    Value: $WeblegendsTag
-                );
             }
-        }
-        else
-        {
-            if $WeblegendsCommit != $LastWeblegendsCommit
+
+            if $WeblegendsTag != $LastWeblegendsTag
             {
-                # New weblegends Commit
+                # New weblegends Tag
                 {
-                    PSCall dfhack::make-dfhack-package
+                    Post-Http https://buildmaster.local.lubar.me/api/releases/create
                     (
-                        key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                        applicationName: weblegends,
-                        releaseNumber: 0.0.0
+                        FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: weblegends, releaseNumber: $WeblegendsTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $WeblegendsTag), `$PluginTagged, true),
+                        LogResponseBody: true
                     );
 
                     PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: weblegends,
-                        releaseNumber: dfhack-$DFHackTag
+                        releaseNumber: $WeblegendsTag
                     );
+
+                    if $LastWeblegendsTag != ""
+                    {
+                        PSCall dfhack::mark-dfhack-release-complete
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: weblegends,
+                            releaseNumber: $LastWeblegendsTag
+                        );
+                    }
 
                     Otter::Set-Variable
                     (
-                        Name: LastWeblegendsCommit,
-                        Value: $WeblegendsCommit
+                        Name: LastWeblegendsTag,
+                        Value: $WeblegendsTag
                     );
                 }
             }
-        }
-
-        if $ComplainTag != $LastComplainTag
-        {
-            # New complain Tag
+            else
             {
-                Post-Http https://buildmaster.local.lubar.me/api/releases/create
-                (
-                    FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: complain, releaseNumber: $ComplainTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $ComplainTag), `$PluginTagged, true),
-                    LogResponseBody: true
-                );
-
-                PSCall dfhack::make-dfhack-package
-                (
-                    key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                    applicationName: complain,
-                    releaseNumber: $ComplainTag
-                );
-
-                if $LastComplainTag != ""
+                if $WeblegendsCommit != $LastWeblegendsCommit
                 {
-                    PSCall dfhack::mark-dfhack-release-complete
-                    (
-                        key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                        applicationName: complain,
-                        releaseNumber: $LastComplainTag
-                    );
+                    # New weblegends Commit
+                    {
+                        PSCall dfhack::make-dfhack-package
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: weblegends,
+                            releaseNumber: 0.0.0
+                        );
+
+                        PSCall dfhack::make-dfhack-package
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: weblegends,
+                            releaseNumber: dfhack-$DFHackTag
+                        );
+
+                        Otter::Set-Variable
+                        (
+                            Name: LastWeblegendsCommit,
+                            Value: $WeblegendsCommit
+                        );
+                    }
                 }
-
-                Otter::Set-Variable
-                (
-                    Name: LastComplainTag,
-                    Value: $ComplainTag
-                );
             }
-        }
-        else
-        {
-            if $ComplainCommit != $LastComplainCommit
+
+            if $ComplainTag != $LastComplainTag
             {
-                # New complain Commit
+                # New complain Tag
                 {
-                    PSCall dfhack::make-dfhack-package
+                    Post-Http https://buildmaster.local.lubar.me/api/releases/create
                     (
-                        key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
-                        applicationName: complain,
-                        releaseNumber: 0.0.0
+                        FormData: %MapAdd(%MapAdd(%MapAdd(%MapAdd(%(key: $GetCredentialProperty(BuildMaster-Releases, ApiKey), applicationName: complain, releaseNumber: $ComplainTag, pipelineId: 3), `$DFHackTag, $DFHackTag), `$DFHackBranch, develop), `$PluginTag, $ComplainTag), `$PluginTagged, true),
+                        LogResponseBody: true
                     );
 
                     PSCall dfhack::make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: complain,
-                        releaseNumber: dfhack-$DFHackTag
+                        releaseNumber: $ComplainTag
                     );
+
+                    if $LastComplainTag != ""
+                    {
+                        PSCall dfhack::mark-dfhack-release-complete
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: complain,
+                            releaseNumber: $LastComplainTag
+                        );
+                    }
 
                     Otter::Set-Variable
                     (
-                        Name: LastComplainCommit,
-                        Value: $ComplainCommit
+                        Name: LastComplainTag,
+                        Value: $ComplainTag
                     );
+                }
+            }
+            else
+            {
+                if $ComplainCommit != $LastComplainCommit
+                {
+                    # New complain Commit
+                    {
+                        PSCall dfhack::make-dfhack-package
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: complain,
+                            releaseNumber: 0.0.0
+                        );
+
+                        PSCall dfhack::make-dfhack-package
+                        (
+                            key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                            applicationName: complain,
+                            releaseNumber: dfhack-$DFHackTag
+                        );
+
+                        Otter::Set-Variable
+                        (
+                            Name: LastComplainCommit,
+                            Value: $ComplainCommit
+                        );
+                    }
                 }
             }
         }
