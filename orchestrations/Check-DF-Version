@@ -87,12 +87,14 @@ rm -rf temp>>
 
     Otter::Set-Variable
     (
+        Credentials: Otter-Variables,
         Name: LastDFReleaseETag,
         Value: $NewETag
     );
 
     Otter::Set-Variable
     (
+        Credentials: Otter-Variables,
         Name: LastDFReleaseModified,
         Value: $NewModified
     );
