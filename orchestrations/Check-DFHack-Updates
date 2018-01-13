@@ -75,6 +75,7 @@ for server WindowsBuilder
 
             Otter::Set-Variable
             (
+                Credentials: Otter-Variables,
                 Name: LastDFHackTag,
                 Value: $DFHackTag
             );
@@ -95,6 +96,7 @@ for server WindowsBuilder
 
                 Otter::Set-Variable
                 (
+                    Credentials: Otter-Variables,
                     Name: LastDFHackCommit,
                     Value: $DFHackCommit
                 );
@@ -131,6 +133,7 @@ for server WindowsBuilder
 
                     Otter::Set-Variable
                     (
+                        Credentials: Otter-Variables,
                         Name: LastDFAITag,
                         Value: $DFAITag
                     );
@@ -158,6 +161,7 @@ for server WindowsBuilder
 
                         Otter::Set-Variable
                         (
+                            Credentials: Otter-Variables,
                             Name: LastDFAICommit,
                             Value: $DFAICommit
                         );
@@ -194,6 +198,7 @@ for server WindowsBuilder
 
                     Otter::Set-Variable
                     (
+                        Credentials: Otter-Variables,
                         Name: LastWeblegendsTag,
                         Value: $WeblegendsTag
                     );
@@ -221,6 +226,7 @@ for server WindowsBuilder
 
                         Otter::Set-Variable
                         (
+                            Credentials: Otter-Variables,
                             Name: LastWeblegendsCommit,
                             Value: $WeblegendsCommit
                         );
