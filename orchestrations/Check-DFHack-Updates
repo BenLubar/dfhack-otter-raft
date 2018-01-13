@@ -1,6 +1,6 @@
 for server WindowsBuilder
 {
-    PSCall dfhack::git-current-tag
+    PSCall git-current-tag
     (
         dir: $DFHackGitCache/check/dfhack,
         repo: https://github.com/DFHack/dfhack.git,
@@ -9,7 +9,7 @@ for server WindowsBuilder
         tag => $DFHackTag
     );
 
-    PSCall dfhack::git-current-tag
+    PSCall git-current-tag
     (
         dir: $DFHackGitCache/check/df-ai,
         repo: https://github.com/BenLubar/df-ai.git,
@@ -18,7 +18,7 @@ for server WindowsBuilder
         tag => $DFAITag
     );
 
-    PSCall dfhack::git-current-tag
+    PSCall git-current-tag
     (
         dir: $DFHackGitCache/check/weblegends,
         repo: https://github.com/BenLubar/weblegends.git,
@@ -49,14 +49,14 @@ for server WindowsBuilder
                 LogResponseBody: true
             );
 
-            PSCall dfhack::make-dfhack-package
+            PSCall make-dfhack-package
             (
                 key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                 applicationName: DFHack,
                 releaseNumber: $DFHackTag
             );
 
-            PSCall dfhack::mark-dfhack-release-complete
+            PSCall mark-dfhack-release-complete
             (
                 key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                 applicationName: DFHack,
@@ -65,7 +65,7 @@ for server WindowsBuilder
 
             foreach $PluginName in @(df-ai, weblegends)
             {
-                PSCall dfhack::mark-dfhack-release-complete
+                PSCall mark-dfhack-release-complete
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: $PluginName,
@@ -86,7 +86,7 @@ for server WindowsBuilder
         {
             # New DFHack Commit
             {
-                PSCall dfhack::make-dfhack-package
+                PSCall make-dfhack-package
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: DFHack,
@@ -112,7 +112,7 @@ for server WindowsBuilder
                         LogResponseBody: true
                     );
 
-                    PSCall dfhack::make-dfhack-package
+                    PSCall make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: df-ai,
@@ -121,7 +121,7 @@ for server WindowsBuilder
 
                     if $LastDFAITag != ""
                     {
-                        PSCall dfhack::mark-dfhack-release-complete
+                        PSCall mark-dfhack-release-complete
                         (
                             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                             applicationName: df-ai,
@@ -142,14 +142,14 @@ for server WindowsBuilder
                 {
                     # New df-ai Commit
                     {
-                        PSCall dfhack::make-dfhack-package
+                        PSCall make-dfhack-package
                         (
                             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                             applicationName: df-ai,
                             releaseNumber: 0.0.0
                         );
 
-                        PSCall dfhack::make-dfhack-package
+                        PSCall make-dfhack-package
                         (
                             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                             applicationName: df-ai,
@@ -175,7 +175,7 @@ for server WindowsBuilder
                         LogResponseBody: true
                     );
 
-                    PSCall dfhack::make-dfhack-package
+                    PSCall make-dfhack-package
                     (
                         key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                         applicationName: weblegends,
@@ -184,7 +184,7 @@ for server WindowsBuilder
 
                     if $LastWeblegendsTag != ""
                     {
-                        PSCall dfhack::mark-dfhack-release-complete
+                        PSCall mark-dfhack-release-complete
                         (
                             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                             applicationName: weblegends,
@@ -205,14 +205,14 @@ for server WindowsBuilder
                 {
                     # New weblegends Commit
                     {
-                        PSCall dfhack::make-dfhack-package
+                        PSCall make-dfhack-package
                         (
                             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                             applicationName: weblegends,
                             releaseNumber: 0.0.0
                         );
 
-                        PSCall dfhack::make-dfhack-package
+                        PSCall make-dfhack-package
                         (
                             key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                             applicationName: weblegends,
