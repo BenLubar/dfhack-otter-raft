@@ -44,7 +44,7 @@ for server WindowsBuilder
             {
                 SHExec >>mkdir temp
 cd temp
-tar  xf ../$FileName --strip-components 1
+tar  xf ../$FileName --strip-components 1 --warning no-timestamp
 zip -r ../$ActualFileName .
 cd ..
 rm -rf temp>>
