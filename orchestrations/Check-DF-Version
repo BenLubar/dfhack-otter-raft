@@ -139,24 +139,27 @@ rm -rf temp>>
             }
         }
 
-        # Bug?
-        set $ApplicationName = "";
+        if false
+        {
+            # Bug?
+            set $ApplicationName = "";
 
-        # Bug?
-        set $ReleaseNumber = "";
+            # Bug?
+            set $ReleaseNumber = "";
 
-        ProGet::Push-Package
-        (
-            Credentials: ProGet,
-            Feed: DwarfFortress,
-            FilePath: $ActualFileName,
-            Group: dwarffortress/core,
-            Name: $Suffix,
-            Version: $VersionNumber,
-            Description: "Dwarf Fortress [version $VersionNumber](https://dwarffortresswiki.org/index.php/Release_information/$VersionNumber) for $MapItem(%FriendlyOSArch, $Suffix), released on $Date.",
-            Title: "Dwarf Fortress ($MapItem(%FriendlyOSArch, $Suffix))",
-            Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
-        );
+            ProGet::Push-Package
+            (
+                Credentials: ProGet,
+                Feed: DwarfFortress,
+                FilePath: $ActualFileName,
+                Group: dwarffortress/core,
+                Name: $Suffix,
+                Version: $VersionNumber,
+                Description: "Dwarf Fortress [version $VersionNumber](https://dwarffortresswiki.org/index.php/Release_information/$VersionNumber) for $MapItem(%FriendlyOSArch, $Suffix), released on $Date.",
+                Title: "Dwarf Fortress ($MapItem(%FriendlyOSArch, $Suffix))",
+                Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
+            );
+        }
     }
 
     Otter::Set-Variable
