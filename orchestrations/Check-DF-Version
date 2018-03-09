@@ -65,6 +65,17 @@ rm -rf temp>>
 
         set $Suffix = $Replace($Replace($ListItem(@Split($ActualFileName, _), 3), .zip, 64), 3264, 32);
 
+        if $Suffix == linux64
+        {
+            for server LinuxBuilder
+            {
+                SHCall df-raws-make
+                (
+                    Arguments: '"$VersionNumber" "$Date"'
+                );
+            }
+        }
+
         # Bug?
         set $ApplicationName = "";
 
