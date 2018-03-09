@@ -23,7 +23,7 @@ ENV DF_ARCHIVE_SHA1 $SHA1Checksum
 RUN mkdir -p /df_linux \
  && cd / \
  && curl -LSo /df_linux.tar.bz2 http://www.bay12games.com/dwarves/df_`${DF_VERSION}_linux.tar.bz2 \
- && echo "`${DF_ARCHIVE_SHA1} *df_linux.tar.bz2" | sha1sum -c
+ && echo "`${DF_ARCHIVE_SHA1} *df_linux.tar.bz2" | sha1sum -c \
  && tar -xjf /df_linux.tar.bz2 df_linux \
  && rm df_linux.tar.bz2 \
  && chmod -x+X -R /df_linux \
