@@ -107,7 +107,7 @@ rm -rf temp>>
                     InedoCore::Exec
                     (
                         FileName: /usr/bin/git,
-                        Arguments: commit -m "Dwarf Fortress $Version",
+                        Arguments: commit -m "Dwarf Fortress $VersionNumber",
                         ErrorOutputLogLevel: Debug,
                         WorkingDirectory: df-docker
                     );
@@ -115,7 +115,7 @@ rm -rf temp>>
                     InedoCore::Exec
                     (
                         FileName: /usr/bin/git,
-                        Arguments: tag "$Version",
+                        Arguments: tag "$VersionNumber",
                         ErrorOutputLogLevel: Debug,
                         WorkingDirectory: df-docker
                     );
