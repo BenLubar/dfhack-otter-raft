@@ -1,6 +1,7 @@
 FROM ubuntu:lts
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl \
@@ -17,10 +18,13 @@ RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 ENV DF_VERSION $VersionUnderscore2
+ENV DF_ARCHIVE_SHA1 $SHA1Checksum
 
 RUN mkdir -p /df_linux \
- && curl -sSL http://www.bay12games.com/dwarves/df_`${DF_VERSION}_linux.tar.bz2 \
-  | tar -xjC / df_linux \
+ && cd / \
+ && curl -LSo /df_linux.tar.bz2 http://www.bay12games.com/dwarves/df_`${DF_VERSION}_linux.tar.bz2 \
+ && echo "`${DF_ARCHIVE_SHA1} *df_linux.tar.bz2" | sha1sum -c
+ && tar -xjf /df_linux.tar.bz2 df_linux \
  && chmod -x+X -R /df_linux \
  && chmod +x /df_linux/df /df_linux/libs/Dwarf_Fortress \
  && rm /df_linux/libs/libgcc_s.so.1 /df_linux/libs/libstdc++.so.6 \
