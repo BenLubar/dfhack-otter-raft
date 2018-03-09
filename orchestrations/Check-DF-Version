@@ -69,10 +69,70 @@ rm -rf temp>>
         {
             for server LinuxBuilder
             {
-                SHCall df-raws-make
-                (
-                    Arguments: '"$VersionNumber" "$Date"'
-                );
+                # Raws
+                {
+                    SHCall dfhack::df-raws-make
+                    (
+                        Arguments: '"$VersionNumber" "$Date"'
+                    );
+                }
+
+                # Docker
+                {
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: clone git@github.com:BenLubar/df-docker.git df-docker,
+                        ErrorOutputLogLevel: Debug
+                    );
+
+                    InedoCore::Apply-Template dfhack::docker-dwarffortress
+                    (
+                        OutputFile: df-docker/dwarffortress/Dockerfile,
+                        AdditionalVariables: %(VersionUnderscore2: $ListItem(@Split($ActualFileName, _), 1)_$ListItem(@Split($ActualFileName, _), 2), SHA1Checksum: $SHEval(sha1sum -b "$ActualFileName" | cut -f 1 -d " ")),
+                        NewLines: Linux
+                    );
+
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: add dwarffortress/Dockerfile,
+                        ErrorOutputLogLevel: Debug,
+                        WorkingDirectory: df-docker
+                    );
+
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: commit -m "Dwarf Fortress $Version",
+                        ErrorOutputLogLevel: Debug,
+                        WorkingDirectory: df-docker
+                    );
+
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: tag "$Version",
+                        ErrorOutputLogLevel: Debug,
+                        WorkingDirectory: df-docker
+                    );
+
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: push,
+                        ErrorOutputLogLevel: Debug,
+                        WorkingDirectory: df-docker
+                    );
+
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: push --tags,
+                        ErrorOutputLogLevel: Debug,
+                        WorkingDirectory: df-docker
+                    );
+                }
             }
         }
 
