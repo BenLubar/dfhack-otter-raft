@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-go get -u github.com/BenLubar/df2014/cmd/dipscript
+#go get -u github.com/BenLubar/df2014/cmd/dipscript
 
 DF() {
     version=${1//\./_}
