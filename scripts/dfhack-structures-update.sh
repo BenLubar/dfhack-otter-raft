@@ -13,7 +13,7 @@ if [[ "$Version" = "0.44.06" ]]; then
     # XXX
     git checkout ee36a1f380054cb4b485230f66bf5598c70fc5ea -- symbols.xml
     sed "122,130d;178,186d;225,233d" -i symbols.xml
-    sed "1109s/^/<int32_t\/><int32_t\/><int32_t\/><int32_t\/>/" -i df.units.xml
+    sed "1109s/^/<pointer\/><pointer\/>/" -i df.units.xml
 fi
 
 git remote add BenLubar git@github.com:BenLubar/df-structures.git
