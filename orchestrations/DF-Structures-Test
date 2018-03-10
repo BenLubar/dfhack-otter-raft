@@ -44,6 +44,6 @@ for server LinuxBuilder
     (
         Arguments: '"$WorkingDirectory" "$VersionNumber"',
         Verbose: true,
-        ErrorOutputLogLevel: Warning
+        ErrorOutputLogLevel: Debug
     );
 }
