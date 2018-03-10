@@ -74,6 +74,8 @@ sed -e 's/^/        /' -i linux64_vtable.xml.tmp
 sed -e 's/^/        /' -i osx32_vtable.xml.tmp
 sed -e 's/^/        /' -i osx64_vtable.xml.tmp
 
+Win32Timestamp="0x`winedump-stable "../win32/Dwarf Fortress.exe" | grep TimeDateStamp | grep -o '[0-9A-F]\{8\}'`"
+Win64Timestamp="0x`winedump-stable "../win64/Dwarf Fortress.exe" | grep TimeDateStamp | grep -o '[0-9A-F]\{8\}'`"
 Linux32MD5="`md5sum -b "../linux32/libs/Dwarf_Fortress" | cut -d ' ' -f 1`"
 Linux64MD5="`md5sum -b "../linux64/libs/Dwarf_Fortress" | cut -d ' ' -f 1`"
 OSX32MD5="`md5sum -b "../osx32/dwarfort.exe" | cut -d ' ' -f 1`"
@@ -148,3 +150,8 @@ sed -n '/<!-- end osx -->/,$ p' symbols.xml >> symbols.xml.tmp
 
 mv -f symbols.xml.tmp symbols.xml
 rm -f *.xml.tmp
+
+git add symbols.xml
+git commit -m "Automatically generated symbols.xml for DF $Version"
+
+git push -fu BenLubar auto-symbols-update
