@@ -12,6 +12,11 @@ export RUBYLIB="$RUBYLIB:`pwd`/metasm"
 
 cd df-structures
 
+# XXX
+if [[ "$Version" = "0.44.06" ]]; then
+    git reset --hard ee36a1f380054cb4b485230f66bf5598c70fc5ea
+fi
+
 git remote add BenLubar git@github.com:BenLubar/df-structures.git
 git push -f BenLubar master
 
