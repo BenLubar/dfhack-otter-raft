@@ -1,3 +1,99 @@
-module DF-Handle-New-Version
+module DF-Handle-New-Version<$FileName, $VersionNumber>
 {
+    set $ActualFileName = $FileName;
+
+    # Zip
+    if $MatchesRegex($FileName, \.tar\.bz2`$)
+    {
+        set $LinuxWorkingDirectory = "";
+
+        for server LinuxBuilder
+        {
+            set $LinuxWorkingDirectory = $WorkingDirectory;
+        }
+
+        set $ActualFileName = $Replace($FileName, .tar.bz2, .zip);
+
+        Transfer-Files
+        (
+            Include: $FileName,
+            FromDirectory: $WorkingDirectory,
+            FromServer: WindowsBuilder,
+            ToDirectory: $LinuxWorkingDirectory,
+            ToServer: LinuxBuilder
+        );
+
+        for server LinuxBuilder
+        {
+            SHExec >>mkdir temp
+cd temp
+tar  xf ../$FileName --strip-components 1 --warning no-timestamp
+zip -r ../$ActualFileName .
+cd ..
+rm -rf temp>>
+            (
+                Verbose: true
+            );
+        }
+
+        Transfer-Files
+        (
+            Include: $ActualFileName,
+            FromDirectory: $LinuxWorkingDirectory,
+            FromServer: LinuxBuilder,
+            ToDirectory: $WorkingDirectory,
+            ToServer: WindowsBuilder
+        );
+    }
+
+    set @Parts = @Split($ActualFileName, _);
+
+    set $Suffix = $Replace($Replace($ListItem(@Parts, 3), .zip, 64), 3264, 32);
+
+    if $Suffix == linux64
+    {
+        for server LinuxBuilder
+        {
+            # Raws
+            {
+                SHCall dfhack::df-raws-make
+                (
+                    Arguments: '"$VersionNumber" "$Date"'
+                );
+            }
+
+            # Docker
+            {
+                call DF-New-Docker
+                (
+                    FileName: $FileName,
+                    VersionNumber: $VersionNumber
+                );
+            }
+        }
+    }
+
+    # ProGet
+    {
+        # Bug?
+        set $ApplicationName = "";
+
+        # Bug?
+        set $ReleaseNumber = "";
+
+        set %FriendlyOSArch = %(osx32: 32-bit Mac OS X, osx64: 64-bit Mac OS X, linux32: 32-bit Linux, linux64: 64-bit Linux, win32: 32-bit Windows, win64: 64-bit Windows);
+
+        ProGet::Push-Package
+        (
+            Credentials: ProGet,
+            Feed: DwarfFortress,
+            FilePath: $ActualFileName,
+            Group: dwarffortress/core,
+            Name: $Suffix,
+            Version: $VersionNumber,
+            Description: "Dwarf Fortress [version $VersionNumber](https://dwarffortresswiki.org/index.php/Release_information/$VersionNumber) for $MapItem(%FriendlyOSArch, $Suffix), released on $Date.",
+            Title: "Dwarf Fortress ($MapItem(%FriendlyOSArch, $Suffix))",
+            Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
+        );
+    }
 }
