@@ -5,6 +5,8 @@ set -ex
 
 cd "$1"
 shift
+Version="$1"
+shift
 
 export RUBYLIB="$RUBYLIB:`pwd`/metasm"
 
@@ -71,6 +73,11 @@ sed -e 's/^/        /' -i linux32_vtable.xml.tmp
 sed -e 's/^/        /' -i linux64_vtable.xml.tmp
 sed -e 's/^/        /' -i osx32_vtable.xml.tmp
 sed -e 's/^/        /' -i osx64_vtable.xml.tmp
+
+Linux32MD5="`md5sum -b "../linux32/libs/Dwarf_Fortress" | cut -d ' ' -f 1`"
+Linux64MD5="`md5sum -b "../linux64/libs/Dwarf_Fortress" | cut -d ' ' -f 1`"
+OSX32MD5="`md5sum -b "../osx32/dwarfort.exe" | cut -d ' ' -f 1`"
+OSX64MD5="`md5sum -b "../osx64/dwarfort.exe" | cut -d ' ' -f 1`"
 
 sed -n '/<!-- end windows -->/Q' symbols.xml > symbols.xml.tmp
 echo >> symbols.xml.tmp
