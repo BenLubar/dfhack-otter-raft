@@ -15,7 +15,7 @@ cd df-structures
 git remote add BenLubar git@github.com:BenLubar/df-structures.git
 git push -f BenLubar master
 
-git branch -D auto-symbols-update
+git branch -D auto-symbols-update || true
 git checkout -b auto-symbols-update
 
 ruby ../df_misc/dump_df_globals.rb "../win32/Dwarf Fortress.exe" > win32_globals.xml.tmp
