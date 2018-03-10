@@ -11,7 +11,7 @@ cd df-structures
 
 if [[ "$Version" = "0.44.06" ]]; then
     # XXX
-    sed -e "s/<stl-string name='adjective' comment='from physical descriptions for use in adv'\/>/<stl-string name='adjective' comment='from physical descriptions for use in adv'\/><padding size='16'\/>/" -i df.units.xml
+    sed "1109s/^/<padding size='16'\/>/" -i df.units.xml
 fi
 
 git remote add BenLubar git@github.com:BenLubar/df-structures.git
