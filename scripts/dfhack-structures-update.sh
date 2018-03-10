@@ -1,7 +1,4 @@
-#!/bin/bash
-
-exec 2>&1
-set -x
+#!/bin/bash -x
 
 cd "$1"
 shift
@@ -15,6 +12,7 @@ cd df-structures
 # XXX
 if [[ "$Version" = "0.44.06" ]]; then
     git checkout ee36a1f380054cb4b485230f66bf5598c70fc5ea -- symbols.xml
+    sed -e "s/    <symbol-table name='v0.44.06.*\n.*\n.*\n//" -i symbols.xml
 fi
 
 git remote add BenLubar git@github.com:BenLubar/df-structures.git
@@ -51,7 +49,7 @@ ruby ../df_misc/scan_keydisplay.rb "../osx32/dwarfort.exe" > osx32_keydisplay.xm
 ruby ../df_misc/scan_keydisplay.rb "../osx64/dwarfort.exe" > osx64_keydisplay.xml.tmp
 fi
 
-perl codegen.pl
+perl ./codegen.pl
 
 sizeunit_win32="`perl ../df_misc/get_sizeofunit.pl codegen/codegen.out.xml windows 32`"
 sizeunit_win64="`perl ../df_misc/get_sizeofunit.pl codegen/codegen.out.xml windows 64`"
