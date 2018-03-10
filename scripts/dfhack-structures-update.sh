@@ -81,7 +81,7 @@ Linux64MD5="`md5sum -b "../linux64/libs/Dwarf_Fortress" | cut -d ' ' -f 1`"
 OSX32MD5="`md5sum -b "../osx32/dwarfort.exe" | cut -d ' ' -f 1`"
 OSX64MD5="`md5sum -b "../osx64/dwarfort.exe" | cut -d ' ' -f 1`"
 
-sed -n '/<!-- end windows -->/Q' symbols.xml > symbols.xml.tmp
+sed '/<!-- end windows -->/Q' symbols.xml > symbols.xml.tmp
 echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version SDL win32' os-type='windows'>" >> symbols.xml.tmp
 echo "        <binary-timestamp value='$Win32Timestamp'/>" >> symbols.xml.tmp
@@ -102,7 +102,7 @@ echo >> symbols.xml.tmp
 echo "    </symbol-table>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 
-sed -n '/<!-- end windows -->/,/<!-- end linux -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
+sed '/<!-- end windows -->/,/<!-- end linux -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
 
 echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version linux32' os-type='linux'>" >> symbols.xml.tmp
@@ -124,7 +124,7 @@ echo >> symbols.xml.tmp
 echo "    </symbol-table>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 
-sed -n '/<!-- end linux -->/,/<!-- end osx -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
+sed '/<!-- end linux -->/,/<!-- end osx -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
 
 echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version osx32' os-type='darwin'>" >> symbols.xml.tmp
