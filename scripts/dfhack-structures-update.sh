@@ -8,15 +8,10 @@ shift
 
 export RUBYLIB="$RUBYLIB:`pwd`/metasm"
 
-git clone git@github.com:BenLubar/df-structures.git df-structures
-
 cd df-structures
 
-git remote add upstream https://github.com/DFHack/df-structures.git
-git checkout master
-git fetch upstream
-git reset --hard upstream/master
-git push -fu origin master
+git remote add BenLubar git@github.com:BenLubar/df-structures.git
+git push -f BenLubar master
 
 git branch -D auto-symbols-update
 git checkout -b auto-symbols-update
