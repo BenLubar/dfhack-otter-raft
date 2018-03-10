@@ -42,7 +42,7 @@ for server LinuxBuilder
 
     SHCall dfhack::dfhack-structures-update
     (
-        Arguments: '"$WorkingDirectory" "$Version"',
+        Arguments: '"$WorkingDirectory" "$VersionNumber"',
         Verbose: true
     );
 }
