@@ -49,4 +49,4 @@ ruby ../df_misc/scan_startdwarfcount.rb "../linux64/libs/Dwarf_Fortress" "$sizeu
 ruby ../df_misc/scan_startdwarfcount.rb "../osx32/dwarfort.exe" "$sizeunit_linux32" > osx32_startdwarfcount.xml.tmp
 ruby ../df_misc/scan_startdwarfcount.rb "../osx64/dwarfort.exe" "$sizeunit_linux64" > osx64_startdwarfcount.xml.tmp
 
-rm -rf codegen *.xml.tmp
+#rm -rf codegen *.xml.tmp
