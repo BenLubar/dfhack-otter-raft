@@ -18,7 +18,8 @@ git fetch upstream
 git reset --hard upstream/master
 git push -fu origin master
 
-git checkout -b auto-structures-update
+git branch -D auto-symbols-update
+git checkout -b auto-symbols-update
 
 ruby ../df_misc/dump_df_globals.rb "../win32/Dwarf Fortress.exe" > win32_globals.xml.tmp
 ruby ../df_misc/dump_df_globals.rb "../win64/Dwarf Fortress.exe" > win64_globals.xml.tmp
@@ -60,4 +61,4 @@ ruby ../df_misc/scan_startdwarfcount.rb "../linux64/libs/Dwarf_Fortress" "$sizeu
 ruby ../df_misc/scan_startdwarfcount.rb "../osx32/dwarfort.exe" "$sizeunit_linux32" > osx32_startdwarfcount.xml.tmp
 ruby ../df_misc/scan_startdwarfcount.rb "../osx64/dwarfort.exe" "$sizeunit_linux64" > osx64_startdwarfcount.xml.tmp
 
-#rm -rf codegen *.xml.tmp
+rm -rf codegen
