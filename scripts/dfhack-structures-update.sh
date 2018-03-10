@@ -11,6 +11,8 @@ cd df-structures
 
 if [[ "$Version" = "0.44.06" ]]; then
     # XXX
+    git checkout ee36a1f380054cb4b485230f66bf5598c70fc5ea -- symbols.xml
+    sed "123,130d;179,186d;226,233d" -i symbols.xml
     sed "1109s/^/<padding size='16'\/>/" -i df.units.xml
 fi
 
