@@ -1,0 +1,40 @@
+set $VersionNumber = 0.44.06;
+
+for server LinuxBuilder
+{
+    set $NormalizedVersion = $Replace($VersionNumber, .0, .);
+
+    foreach $OSArch in @(win32, win64, linux32, linux64, osx32, osx64)
+    {
+        call DFHack-Universal-Package
+        (
+            GroupName: dwarffortress/core,
+            PackageName: $OSArch,
+            NormalizedVersion: $NormalizedVersion,
+            OutputPath: $WorkingDirectory/$OSArch,
+            FeedName: DwarfFortress
+        );
+    }
+
+    call DFHack-Git
+    (
+        RepoID: jjyg-df_misc,
+        Repository: https://github.com/jjyg/df_misc.git,
+        Directory: $WorkingDirectory/df_misc
+    );
+
+    call DFHack-Git
+    (
+        RepoID: jjyg-metasm,
+        Repository: https://github.com/jjyg/metasm.git,
+        Directory: $WorkingDirectory/metasm
+    );
+
+    SHCall dfhack-structures-update
+    (
+        Arguments: '"$WorkingDirectory"',
+        Verbose: true
+    );
+
+    InedoCore::Sleep 86400;
+}
