@@ -9,6 +9,14 @@ git clone git@github.com:BenLubar/df-structures.git df-structures
 
 cd df-structures
 
+git remote add upstream https://github.com/DFHack/df-structures.git
+git checkout master
+git fetch upstream
+git reset --hard upstream/master
+git push -fu origin master
+
+git checkout -b auto-structures-update
+
 ruby ../df_misc/dump_df_globals.rb "../win32/Dwarf Fortress.exe" > win32_globals.xml.tmp
 ruby ../df_misc/dump_df_globals.rb "../win64/Dwarf Fortress.exe" > win64_globals.xml.tmp
 ruby ../df_misc/dump_df_globals.rb "../linux32/libs/Dwarf_Fortress" > linux32_globals.xml.tmp
