@@ -168,7 +168,9 @@ sed -n '/<!-- end osx -->/,$ p' symbols.xml >> symbols.xml.tmp
 mv -f symbols.xml.tmp symbols.xml
 rm -f *.xml.tmp
 
-git add symbols.xml
+perl ./make-keybindings.pl < ../linux64/g_src/keybindings.h > df.keybindings.xml
+
+git add symbols.xml df.keybindings.xml
 git commit -m "Automatically generated symbols.xml for DF $Version"
 
 git push -fu BenLubar auto-symbols-update
