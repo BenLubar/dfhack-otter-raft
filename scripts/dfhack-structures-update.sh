@@ -35,12 +35,12 @@ ruby ../df_misc/scan_vtable.rb "../linux64/libs/Dwarf_Fortress" > linux64_vtable
 ruby ../df_misc/scan_vtable.rb "../osx32/dwarfort.exe" > osx32_vtable.xml.tmp
 ruby ../df_misc/scan_vtable.rb "../osx64/dwarfort.exe" > osx64_vtable.xml.tmp
 
-ruby ../df_misc/scan_ctors.rb "../win32/Dwarf Fortress.exe" > win32_ctors.xml.tmp
-ruby ../df_misc/scan_ctors.rb "../win64/Dwarf Fortress.exe" > win64_ctors.xml.tmp
-ruby ../df_misc/scan_ctors.rb "../linux32/libs/Dwarf_Fortress" > linux32_ctors.xml.tmp
-ruby ../df_misc/scan_ctors.rb "../linux64/libs/Dwarf_Fortress" > linux64_ctors.xml.tmp
-ruby ../df_misc/scan_ctors_osx.rb "../osx32/dwarfort.exe" > osx32_ctors.xml.tmp
-ruby ../df_misc/scan_ctors_osx.rb "../osx64/dwarfort.exe" > osx64_ctors.xml.tmp
+ruby ../df_misc/scan_ctors.rb "../win32/Dwarf Fortress.exe" > win32_ctors.xml.tmp || true
+ruby ../df_misc/scan_ctors.rb "../win64/Dwarf Fortress.exe" > win64_ctors.xml.tmp || true
+ruby ../df_misc/scan_ctors.rb "../linux32/libs/Dwarf_Fortress" > linux32_ctors.xml.tmp || true
+ruby ../df_misc/scan_ctors.rb "../linux64/libs/Dwarf_Fortress" > linux64_ctors.xml.tmp || true
+ruby ../df_misc/scan_ctors_osx.rb "../osx32/dwarfort.exe" > osx32_ctors.xml.tmp || true
+ruby ../df_misc/scan_ctors_osx.rb "../osx64/dwarfort.exe" > osx64_ctors.xml.tmp || true
 
 ruby ../df_misc/scan_keydisplay.rb "../win32/Dwarf Fortress.exe" > win32_keydisplay.xml.tmp
 ruby ../df_misc/scan_keydisplay.rb "../win64/Dwarf Fortress.exe" > win64_keydisplay.xml.tmp
