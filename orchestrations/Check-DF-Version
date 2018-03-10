@@ -86,9 +86,9 @@ rm -rf temp>>
                         ErrorOutputLogLevel: Debug
                     );
 
-                    set $VersionUnderscore2 = $ListItem(@Split($ActualFileName, _), 1)_$ListItem(@Split($ActualFileName, _), 2);
+                    set $VersionUnderscore2 = $ListItem(@Split($FileName, _), 1)_$ListItem(@Split($FileName, _), 2);
 
-                    set $SHA1Checksum = $SHEval(sha1sum -b "$ActualFileName" | cut -f 1 -d " ");
+                    set $SHA1Checksum = $SHEval(sha1sum -b "$FileName" | cut -f 1 -d " ");
 
                     InedoCore::Apply-Template dfhack::docker-dwarffortress
                     (
