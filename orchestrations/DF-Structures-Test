@@ -20,14 +20,16 @@ for server LinuxBuilder
     (
         RepoID: jjyg-df_misc,
         Repository: https://github.com/jjyg/df_misc.git,
-        Directory: $WorkingDirectory/df_misc
+        Directory: $WorkingDirectory/df_misc,
+        Branch: master
     );
 
     call DFHack-Git
     (
         RepoID: jjyg-metasm,
         Repository: https://github.com/jjyg/metasm.git,
-        Directory: $WorkingDirectory/metasm
+        Directory: $WorkingDirectory/metasm,
+        Branch: master
     );
 
     SHCall dfhack::dfhack-structures-update
