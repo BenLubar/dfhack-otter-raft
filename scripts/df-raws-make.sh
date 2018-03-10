@@ -8,7 +8,7 @@ DF() {
     name=../df_${version}_linux.tar.bz2
     if [[ -f "$name" ]]; then
         rm -rf -- *
-        tar xf "$name" df_linux/raw df_linux/data/{announcement,dipscript,help,init,speech} df_linux/data/index
+        tar xmf "$name" df_linux/raw df_linux/data/{announcement,dipscript,help,init,speech} df_linux/data/index
     else
         echo "(cannot make raws for $1 - no archive)" >&2
         return 1
