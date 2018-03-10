@@ -30,7 +30,7 @@ for server LinuxBuilder
         Directory: $WorkingDirectory/metasm
     );
 
-    SHCall dfhack-structures-update
+    SHCall dfhack::dfhack-structures-update
     (
         Arguments: '"$WorkingDirectory"',
         Verbose: true
