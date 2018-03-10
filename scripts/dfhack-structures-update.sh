@@ -1,7 +1,7 @@
 #!/bin/bash
 
 exec 2>&1
-set -ex
+set -x
 
 cd "$1"
 shift
