@@ -1,4 +1,3 @@
-##AH:UseTextMode
 set $VersionNumber = 0.44.06;
 
 for server LinuxBuilder
@@ -46,6 +45,4 @@ for server LinuxBuilder
         Arguments: '"$WorkingDirectory" "$Version"',
         Verbose: true
     );
-
-    InedoCore::Sleep 86400;
 }
