@@ -1,21 +1,24 @@
-#!/bin/bash -e
+#!/bin/bash
+
+exec 2>&1
+set -ex
 
 cd "$1"
 shift
 
 export RUBYLIB="$RUBYLIB:`pwd`/metasm"
 
-git clone git@github.com:BenLubar/df-structures.git df-structures 2>&1
+git clone git@github.com:BenLubar/df-structures.git df-structures
 
 cd df-structures
 
-git remote add upstream https://github.com/DFHack/df-structures.git 2>&1
-git checkout master 2>&1
-git fetch upstream 2>&1
-git reset --hard upstream/master 2>&1
-git push -fu origin master 2>&1
+git remote add upstream https://github.com/DFHack/df-structures.git
+git checkout master
+git fetch upstream
+git reset --hard upstream/master
+git push -fu origin master
 
-git checkout -b auto-structures-update 2>&1
+git checkout -b auto-structures-update
 
 ruby ../df_misc/dump_df_globals.rb "../win32/Dwarf Fortress.exe" > win32_globals.xml.tmp
 ruby ../df_misc/dump_df_globals.rb "../win64/Dwarf Fortress.exe" > win64_globals.xml.tmp
