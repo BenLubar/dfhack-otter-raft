@@ -12,7 +12,6 @@ cd df-structures
 # XXX
 if [[ "$Version" = "0.44.06" ]]; then
     git checkout ee36a1f380054cb4b485230f66bf5598c70fc5ea -- symbols.xml
-    sed -e "s/    <symbol-table name='v0.44.06.*\n.*\n.*\n//" -i symbols.xml
 fi
 
 git remote add BenLubar git@github.com:BenLubar/df-structures.git
