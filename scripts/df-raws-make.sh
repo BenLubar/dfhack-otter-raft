@@ -42,8 +42,8 @@ DF() {
     git tag "v$1"
 }
 
-git clone git@github.com:BenLubar/raws.git raws
+git clone git@github.com:BenLubar/raws.git raws 2>&1
 cd raws
 DF "$1" "$2"
-git push
-git push --tags
+git push 2>&1
+git push --tags 2>&1
