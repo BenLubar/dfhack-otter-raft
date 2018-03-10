@@ -62,3 +62,80 @@ ruby ../df_misc/scan_startdwarfcount.rb "../osx32/dwarfort.exe" "$sizeunit_linux
 ruby ../df_misc/scan_startdwarfcount.rb "../osx64/dwarfort.exe" "$sizeunit_linux64" > osx64_startdwarfcount.xml.tmp
 
 rm -rf codegen
+
+sed -e 's/^/        /' -i win32_globals.xml.tmp
+sed -e 's/^/        /' -i win64_globals.xml.tmp
+sed -e 's/^/        /' -i linux32_globals.xml.tmp
+sed -e 's/^/        /' -i linux64_globals.xml.tmp
+sed -e 's/^/        /' -i osx32_globals.xml.tmp
+sed -e 's/^/        /' -i osx64_globals.xml.tmp
+
+sed -e 's/^/        /' -i win32_vtable.xml.tmp
+sed -e 's/^/        /' -i win64_vtable.xml.tmp
+sed -e 's/^/        /' -i linux32_vtable.xml.tmp
+sed -e 's/^/        /' -i linux64_vtable.xml.tmp
+sed -e 's/^/        /' -i osx32_vtable.xml.tmp
+sed -e 's/^/        /' -i osx64_vtable.xml.tmp
+
+echo > win_symbols.xml.tmp
+echo "    <symbol-table name='v$Version SDL win32' os-type='windows'>" >> win_symbols.xml.tmp
+echo "        <binary-timestamp value='$Win32Timestamp'/>" >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+cat win32_globals.xml.tmp >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+cat win32_vtable.xml.tmp >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+echo "    </symbol-table>" >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+echo "    <symbol-table name='v$Version SDL win64' os-type='windows'>" >> win_symbols.xml.tmp
+echo "        <binary-timestamp value='$Win64Timestamp'/>" >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+cat win64_globals.xml.tmp >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+cat win64_vtable.xml.tmp >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+echo "    </symbol-table>" >> win_symbols.xml.tmp
+echo >> win_symbols.xml.tmp
+echo "    <!-- end windows -->" >> win_symbols.xml.tmp
+
+echo > linux_symbols.xml.tmp
+echo "    <symbol-table name='v$Version linux32' os-type='linux'>" >> linux_symbols.xml.tmp
+echo "        <md5-hash value='$Linux32MD5'/>" >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+cat linux32_globals.xml.tmp >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+cat linux32_vtable.xml.tmp >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+echo "    </symbol-table>" >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+echo "    <symbol-table name='v$Version linux64' os-type='linux'>" >> linux_symbols.xml.tmp
+echo "        <md5-hash value='$Linux64MD5'/>" >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+cat linux64_globals.xml.tmp >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+cat linux64_vtable.xml.tmp >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+echo "    </symbol-table>" >> linux_symbols.xml.tmp
+echo >> linux_symbols.xml.tmp
+echo "    <!-- end linux -->" >> linux_symbols.xml.tmp
+
+echo > osx_symbols.xml.tmp
+echo "    <symbol-table name='v$Version osx32' os-type='darwin'>" >> osx_symbols.xml.tmp
+echo "        <md5-hash value='$OSX32MD5'/>" >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+cat osx32_globals.xml.tmp >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+cat osx32_vtable.xml.tmp >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+echo "    </symbol-table>" >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+echo "    <symbol-table name='v$Version osx64' os-type='darwin'>" >> osx_symbols.xml.tmp
+echo "        <md5-hash value='$OSX64MD5'/>" >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+cat osx64_globals.xml.tmp >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+cat osx64_vtable.xml.tmp >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+echo "    </symbol-table>" >> osx_symbols.xml.tmp
+echo >> osx_symbols.xml.tmp
+echo "    <!-- end osx -->" >> osx_symbols.xml.tmp
