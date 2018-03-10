@@ -28,6 +28,11 @@ for server WindowsBuilder
         }
     }
 
+    call Update-DF-Structures
+    (
+        VersionNumber: $VersionNumber
+    );
+
     Otter::Set-Variable
     (
         Credentials: Otter-Variables,
