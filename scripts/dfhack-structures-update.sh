@@ -102,7 +102,7 @@ echo >> symbols.xml.tmp
 echo "    </symbol-table>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 
-sed '/<!-- end windows -->/,/<!-- end linux -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
+sed -n '/<!-- end windows -->/,/<!-- end linux -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
 
 echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version linux32' os-type='linux'>" >> symbols.xml.tmp
@@ -124,7 +124,7 @@ echo >> symbols.xml.tmp
 echo "    </symbol-table>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 
-sed '/<!-- end linux -->/,/<!-- end osx -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
+sed -n '/<!-- end linux -->/,/<!-- end osx -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
 
 echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version osx32' os-type='darwin'>" >> symbols.xml.tmp
