@@ -32,6 +32,7 @@ ruby ../df_misc/scan_vtable.rb "../linux64/libs/Dwarf_Fortress" > linux64_vtable
 ruby ../df_misc/scan_vtable.rb "../osx32/dwarfort.exe" > osx32_vtable.xml.tmp
 ruby ../df_misc/scan_vtable.rb "../osx64/dwarfort.exe" > osx64_vtable.xml.tmp
 
+if false; then
 ruby ../df_misc/scan_ctors.rb "../win32/Dwarf Fortress.exe" > win32_ctors.xml.tmp || true
 ruby ../df_misc/scan_ctors.rb "../win64/Dwarf Fortress.exe" > win64_ctors.xml.tmp || true
 ruby ../df_misc/scan_ctors.rb "../linux32/libs/Dwarf_Fortress" > linux32_ctors.xml.tmp || true
@@ -43,6 +44,7 @@ ruby ../df_misc/scan_keydisplay.rb "../win32/Dwarf Fortress.exe" > win32_keydisp
 ruby ../df_misc/scan_keydisplay.rb "../win64/Dwarf Fortress.exe" > win64_keydisplay.xml.tmp
 ruby ../df_misc/scan_keydisplay.rb "../osx32/dwarfort.exe" > osx32_keydisplay.xml.tmp
 ruby ../df_misc/scan_keydisplay.rb "../osx64/dwarfort.exe" > osx64_keydisplay.xml.tmp
+fi
 
 perl codegen.pl
 
@@ -67,6 +69,13 @@ sed -e 's/^/        /' -i linux64_globals.xml.tmp
 sed -e 's/^/        /' -i osx32_globals.xml.tmp
 sed -e 's/^/        /' -i osx64_globals.xml.tmp
 
+sed -e 's/^/        /' -i win32_startdwarfcount.xml.tmp
+sed -e 's/^/        /' -i win64_startdwarfcount.xml.tmp
+sed -e 's/^/        /' -i linux32_startdwarfcount.xml.tmp
+sed -e 's/^/        /' -i linux64_startdwarfcount.xml.tmp
+sed -e 's/^/        /' -i osx32_startdwarfcount.xml.tmp
+sed -e 's/^/        /' -i osx64_startdwarfcount.xml.tmp
+
 sed -e 's/^/        /' -i win32_vtable.xml.tmp
 sed -e 's/^/        /' -i win64_vtable.xml.tmp
 sed -e 's/^/        /' -i linux32_vtable.xml.tmp
@@ -86,6 +95,7 @@ echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version SDL win32' os-type='windows'>" >> symbols.xml.tmp
 echo "        <binary-timestamp value='$Win32Timestamp'/>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
+cat win32_startdwarfcount.xml.tmp >> symbols.xml.tmp
 cat win32_globals.xml.tmp >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 cat win32_vtable.xml.tmp >> symbols.xml.tmp
@@ -95,6 +105,7 @@ echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version SDL win64' os-type='windows'>" >> symbols.xml.tmp
 echo "        <binary-timestamp value='$Win64Timestamp'/>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
+cat win64_startdwarfcount.xml.tmp >> symbols.xml.tmp
 cat win64_globals.xml.tmp >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 cat win64_vtable.xml.tmp >> symbols.xml.tmp
@@ -108,6 +119,7 @@ echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version linux32' os-type='linux'>" >> symbols.xml.tmp
 echo "        <md5-hash value='$Linux32MD5'/>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
+cat linux32_startdwarfcount.xml.tmp >> symbols.xml.tmp
 cat linux32_globals.xml.tmp >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 cat linux32_vtable.xml.tmp >> symbols.xml.tmp
@@ -117,6 +129,7 @@ echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version linux64' os-type='linux'>" >> symbols.xml.tmp
 echo "        <md5-hash value='$Linux64MD5'/>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
+cat linux64_startdwarfcount.xml.tmp >> symbols.xml.tmp
 cat linux64_globals.xml.tmp >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 cat linux64_vtable.xml.tmp >> symbols.xml.tmp
@@ -130,6 +143,7 @@ echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version osx32' os-type='darwin'>" >> symbols.xml.tmp
 echo "        <md5-hash value='$OSX32MD5'/>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
+cat osx32_startdwarfcount.xml.tmp >> symbols.xml.tmp
 cat osx32_globals.xml.tmp >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 cat osx32_vtable.xml.tmp >> symbols.xml.tmp
@@ -139,6 +153,7 @@ echo >> symbols.xml.tmp
 echo "    <symbol-table name='v$Version osx64' os-type='darwin'>" >> symbols.xml.tmp
 echo "        <md5-hash value='$OSX64MD5'/>" >> symbols.xml.tmp
 echo >> symbols.xml.tmp
+cat osx64_startdwarfcount.xml.tmp >> symbols.xml.tmp
 cat osx64_globals.xml.tmp >> symbols.xml.tmp
 echo >> symbols.xml.tmp
 cat osx64_vtable.xml.tmp >> symbols.xml.tmp
