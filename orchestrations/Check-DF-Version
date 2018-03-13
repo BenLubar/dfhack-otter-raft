@@ -2,20 +2,20 @@ for server WindowsBuilder
 {
     Ensure-Directory $WorkingDirectory;
 
+    PSCall dfhack::check-df-version
+    (
+        workingDirectory: $WorkingDirectory,
+        lastETag: $LastDFReleaseETag,
+        lastModified: $LastDFReleaseModified,
+        etag => $NewETag,
+        modified => $NewModified,
+        version => $VersionNumber,
+        date => $Date,
+        versions => @VersionFiles
+    );
+
     if false
     {
-        PSCall dfhack::check-df-version
-        (
-            workingDirectory: $WorkingDirectory,
-            lastETag: $LastDFReleaseETag,
-            lastModified: $LastDFReleaseModified,
-            etag => $NewETag,
-            modified => $NewModified,
-            version => $VersionNumber,
-            date => $Date,
-            versions => @VersionFiles
-        );
-
         foreach $FileName in @VersionFiles
         {
             # File
@@ -27,29 +27,24 @@ for server WindowsBuilder
                 );
             }
         }
+
+        call Update-DF-Structures
+        (
+            VersionNumber: $VersionNumber
+        );
     }
 
-    set $VersionNumber = 0.44.07;
-
-    call Update-DF-Structures
+    Otter::Set-Variable
     (
-        VersionNumber: $VersionNumber
+        Credentials: Otter-Variables,
+        Name: LastDFReleaseETag,
+        Value: $NewETag
     );
 
-    if false
-    {
-        Otter::Set-Variable
-        (
-            Credentials: Otter-Variables,
-            Name: LastDFReleaseETag,
-            Value: $NewETag
-        );
-
-        Otter::Set-Variable
-        (
-            Credentials: Otter-Variables,
-            Name: LastDFReleaseModified,
-            Value: $NewModified
-        );
-    }
+    Otter::Set-Variable
+    (
+        Credentials: Otter-Variables,
+        Name: LastDFReleaseModified,
+        Value: $NewModified
+    );
 }
