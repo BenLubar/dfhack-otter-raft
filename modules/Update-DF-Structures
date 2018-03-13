@@ -65,7 +65,7 @@ module Update-DF-Structures<$VersionNumber>
         (
             ContentType: application/json,
             TextData: $ToJson(%(title: "Automated df-structures update for DF $VersionNumber", head: "BenLubar:auto-symbols-update", base: master, body: "This is an automated pull request. Only one such pull request should be made for each Dwarf Fortress release. If this bot is malfunctioning, contact BenLubar on IRC.", maintainer_can_modify: true)),
-            LogRequestData: false,
+            LogRequestData: true,
             LogResponseBody: true,
             ProxyRequest: false,
             UserName: $GetCredentialProperty(GitHub-BenLubar, UserName),
