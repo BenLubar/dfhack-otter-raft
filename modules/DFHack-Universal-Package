@@ -15,7 +15,7 @@ module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersio
         InedoCore::Exec
         (
             FileName: /usr/bin/wget,
-            Arguments: -q "https://proget.local.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip" -O "$WorkingDirectory/${PackageName}.zip"
+            Arguments: -q "https://proget.local.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip" -O "${PackageName}.zip"
         );
     }
 
