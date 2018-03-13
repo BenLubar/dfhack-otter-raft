@@ -1,49 +1,55 @@
 for server WindowsBuilder
 {
-    set %FriendlyOSArch = %(osx32: 32-bit Mac OS X, osx64: 64-bit Mac OS X, linux32: 32-bit Linux, linux64: 64-bit Linux, win32: 32-bit Windows, win64: 64-bit Windows);
-
     Ensure-Directory $WorkingDirectory;
 
-    PSCall dfhack::check-df-version
-    (
-        workingDirectory: $WorkingDirectory,
-        lastETag: $LastDFReleaseETag,
-        lastModified: $LastDFReleaseModified,
-        etag => $NewETag,
-        modified => $NewModified,
-        version => $VersionNumber,
-        date => $Date,
-        versions => @VersionFiles
-    );
-
-    foreach $FileName in @VersionFiles
+    if false
     {
-        # File
+        PSCall dfhack::check-df-version
+        (
+            workingDirectory: $WorkingDirectory,
+            lastETag: $LastDFReleaseETag,
+            lastModified: $LastDFReleaseModified,
+            etag => $NewETag,
+            modified => $NewModified,
+            version => $VersionNumber,
+            date => $Date,
+            versions => @VersionFiles
+        );
+
+        foreach $FileName in @VersionFiles
         {
-            call DF-Handle-New-Version
-            (
-                FileName: $FileName,
-                VersionNumber: $VersionNumber
-            );
+            # File
+            {
+                call DF-Handle-New-Version
+                (
+                    FileName: $FileName,
+                    VersionNumber: $VersionNumber
+                );
+            }
         }
     }
+
+    set $VersionNumber = 0.44.07;
 
     call Update-DF-Structures
     (
         VersionNumber: $VersionNumber
     );
 
-    Otter::Set-Variable
-    (
-        Credentials: Otter-Variables,
-        Name: LastDFReleaseETag,
-        Value: $NewETag
-    );
+    if false
+    {
+        Otter::Set-Variable
+        (
+            Credentials: Otter-Variables,
+            Name: LastDFReleaseETag,
+            Value: $NewETag
+        );
 
-    Otter::Set-Variable
-    (
-        Credentials: Otter-Variables,
-        Name: LastDFReleaseModified,
-        Value: $NewModified
-    );
+        Otter::Set-Variable
+        (
+            Credentials: Otter-Variables,
+            Name: LastDFReleaseModified,
+            Value: $NewModified
+        );
+    }
 }
