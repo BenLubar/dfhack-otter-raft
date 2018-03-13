@@ -55,6 +55,7 @@ rm -rf temp>>
         for server LinuxBuilder
         {
             # Raws
+            if false
             {
                 SHCall dfhack::df-raws-make
                 (
