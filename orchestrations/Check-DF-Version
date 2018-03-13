@@ -14,25 +14,22 @@ for server WindowsBuilder
         versions => @VersionFiles
     );
 
-    if false
+    foreach $FileName in @VersionFiles
     {
-        foreach $FileName in @VersionFiles
+        # File
         {
-            # File
-            {
-                call DF-Handle-New-Version
-                (
-                    FileName: $FileName,
-                    VersionNumber: $VersionNumber
-                );
-            }
+            call DF-Handle-New-Version
+            (
+                FileName: $FileName,
+                VersionNumber: $VersionNumber
+            );
         }
-
-        call Update-DF-Structures
-        (
-            VersionNumber: $VersionNumber
-        );
     }
+
+    call Update-DF-Structures
+    (
+        VersionNumber: $VersionNumber
+    );
 
     Otter::Set-Variable
     (
