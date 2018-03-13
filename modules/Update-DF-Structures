@@ -2,7 +2,7 @@ module Update-DF-Structures<$VersionNumber>
 {
     for server LinuxBuilder
     {
-        for directory df-structures-update
+        for directory $WorkingDirectory/df-structures-update
         {
             set $NormalizedVersion = $Replace($VersionNumber, .0, .);
 
