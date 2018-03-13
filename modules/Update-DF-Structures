@@ -48,28 +48,13 @@ module Update-DF-Structures<$VersionNumber>
                 Verbose: true,
                 ErrorOutputLogLevel: Debug
             );
+
+            SHExec >>DFVersion="${VersionNumber}"
+
+curl -n -i --data '{"title":"Automated df-structures update for DF '"$DFVersion"'","head":"BenLubar:auto-symbols-update","base":"master","body":"This is an automated pull request. Only one such pull request should be made for each Dwarf Fortress release. If this bot is malfunctioning, contact BenLubar on IRC."}' https://api.github.com/repos/DFHack/df-structures/pulls>>
+            (
+                ErrorOutputLogLevel: Debug
+            );
         }
-    }
-
-    for server localhost
-    {
-        GitHub-GetSource
-        (
-            Credentials: GitHub-BenLubar,
-            Organization: BenLubar,
-            Repository: git-lfs-example-repository,
-            DiskPath: $WorkingDirectory/dummy
-        );
-
-        Post-Http https://api.github.com/repos/DFHack/df-structures/pulls
-        (
-            ContentType: application/json,
-            TextData: $ToJson(%(title: $Eval("Automated df-structures update for DF $VersionNumber"), head: "BenLubar:auto-symbols-update", base: master, body: "This is an automated pull request. Only one such pull request should be made for each Dwarf Fortress release. If this bot is malfunctioning, contact BenLubar on IRC.")),
-            LogRequestData: true,
-            LogResponseBody: true,
-            ProxyRequest: false,
-            UserName: $GetCredentialProperty(GitHub-BenLubar, UserName),
-            Password: $GetCredentialProperty(GitHub-BenLubar, Password)
-        );
     }
 }
