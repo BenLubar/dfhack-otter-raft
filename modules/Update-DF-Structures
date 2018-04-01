@@ -63,7 +63,7 @@ module Update-DF-Structures<$VersionNumber>
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: DFHack,
                     releaseNumber: 0.0.0,
-                    variables: %MapAdd(%(), `$OverrideStructuresCommit, $CommitHash)
+                    variables: %MapAdd(%MapAdd(%(), `$OverrideStructuresCommit, $CommitHash), `$NewDFVersion, $VersionNumber)
                 );
             }
         }
