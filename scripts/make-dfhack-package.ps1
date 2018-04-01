@@ -1,10 +1,10 @@
-Param($key, $applicationName, $releaseNumber)
+Param($key, $applicationName, $releaseNumber, $variables)
 
 $body = @{
     key = $key
     applicationName = $applicationName
     releaseNumber = $releaseNumber
-}
+} + $variables
 
 $package = Invoke-RestMethod -Method Post -Uri https://buildmaster.local.lubar.me/api/releases/packages/create -Body $body
 
