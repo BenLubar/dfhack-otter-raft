@@ -56,14 +56,32 @@ module Update-DF-Structures<$VersionNumber>
 
             set $CommitHash = $Trim($SHEval(cd $WorkingDirectory/df-structures; git log -n 1 --format=%H));
 
+            call DFHack-Git
+            (
+                RepoID: DFHack-dfhack,
+                Repository: https://github.com/DFHack/dfhack.git,
+                Directory: $WorkingDirectory/dfhack,
+                Branch: develop
+            );
+
+            set $DFHackCommit = $Trim($SHEval(cd $WorkingDirectory/dfhack; git log -n 1 --format=%H));
+
             for server WindowsBuilder
             {
+                set %Variables = %();
+
+                set %Variables = %MapAdd(%Variables, `$DFHackCommit, $DFHackCommit);
+
+                set %Variables = %MapAdd(%Variables, `$NewDFVersion, $VersionNumber);
+
+                set %Variables = %MapAdd(%Variables, `$OverrideStructuresCommit, $CommitHash);
+
                 PSCall dfhack::make-dfhack-package
                 (
                     key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
                     applicationName: DFHack,
                     releaseNumber: 0.0.0,
-                    variables: %MapAdd(%MapAdd(%(), `$OverrideStructuresCommit, $CommitHash), `$NewDFVersion, $VersionNumber)
+                    variables: %Variables
                 );
             }
         }
