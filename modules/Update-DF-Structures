@@ -53,6 +53,19 @@ module Update-DF-Structures<$VersionNumber>
             (
                 ErrorOutputLogLevel: Debug
             );
+
+            set $CommitHash = $Trim($SHEval(cd $WorkingDirectory/df-structures; git log -n 1 --format=%H));
+
+            for server WindowsBuilder
+            {
+                PSCall dfhack::make-dfhack-package
+                (
+                    key: $GetCredentialProperty(BuildMaster-Releases, ApiKey),
+                    applicationName: DFHack,
+                    releaseNumber: 0.0.0,
+                    variables: %MapAdd(%(), `$OverrideStructuresCommit, $CommitHash)
+                );
+            }
         }
     }
 }
