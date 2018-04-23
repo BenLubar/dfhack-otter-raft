@@ -49,7 +49,7 @@ module Update-DF-Structures<$VersionNumber>
                 ErrorOutputLogLevel: Debug
             );
 
-            SHExec >>curl -n -i -d '{"title":"Automated df-structures update for DF ${VersionNumber}","head":"BenLubar:auto-symbols-update","base":"master","body":"This is an automated pull request. Only one such pull request should be made for each Dwarf Fortress release. If this bot is malfunctioning, contact BenLubar on IRC."}' https://api.github.com/repos/DFHack/df-structures/pulls>>
+            SHExec >>curl -n -i -d '{"title":"Automated df-structures update for DF ${VersionNumber}","head":"BenLubar:auto-symbols-update","base":"master","body":"This is an automated pull request. Only one such pull request should be made for each Dwarf Fortress release. If this bot is malfunctioning, contact BenLubar on IRC.<!-- buildmaster:skip-pr -->"}' https://api.github.com/repos/DFHack/df-structures/pulls>>
             (
                 ErrorOutputLogLevel: Debug
             );
