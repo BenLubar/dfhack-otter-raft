@@ -17,7 +17,7 @@ module DFHack-PR-Get-Sources
             FileName: $DefaultGitExePath,
             Arguments: fetch https://github.com/DFHack/df-structures.git refs/pull/$ReleaseNumber/merge,
             WorkingDirectory: $WorkingDirectory/src/library/xml,
-            ErrorOutputLogLevel: Warning
+            ErrorOutputLogLevel: Information
         );
 
         InedoCore::Exec
