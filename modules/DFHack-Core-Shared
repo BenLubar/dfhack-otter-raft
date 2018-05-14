@@ -143,21 +143,23 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                     }
                     else
                     {
-                        if $BuildType == RelWithDebInfo && $TrustedBuild
+                        if false
                         {
-                            SHCall dfhack-collect-pdb
-                            (
-                                Arguments: $WorkingDirectory $DebugDirectory,
-                                ErrorOutputLogLevel: Warning
-                            );
+                            if $BuildType == RelWithDebInfo && $TrustedBuild
+                            {
+                                SHCall dfhack-collect-pdb
+                                (
+                                    Arguments: $WorkingDirectory $DebugDirectory,
+                                    ErrorOutputLogLevel: Warning
+                                );
 
-                            Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
-                            (
-                                From: $DebugDirectory,
-                                Include: **.pdb,
-                                IgnoreEmptyArtifact: true,
-                                Overwrite: true
-                            );
+                                Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
+                                (
+                                    From: $DebugDirectory,
+                                    Include: **.pdb,
+                                    Overwrite: true
+                                );
+                            }
                         }
 
                         Create-Artifact Windows$Bits$ArtifactSuffix

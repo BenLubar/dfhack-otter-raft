@@ -212,15 +212,17 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                             Overwrite: true
                         );
 
-                        if $BuildType == RelWithDebInfo && $TrustedBuild
+                        if false
                         {
-                            Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
-                            (
-                                From: $DebugPrefix,
-                                Include: **.pdb,
-                                IgnoreEmptyArtifact: true,
-                                Overwrite: true
-                            );
+                            if $BuildType == RelWithDebInfo && $TrustedBuild
+                            {
+                                Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
+                                (
+                                    From: $DebugPrefix,
+                                    Include: **.pdb,
+                                    Overwrite: true
+                                );
+                            }
                         }
                     }
                 }
