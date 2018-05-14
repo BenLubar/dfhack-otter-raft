@@ -192,6 +192,8 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                 {
                     if $OperatingSystem == Windows
                     {
+                        Ensure-Directory $InstallPrefix/staging;
+
                         Copy-Files
                         (
                             Include: $PluginName.plug.dll,
