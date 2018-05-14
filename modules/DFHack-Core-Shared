@@ -9,6 +9,8 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
         ServerName => $LinuxBuilder
     );
 
+    set $HaveServer = true;
+
     try
     {
         set $Title = $OperatingSystem;
@@ -78,6 +80,8 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                 Role: DFHack-Linux-Builders,
                 Verbose: true
             );
+
+            set $HaveServer = false;
 
             set $DebugDirectory = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
 
@@ -175,11 +179,14 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
     }
     catch
     {
-        Release-Server $LinuxBuilder
-        (
-            Role: DFHack-Linux-Builders,
-            Verbose: true
-        );
+        if $HaveServer
+        {
+            Release-Server $LinuxBuilder
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true
+            );
+        }
 
         throw;
     }

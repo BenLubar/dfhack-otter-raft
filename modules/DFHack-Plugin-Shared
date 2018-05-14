@@ -9,6 +9,8 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
         ServerName => $LinuxBuilder
     );
 
+    set $HaveServer = true;
+
     try
     {
         set $Title = $OperatingSystem;
@@ -135,6 +137,8 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                 Verbose: true
             );
 
+            set $HaveServer = false;
+
             if $OperatingSystem == Linux
             {
                 InedoCore::Exec
@@ -195,19 +199,12 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                 {
                     if $OperatingSystem == Windows
                     {
-                        Ensure-Directory $InstallPrefix/staging;
-
-                        Copy-Files
+                        InedoCore::Exec
                         (
-                            Include: $PluginName.plug.dll,
-                            From: $InstallPrefix/hack/plugins,
-                            To: $InstallPrefix/staging
-                        );
-
-                        Create-ZipFile
-                        (
-                            Name: $InstallPrefix/$PluginName-$ReleaseNumber-windows-$Bits.zip,
-                            Directory: $InstallPrefix/staging
+                            FileName: /usr/bin/zip,
+                            Arguments: ../../$PluginName-$ReleaseNumber-windows-$Bits.zip $PluginName.plug.dll,
+                            WorkingDirectory: $InstallPrefix/hack/plugins,
+                            ErrorOutputLogLevel: Warning
                         );
 
                         Create-Artifact Windows$Bits$ArtifactSuffix
@@ -236,11 +233,14 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
     }
     catch
     {
-        Release-Server $LinuxBuilder
-        (
-            Role: DFHack-Linux-Builders,
-            Verbose: true
-        );
+        if $HaveServer
+        {
+            Release-Server $LinuxBuilder
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true
+            );
+        }
 
         throw;
     }
