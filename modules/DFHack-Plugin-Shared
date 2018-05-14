@@ -104,14 +104,17 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                     {
                         if $OperatingSystem == Windows
                         {
-                            if $BuildType == RelWithDebInfo && $TrustedBuild
+                            if false
                             {
-                                Copy-Files
-                                (
-                                    Include: **.pdb,
-                                    From: $InstallPrefix/plugins/$PluginName,
-                                    To: $DebugPrefix/hack/plugins
-                                );
+                                if $BuildType == RelWithDebInfo && $TrustedBuild
+                                {
+                                    Copy-Files
+                                    (
+                                        Include: **.pdb,
+                                        From: $InstallPrefix/plugins/$PluginName,
+                                        To: $DebugPrefix/hack/plugins
+                                    );
+                                }
                             }
                         }
                     }
