@@ -1,0 +1,209 @@
+module DFHack-Publish-Package<$ArtifactName, $PackageName, $OSArch, $PackageVersion, $PackageDescription, @PackageDependencies, $WindowsBuilder, $LinuxBuilder, $Tagged = true, $Plugin = false>
+{
+    for server $WindowsBuilder
+    {
+        set %FriendlyOSArch = %(win32: "32-bit Windows",
+            win64: "64-bit Windows",
+            linux32: "32-bit Linux (latest GCC)",
+            linux64: "64-bit Linux (latest GCC)",
+            linux32-gcc48: "32-bit Linux (GCC 4.8)",
+            linux64-gcc48: "64-bit Linux (GCC 4.8)",
+            osx32: "32-bit Mac OS X (latest GCC)",
+            osx64: "64-bit Mac OS X (latest GCC)",
+            osx32-gcc48: "32-bit Mac OS X (GCC 4.8)",
+            osx64-gcc48: "64-bit Mac OS X (GCC 4.8)",
+            win32-dev: "32-bit Windows (development version)",
+            win64-dev: "64-bit Windows (development version)",
+            linux32-dev: "32-bit Linux (development version) (latest GCC)",
+            linux64-dev: "64-bit Linux (development version) (latest GCC)",
+            linux32-gcc48-dev: "32-bit Linux (development version) (GCC 4.8)",
+            linux64-gcc48-dev: "64-bit Linux (development version) (GCC 4.8)",
+            osx32-dev: "32-bit Mac OS X (development version) (latest GCC)",
+            osx64-dev: "64-bit Mac OS X (development version) (latest GCC)",
+            osx32-gcc48-dev: "32-bit Mac OS X (development version) (GCC 4.8)",
+            osx64-gcc48-dev: "64-bit Mac OS X (development version) (GCC 4.8)",
+            win32-pre: "32-bit Windows (prerelease version)",
+            win64-pre: "64-bit Windows (prerelease version)",
+            linux32-pre: "32-bit Linux (prerelease version) (latest GCC)",
+            linux64-pre: "64-bit Linux (prerelease version) (latest GCC)",
+            linux32-gcc48-pre: "32-bit Linux (prerelease version) (GCC 4.8)",
+            linux64-gcc48-pre: "64-bit Linux (prerelease version) (GCC 4.8)",
+            osx32-pre: "32-bit Mac OS X (prerelease version) (latest GCC)",
+            osx64-pre: "64-bit Mac OS X (prerelease version) (latest GCC)",
+            osx32-gcc48-pre: "32-bit Mac OS X (prerelease version) (GCC 4.8)",
+            osx64-gcc48-pre: "64-bit Mac OS X (prerelease version) (GCC 4.8)",
+            win32-dbg: "32-bit Windows (debug build)",
+            win64-dbg: "64-bit Windows (debug build)",
+            linux32-dbg: "32-bit Linux (debug build) (latest GCC)",
+            linux64-dbg: "64-bit Linux (debug build) (latest GCC)",
+            linux32-gcc48-dbg: "32-bit Linux (debug build) (GCC 4.8)",
+            linux64-gcc48-dbg: "64-bit Linux (debug build) (GCC 4.8)",
+            osx32-dbg: "32-bit Mac OS X (debug build) (latest GCC)",
+            osx64-dbg: "64-bit Mac OS X (debug build) (latest GCC)",
+            osx32-gcc48-dbg: "32-bit Mac OS X (debug build) (GCC 4.8)",
+            osx64-gcc48-dbg: "64-bit Mac OS X (debug build) (GCC 4.8)",
+            win32-auto: "32-bit Windows (automatic build)",
+            win64-auto: "64-bit Windows (automatic build)",
+            linux32-auto: "32-bit Linux (automatic build) (latest GCC)",
+            linux64-auto: "64-bit Linux (automatic build) (latest GCC)",
+            linux32-gcc48-auto: "32-bit Linux (automatic build) (GCC 4.8)",
+            linux64-gcc48-auto: "64-bit Linux (automatic build) (GCC 4.8)",
+            osx32-auto: "32-bit Mac OS X (automatic build) (latest GCC)",
+            osx64-auto: "64-bit Mac OS X (automatic build) (latest GCC)",
+            osx32-gcc48-auto: "32-bit Mac OS X (automatic build) (GCC 4.8)",
+            osx64-gcc48-auto: "64-bit Mac OS X (automatic build) (GCC 4.8)");
+
+        set $FeedName = DwarfFortress;
+
+        if !$Tagged
+        {
+            set $FeedName = DwarfFortress-prerelease;
+        }
+
+        Deploy-Artifact $ArtifactName
+        (
+            To: $WorkingDirectory/tmp_$ArtifactName
+        );
+
+        set $FileName = $Trim($PSEval(Get-ChildItem $WorkingDirectory/tmp_$ArtifactName -Name | Out-String));
+
+        if $MatchesRegex($FileName, \.zip`$)
+        {
+            if $Plugin
+            {
+                Extract-ZipFile $WorkingDirectory/tmp_$ArtifactName/$FileName
+                (
+                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin/hack/plugins
+                );
+
+                Create-ZipFile
+                (
+                    Name: $WorkingDirectory/tmp_$ArtifactName/$FileName,
+                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin,
+                    Overwrite: true
+                );
+            }
+
+            with retry = 5
+            {
+                ProGet::Push-Package
+                (
+                    Credentials: ProGet,
+                    Feed: $FeedName,
+                    FilePath: tmp_$ArtifactName/$FileName,
+                    Group: dfhack/$PackageName,
+                    Name: $OSArch,
+                    Version: $PackageVersion,
+                    Description: >>DFHack $PackageName ($MapItem(%FriendlyOSArch, $OSArch))
+
+$PackageDescription>>,
+                    Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
+                    Dependencies: @PackageDependencies
+                );
+            }
+        }
+        else
+        {
+            set $LinuxWorkingDirectory = "";
+
+            for server $LinuxBuilder
+            {
+                set $LinuxWorkingDirectory = $WorkingDirectory;
+            }
+
+            Transfer-Files
+            (
+                Include: **,
+                FromDirectory: $WorkingDirectory/tmp_$ArtifactName,
+                FromServer: $WindowsBuilder,
+                ToDirectory: $LinuxWorkingDirectory/tmp_$ArtifactName,
+                ToServer: $LinuxBuilder
+            );
+
+            for server $LinuxBuilder
+            {
+                SHExec >>cd "$WorkingDirectory/tmp_$ArtifactName"
+mkdir temp
+cd temp
+tar xf "../$FileName"
+zip -r "../converted.zip" .
+cd ..
+rm -rf temp>>
+                (
+                    Verbose: true
+                );
+            }
+
+            Transfer-Files
+            (
+                Include: converted.zip,
+                FromDirectory: $LinuxWorkingDirectory/tmp_$ArtifactName,
+                FromServer: $LinuxBuilder,
+                ToDirectory: $WorkingDirectory/tmp_$ArtifactName,
+                ToServer: $WindowsBuilder
+            );
+
+            if $Plugin
+            {
+                Extract-ZipFile $WorkingDirectory/tmp_$ArtifactName/converted.zip
+                (
+                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin/hack/plugins
+                );
+
+                Create-ZipFile
+                (
+                    Name: $WorkingDirectory/tmp_$ArtifactName/converted.zip,
+                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin,
+                    Overwrite: true
+                );
+            }
+
+            with retry = 5
+            {
+                ProGet::Push-Package
+                (
+                    Credentials: ProGet,
+                    Feed: $FeedName,
+                    FilePath: tmp_$ArtifactName/converted.zip,
+                    Group: dfhack/$PackageName,
+                    Name: $OSArch,
+                    Version: $PackageVersion,
+                    Description: >>DFHack $PackageName ($MapItem(%FriendlyOSArch, $OSArch))
+
+$PackageDescription>>,
+                    Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
+                    Dependencies: @PackageDependencies
+                );
+            }
+        }
+
+        if !$Tagged
+        {
+            Deploy-Artifact $ArtifactName-dbgsym
+            (
+                To: $WorkingDirectory/tmp_$ArtifactName-dbgsym,
+                DeployAsZipFile: true
+            );
+
+            with retry = 5
+            {
+                ProGet::Push-Package
+                (
+                    Credentials: ProGet,
+                    Feed: $FeedName,
+                    FilePath: tmp_$ArtifactName-dbgsym/$ArtifactName-dbgsym.zip,
+                    Group: dfhack/$PackageName,
+                    Name: $OSArch-dbgsym,
+                    Version: $PackageVersion,
+                    Description: >>Debug symbols for DFHack $PackageName ($MapItem(%FriendlyOSArch, $OSArch))
+
+This is a debug symbol package. If you don't know what that means, this is probably not the package you are looking for. Check the "dependencies" tab for a link to the package containing the content.
+
+$PackageDescription>>,
+                    Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
+                    Dependencies: @(dfhack/$PackageName/$OSArch:$PackageVersion)
+                );
+            }
+        }
+    }
+}

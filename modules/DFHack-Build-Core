@@ -1,0 +1,161 @@
+module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
+{
+    # Windows
+    {
+        # Windows (32)
+        with async = DFHackBuild
+        {
+            call DFHack-Core-Shared
+            (
+                OperatingSystem: Windows,
+                Bits: 32,
+                ImageTag: msvc,
+                BuildType: $BuildType,
+                ArtifactSuffix: $ArtifactSuffix
+            );
+        }
+
+        # Windows (64)
+        with async = DFHackBuild
+        {
+            call DFHack-Core-Shared
+            (
+                OperatingSystem: Windows,
+                Bits: 64,
+                ImageTag: msvc,
+                BuildType: $BuildType,
+                ArtifactSuffix: $ArtifactSuffix
+            );
+        }
+
+        # Temporary, to speed up debugging.
+        if $ApplicationName == DFHack Pull Requests && $ReleaseNumber == 1271
+        {
+            await DFHackBuild;
+        }
+    }
+
+    # Linux
+    {
+        # GCC Latest
+        {
+            # Linux (32)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: Linux,
+                    Bits: 32,
+                    ImageTag: latest,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+
+            # Linux (64)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: Linux,
+                    Bits: 64,
+                    ImageTag: latest,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+        }
+
+        # GCC 4.8
+        {
+            # Linux (gcc 4.8) (32)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: Linux,
+                    Bits: 32,
+                    ImageTag: gcc-4.8,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+
+            # Linux (gcc 4.8) (64)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: Linux,
+                    Bits: 64,
+                    ImageTag: gcc-4.8,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+        }
+    }
+
+    # OS X
+    {
+        # GCC Latest
+        {
+            # OS X (32)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: MacOSX,
+                    Bits: 32,
+                    ImageTag: latest,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+
+            # OS X (64)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: MacOSX,
+                    Bits: 64,
+                    ImageTag: latest,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+        }
+
+        # GCC 4.8
+        {
+            # OS X (gcc 4.8) (32)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: MacOSX,
+                    Bits: 32,
+                    ImageTag: gcc-4.8,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+
+            # OS X (gcc 4.8) (64)
+            with async = DFHackBuild
+            {
+                call DFHack-Core-Shared
+                (
+                    OperatingSystem: MacOSX,
+                    Bits: 64,
+                    ImageTag: gcc-4.8,
+                    BuildType: $BuildType,
+                    ArtifactSuffix: $ArtifactSuffix
+                );
+            }
+        }
+    }
+
+    await DFHackBuild;
+}

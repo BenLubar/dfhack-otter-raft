@@ -1,0 +1,136 @@
+module DFHack-Cache-Dependencies<$DependencyPath>
+{
+    Get-Http https://api.github.com/repos/DFHack/dfhack-bin/releases/latest
+    (
+        MaxResponseLength: 2147483647,
+        ProxyRequest: false,
+        ResponseBody => $LatestDFHackBin
+    );
+
+    set %ReleaseData = %FromJson($LatestDFHackBin);
+
+    # Normalized by ProGet standards
+    set $Version = $Replace($MapItem(%ReleaseData, tag_name), .0, .);
+
+    try
+    {
+        call DFHack-Universal-Package
+        (
+            PackageName: dfhack-depends,
+            NormalizedVersion: $Version,
+            OutputPath: $DependencyPath
+        );
+    }
+    catch
+    {
+        with lock = !dfhackdeps
+        {
+            try
+            {
+                call DFHack-Universal-Package
+                (
+                    PackageName: dfhack-depends,
+                    NormalizedVersion: $Version,
+                    OutputPath: $DependencyPath
+                );
+            }
+            catch
+            {
+                Acquire-Server
+                (
+                    Role: DFHack-Linux-Builders,
+                    Verbose: true,
+                    DoNotShare: true,
+                    ServerName => $LinuxBuilder
+                );
+
+                set $LinuxWorkingDirectory = "";
+
+                for server $LinuxBuilder
+                {
+                    set $LinuxWorkingDirectory = $WorkingDirectory;
+
+                    Ensure-Directory $WorkingDirectory/deps;
+
+                    for directory $WorkingDirectory/deps
+                    {
+                        foreach %Asset in @MapItem(%ReleaseData, assets)
+                        {
+                            Download-Http $MapItem(%Asset, browser_download_url)
+                            (
+                                MaxResponseLength: 2147483647,
+                                FileName: $WorkingDirectory/$MapItem(%Asset, name),
+                                ProxyRequest: false
+                            );
+
+                            if $MapItem(%Asset, content_type) == application/x-gzip
+                            {
+                                InedoCore::Exec
+                                (
+                                    FileName: /bin/gunzip,
+                                    Arguments: -k $MapItem(%Asset, name)
+                                );
+                            }
+                        }
+
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/zip,
+                            Arguments: ../deps.zip -- *,
+                            WorkingDirectory: $WorkingDirectory
+                        );
+                    }
+                }
+
+                Acquire-Server
+                (
+                    Role: DFHack-Windows-Builders,
+                    Verbose: true,
+                    DoNotShare: true,
+                    ServerName => $WindowsBuilder
+                );
+
+                for server $WindowsBuilder
+                {
+                    Transfer-Files
+                    (
+                        Include: deps.zip,
+                        FromDirectory: $LinuxWorkingDirectory,
+                        FromServer: $LinuxBuilder,
+                        ToDirectory: $WorkingDirectory,
+                        ToServer: $WindowsBuilder,
+                        Verbose: true
+                    );
+
+                    Release-Server $LinuxBuilder
+                    (
+                        Role: DFHack-Linux-Builders,
+                        Verbose: true
+                    );
+
+                    ProGet::Push-Package
+                    (
+                        Credentials: ProGet,
+                        Feed: Universal,
+                        FilePath: $WorkingDirectory/deps.zip,
+                        Name: dfhack-depends,
+                        Version: $Version
+                    );
+                }
+
+                Release-Server $WindowsBuilder
+                (
+                    Role: DFHack-Windows-Builders,
+                    Verbose: true
+                );
+
+                call DFHack-Universal-Package
+                (
+                    PackageName: dfhack-depends,
+                    NormalizedVersion: $Version,
+                    OutputPath: $DependencyPath
+                );
+            }
+        }
+    }
+}

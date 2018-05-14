@@ -1,0 +1,287 @@
+##AH:EvaluateStatementDescriptions
+
+set $GitHubBuildContext = "";
+
+if $IsVariableDefined(OverrideStructuresCommit)
+{
+    set $GitHubBuildContext = auto-structures;
+}
+else
+{
+    if $PluginTag != ""
+    {
+        Set-Execution-Priority 50;
+
+        set $GitHubBuildContext = release;
+    }
+    else
+    {
+        if $DFHackTag != ""
+        {
+            Set-Execution-Priority 25;
+
+            set $GitHubBuildContext = pre-$DFHackTag;
+        }
+        else
+        {
+            Set-Execution-Priority 30;
+
+            set $GitHubBuildContext = develop;
+        }
+    }
+}
+
+if $GetVariableValue(TriggeredByDFHack)
+{
+    Set-Execution-Priority 5;
+}
+
+try
+{
+    GitHub-Set-Status
+    (
+        Credentials: GitHub-BenLubar,
+        Organization: $PluginOwner,
+        Repository: $ApplicationName,
+        AdditionalContext: $GitHubBuildContext,
+        CommitHash: $PluginCommit,
+        Description: "#$ExecutionId downloading source code...",
+        Status: pending
+    );
+
+    # Get Source
+    {
+        Wait-For-Higher-Priority-Executions
+        (
+            Verbose: true
+        );
+
+        # Git
+        with lock = !DFHackGit
+        {
+            if false
+            {
+                foreach server in @ServersInRole(DFHack-Windows-Builders)
+                {
+                    # Windows ($ServerName)
+                    with async = Git
+                    {
+                        call DFHack-Plugin-Get-Sources();
+                    }
+                }
+            }
+
+            foreach server in @ServersInRole(DFHack-Linux-Builders)
+            {
+                # Linux ($ServerName)
+                with async = Git
+                {
+                    call DFHack-Plugin-Get-Sources();
+                }
+            }
+
+            await Git;
+        }
+
+        GitHub-Set-Status
+        (
+            Credentials: GitHub-BenLubar,
+            Organization: $PluginOwner,
+            Repository: $ApplicationName,
+            AdditionalContext: $GitHubBuildContext,
+            CommitHash: $PluginCommit,
+            Description: "#$ExecutionId downloading dependencies...",
+            Status: pending
+        );
+
+        Wait-For-Higher-Priority-Executions
+        (
+            Verbose: true
+        );
+
+        with lock = !DFHackDependencies
+        {
+            if false
+            {
+                # Windows
+                foreach server in @ServersInRole(DFHack-Windows-Builders)
+                {
+                    # Windows Dependencies ($ServerName)
+                    {
+                        with async = Dependencies
+                        {
+                            Create-File $WorkingDirectory/src/plugins/CMakeLists.custom.txt
+                            (
+                                Text: "add_subdirectory($ApplicationName)",
+                                Overwrite: true
+                            );
+                        }
+
+                        with async = Dependencies
+                        {
+                            call DFHack-Cache-Dependencies
+                            (
+                                DependencyPath: $WorkingDirectory/src/CMake/downloads
+                            );
+                        }
+
+                        with async = Dependencies
+                        {
+                            Execute-PowerShell >>Set-Location $WorkingDirectory
+NuGet.exe install -NonInteractive -Source https://api.nuget.org/v3/index.json clcache
+Move-Item .\clcache.*\clcache-*\ .\clcache
+Remove-Item -Recurse .\clcache.*\>>;
+
+                            Create-File $WorkingDirectory\clcache.bat
+                            (
+                                Text: >>`@echo off
+`@setlocal
+set CLCACHE_DIR=$BaseWorkingDirectory\dfhack-clcache
+set CLCACHE_BASEDIR=$WorkingDirectory
+"$WorkingDirectory\clcache\clcache.exe" `%*
+>>
+                            );
+                        }
+                    }
+                }
+            }
+
+            # Linux
+            foreach server in @ServersInRole(DFHack-Linux-Builders)
+            {
+                # Linux Dependencies ($ServerName)
+                {
+                    with async = Dependencies
+                    {
+                        Create-File $WorkingDirectory/src/plugins/CMakeLists.custom.txt
+                        (
+                            Text: "add_subdirectory($ApplicationName)",
+                            Overwrite: true
+                        );
+                    }
+
+                    with async = Dependencies
+                    {
+                        call DFHack-Cache-Dependencies
+                        (
+                            DependencyPath: $WorkingDirectory/src/CMake/downloads
+                        );
+                    }
+
+                    with async = Dependencies
+                    {
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/docker,
+                            Arguments: pull $DFHackBuildEnv:latest,
+                            ErrorOutputLogLevel: Debug
+                        );
+                    }
+
+                    with async = Dependencies
+                    {
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/docker,
+                            Arguments: pull $DFHackBuildEnv:gcc-4.8,
+                            ErrorOutputLogLevel: Debug
+                        );
+                    }
+
+                    with async = Dependencies
+                    {
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/docker,
+                            Arguments: pull $DFHackBuildEnv:msvc,
+                            ErrorOutputLogLevel: Debug
+                        );
+                    }
+
+                    with async = Dependencies
+                    {
+                        InedoCore::Exec
+                        (
+                            FileName: /bin/bash,
+                            Arguments: "-c 'mkdir -p `$HOME/.ccache {out,build}{32,64}{{,-osx}{,-4.8},-win}'",
+                            WorkingDirectory: $WorkingDirectory
+                        );
+
+                        call DFHack-Cache-OSX
+                        (
+                            TargetPath: $WorkingDirectory/out32-osx,
+                            Bits: 32
+                        );
+
+                        call DFHack-Cache-OSX
+                        (
+                            TargetPath: $WorkingDirectory/out64-osx,
+                            Bits: 64
+                        );
+
+                        call DFHack-Cache-OSX
+                        (
+                            TargetPath: $WorkingDirectory/out32-osx-4.8,
+                            Bits: 32
+                        );
+
+                        call DFHack-Cache-OSX
+                        (
+                            TargetPath: $WorkingDirectory/out64-osx-4.8,
+                            Bits: 64
+                        );
+                    }
+                }
+            }
+
+            await Dependencies;
+        }
+    }
+
+    GitHub-Set-Status
+    (
+        Credentials: GitHub-BenLubar,
+        Organization: $PluginOwner,
+        Repository: $ApplicationName,
+        AdditionalContext: $GitHubBuildContext,
+        CommitHash: $PluginCommit,
+        Description: "#$ExecutionId waiting to build...",
+        Status: pending
+    );
+
+    Wait-For-Higher-Priority-Executions
+    (
+        Verbose: true
+    );
+
+    if $PluginTagged
+    {
+        call DFHack-Plugin-Build
+        (
+            BuildType: Release,
+            GitHubBuildContext: $GitHubBuildContext
+        );
+    }
+    else
+    {
+        call DFHack-Plugin-Build
+        (
+            BuildType: RelWithDebInfo,
+            GitHubBuildContext: $GitHubBuildContext
+        );
+    }
+}
+catch
+{
+    error;
+}
+
+GitHub-Set-Status
+(
+    Credentials: GitHub-BenLubar,
+    Organization: $PluginOwner,
+    Repository: $ApplicationName,
+    AdditionalContext: $GitHubBuildContext,
+    CommitHash: $PluginCommit,
+    Status: auto
+);

@@ -1,0 +1,152 @@
+if $PluginTagged && ($ApplicationName == df-ai || $ApplicationName == weblegends)
+{
+    # Docker
+    with lock = !DFAIDocker
+    {
+        set $DFAIRelease = "";
+
+        set $WeblegendsRelease = "";
+
+        if $ApplicationName == df-ai
+        {
+            set $DFAIRelease = $ReleaseNumber;
+
+            foreach $CandidateRelease in @ReleasesInApplication(weblegends, active)
+            {
+                if $ReleaseVariable(PluginTagged, $CandidateRelease, weblegends) && $ReleaseVariable(DFHackTag, $CandidateRelease, weblegends) == $DFHackTag
+                {
+                    set $WeblegendsRelease = $CandidateRelease;
+                }
+            }
+        }
+        else
+        {
+            if $ApplicationName == weblegends
+            {
+                set $WeblegendsRelease = $ReleaseNumber;
+
+                foreach $CandidateRelease in @ReleasesInApplication(df-ai, active)
+                {
+                    if $ReleaseVariable(PluginTagged, $CandidateRelease, df-ai) && $ReleaseVariable(DFHackTag, $CandidateRelease, df-ai) == $DFHackTag
+                    {
+                        set $DFAIRelease = $CandidateRelease;
+                    }
+                }
+            }
+        }
+
+        if $DFAIRelease != "" && $WeblegendsRelease != ""
+        {
+            set @DFAIPackages = @PackagesInRelease($DFAIRelease, df-ai, active, Publish);
+
+            set @WeblegendsPackages = @PackagesInRelease($WeblegendsRelease, weblegends, active, Publish);
+
+            if $ListCount(@DFAIPackages) == 1 && $ListCount(@WeblegendsPackages) == 1
+            {
+                set $DFAIPackage = $ListItem(@DFAIPackages, 0);
+
+                set $WeblegendsPackage = $ListItem(@WeblegendsPackages, 0);
+
+                for server $DFHackReleaseLinuxBuilder
+                {
+                    InedoCore::Exec
+                    (
+                        FileName: /usr/bin/git,
+                        Arguments: clone git@github.com:BenLubar/df-docker.git df-docker,
+                        ErrorOutputLogLevel: Debug
+                    );
+
+                    Deploy-Artifact Linux64-4.8
+                    (
+                        To: $WorkingDirectory/df-docker-staging/df-ai,
+                        Application: df-ai,
+                        Release: $DFAIRelease,
+                        Package: $DFAIPackage,
+                        DoNotClearTarget: true
+                    );
+
+                    Deploy-Artifact df-ai-assets
+                    (
+                        To: $WorkingDirectory/df-docker-staging,
+                        Application: df-ai,
+                        Release: $DFAIRelease,
+                        Package: $DFAIPackage,
+                        DeployAsZipFile: true
+                    );
+
+                    Deploy-Artifact Linux64-4.8
+                    (
+                        To: $WorkingDirectory/df-docker-staging/weblegends,
+                        Application: weblegends,
+                        Release: $WeblegendsRelease,
+                        Package: $WeblegendsPackage,
+                        DoNotClearTarget: true
+                    );
+
+                    set $DFAIVersion = $ReleaseVariable(PluginTag, $DFAIRelease, df-ai);
+
+                    set $DFAIArchive = $Trim($SHEval(ls "$WorkingDirectory/df-docker-staging/df-ai/"));
+
+                    set $DFAIArchiveSHA1 = $Trim($SHEval(sha1sum -b "$WorkingDirectory/df-docker-staging/df-ai/$DFAIArchive" | cut -f 1 -d " "));
+
+                    set $DFAIAssetsSHA1 = $Trim($SHEval(sha1sum -b "$WorkingDirectory/df-docker-staging/df-ai-assets.zip" | cut -f 1 -d " "));
+
+                    set $WeblegendsVersion = $ReleaseVariable(PluginTag, $WeblegendsRelease, weblegends);
+
+                    set $WeblegendsArchive = $Trim($SHEval(ls "$WorkingDirectory/df-docker-staging/weblegends/"));
+
+                    set $WeblegendsArchiveSHA1 = $Trim($SHEval(sha1sum -b "$WorkingDirectory/df-docker-staging/weblegends/$WeblegendsArchive" | cut -f 1 -d " "));
+
+                    InedoCore::Apply-Template docker-df-ai
+                    (
+                        OutputFile: df-docker/df-ai/Dockerfile,
+                        NewLines: Linux
+                    );
+
+                    if $Trim($SHEval(git -C $WorkingDirectory/df-docker diff --name-only)) != ""
+                    {
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/git,
+                            Arguments: add df-ai/Dockerfile,
+                            WorkingDirectory: df-docker,
+                            ErrorOutputLogLevel: Debug
+                        );
+
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/git,
+                            Arguments: commit -m "df-ai $DFAIRelease + weblegends $WeblegendsRelease",
+                            ErrorOutputLogLevel: Debug,
+                            WorkingDirectory: df-docker
+                        );
+
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/git,
+                            Arguments: tag -f "df-ai-$DFAIRelease",
+                            ErrorOutputLogLevel: Debug,
+                            WorkingDirectory: df-docker
+                        );
+
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/git,
+                            Arguments: push,
+                            ErrorOutputLogLevel: Debug,
+                            WorkingDirectory: df-docker
+                        );
+
+                        InedoCore::Exec
+                        (
+                            FileName: /usr/bin/git,
+                            Arguments: push -f --tags,
+                            ErrorOutputLogLevel: Debug,
+                            WorkingDirectory: df-docker
+                        );
+                    }
+                }
+            }
+        }
+    }
+}

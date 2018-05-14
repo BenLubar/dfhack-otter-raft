@@ -1,0 +1,114 @@
+{
+  "Name": "DFHack",
+  "Color": null,
+  "Description": "",
+  "EnforceStageSequence": true,
+  "Stages": [
+    {
+      "Name": "Build",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Build DFHack Release",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": true,
+      "Variables": {}
+    },
+    {
+      "Name": "Publish",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Publish DFHack Packages",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": true,
+      "Variables": {}
+    },
+    {
+      "Name": "Plugins",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Trigger DFHack Plugin Builds",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    },
+    {
+      "Name": "Deployed",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Deploy DFHack Plugin Prereleases",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    }
+  ],
+  "Variables": {},
+  "PostDeploymentOptions": {
+    "CreateRelease": false,
+    "CancelReleases": false,
+    "DeployRelease": true
+  }
+}

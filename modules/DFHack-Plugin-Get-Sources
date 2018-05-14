@@ -1,0 +1,72 @@
+module DFHack-Plugin-Get-Sources
+{
+    # DFHack
+    {
+        call DFHack-Git
+        (
+            RepoID: dfhack,
+            Repository: https://github.com/DFHack/dfhack.git,
+            Directory: $WorkingDirectory/src,
+            Branch: $DFHackBranch,
+            Tag: $DFHackTag,
+            RequestedCommitHash: $DFHackCommit,
+            CommitHash => $ResolvedDFHackCommit,
+            ResolvedTag => $ResolvedDFHackTag
+        );
+
+        with lock = !DFHackVariable
+        {
+            Set-ReleaseVariable ResolvedDFHackCommit
+            (
+                Value: $ResolvedDFHackCommit,
+                Package: $PackageNumber
+            );
+
+            Set-ReleaseVariable ResolvedDFHackTag
+            (
+                Value: $ResolvedDFHackTag,
+                Package: $PackageNumber
+            );
+        }
+    }
+
+    # Plugin
+    {
+        call DFHack-Git
+        (
+            RepoID: $PluginOwner-$ApplicationName,
+            Repository: https://github.com/$PluginOwner/$ApplicationName.git,
+            Directory: $WorkingDirectory/src/plugins/$ApplicationName,
+            Branch: master,
+            Tag: $PluginTag,
+            RequestedCommitHash: $PluginCommit,
+            CommitHash => $ResolvedPluginCommit,
+            ResolvedTag => $ResolvedPluginTag
+        );
+
+        with lock = !DFHackVariable
+        {
+            Set-ReleaseVariable ResolvedPluginCommit
+            (
+                Value: $ResolvedPluginCommit,
+                Package: $PackageNumber
+            );
+
+            Set-ReleaseVariable ResolvedPluginTag
+            (
+                Value: $ResolvedPluginTag,
+                Package: $PackageNumber
+            );
+        }
+    }
+
+    # Fixes
+    call DFHack-Version-Specific-Fixes
+    (
+        DFHackTag: $DFHackTag,
+        PluginName: $ApplicationName,
+        PluginTag: $PluginTag,
+        ResolvedDFHackVersion: $ResolvedDFHackTag,
+        ResolvedPluginVersion: $ResolvedPluginTag
+    );
+}

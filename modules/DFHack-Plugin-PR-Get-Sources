@@ -1,0 +1,30 @@
+module DFHack-Plugin-PR-Get-Sources
+{
+    # DFHack
+    {
+        call DFHack-Git
+        (
+            RepoID: dfhack,
+            Repository: https://github.com/DFHack/dfhack.git,
+            Directory: $WorkingDirectory/src,
+            Branch: $DFHackBranch,
+            Tag: $DFHackTag,
+            RequestedCommitHash: $DFHackCommit,
+            CommitHash => $ResolvedDFHackCommit,
+            ResolvedTag => $ResolvedDFHackTag
+        );
+    }
+
+    # Plugin
+    {
+        call DFHack-PR-Git
+        (
+            RepoID: $PluginOwner-$PluginRepo,
+            Repository: https://github.com/$PluginOwner/$PluginRepo.git,
+            Directory: $WorkingDirectory/src/plugins/$PluginRepo,
+            BaseBranch: master,
+            PullRequest: $ReleaseNumber,
+            RequestedCommitHash: $PluginCommit
+        );
+    }
+}

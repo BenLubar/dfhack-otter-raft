@@ -1,0 +1,12 @@
+foreach $PluginName in @ApplicationsInGroup(DFHack Plugins)
+{
+    Deploy-Package
+    (
+        Application: $PluginName,
+        ReleaseNumber: dfhack-$ReleaseNumber,
+        From: Publish,
+        To: Deployed,
+        Wait: false,
+        FailIfCannotDeploy: true
+    );
+}

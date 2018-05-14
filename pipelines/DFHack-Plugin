@@ -1,0 +1,141 @@
+{
+  "Name": "DFHack-Plugin",
+  "Color": null,
+  "Description": "",
+  "EnforceStageSequence": true,
+  "Stages": [
+    {
+      "Name": "Pre-Build",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Ensure DFHack Plugin Commit",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": true,
+      "Variables": {}
+    },
+    {
+      "Name": "Build",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Build DFHack Plugin",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": true,
+      "Variables": {}
+    },
+    {
+      "Name": "Publish-Plugin",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Publish DFHack Plugin",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": true,
+      "Variables": {}
+    },
+    {
+      "Name": "Publish",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Update DF-AI Docker Image",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    },
+    {
+      "Name": "Deployed",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Do Nothing",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    }
+  ],
+  "Variables": {
+    "PluginTag": ""
+  },
+  "PostDeploymentOptions": {
+    "CreateRelease": false,
+    "CancelReleases": false,
+    "DeployRelease": true
+  }
+}

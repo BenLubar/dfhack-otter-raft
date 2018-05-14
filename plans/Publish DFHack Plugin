@@ -1,0 +1,419 @@
+Acquire-Server
+(
+    Role: DFHack-Windows-Publishers,
+    Verbose: true,
+    DoNotShare: true,
+    ServerName => $WindowsBuilder
+);
+
+Acquire-Server
+(
+    Role: DFHack-Linux-Publishers,
+    Verbose: true,
+    DoNotShare: true,
+    ServerName => $LinuxBuilder
+);
+
+set $Suffix = "";
+
+set $DFHackSuffix = "";
+
+set $Description = $ApplicationName [version $ReleaseNumber](https://github.com/$PluginOwner/$ApplicationName/releases/tag/$ResolvedPluginTag);
+
+set @BaseDependencies = @();
+
+set $VersionNumber = $ReleaseNumber;
+
+set $DFHackVersion = $DFHackTag;
+
+if !$PluginTagged
+{
+    if $ReleaseNumber == 0.0.0
+    {
+        if $IsVariableDefined(NewDFVersion)
+        {
+            set $Suffix = -auto;
+
+            set $DFHackSuffix = -auto;
+
+            set $Description = >>$ApplicationName (automatically generated for Dwarf Fortress $NewDFVersion)
+
+$ApplicationName commit: [$PluginCommit](https://github.com/$PluginOwner/$ApplicationName/commit/$PluginCommit)
+
+DFHack commit: [$DFHackCommit](https://github.com/DFHack/dfhack/commit/$DFHackCommit)
+
+Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-structures/commit/$OverrideStructuresCommit)>>;
+
+            set $VersionNumber = $Replace($NewDFVersion, .0, .)-auto;
+
+            set $DFHackVersion = $Replace($NewDFVersion, .0, .)-auto;
+        }
+        else
+        {
+            set $Suffix = -dev;
+
+            set $DFHackSuffix = -dev;
+
+            set $Description = >>$ApplicationName (prerelease)
+
+$ApplicationName commit: [$PluginCommit](https://github.com/$PluginOwner/$ApplicationName/commit/$PluginCommit)
+
+DFHack commit: [$DFHackCommit](https://github.com/DFHack/dfhack/commit/$DFHackCommit)>>;
+
+            set $VersionNumber = 0.0.0-p$PackageNumber;
+
+            set $DFHackVersion = 0.0.0-p$PackageNumber(0.0.0, furthest, DFHack);
+        }
+    }
+    else
+    {
+        set $Suffix = -pre;
+
+        set $DFHackSuffix = -dbg;
+
+        set $Description = >>$ApplicationName (prerelease, dfhack $DFHackTag)
+
+$ApplicationName commit: [$PluginCommit](https://github.com/$PluginOwner/$ApplicationName/commit/$PluginCommit)>>;
+
+        set $VersionNumber = $DFHackTag.p$PackageNumber;
+    }
+}
+
+# df-ai shared assets
+if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
+{
+    for server $WindowsBuilder
+    {
+        Deploy-Artifact df-ai-assets
+        (
+            To: $WorkingDirectory,
+            DeployAsZipFile: true
+        );
+
+        set $FeedName = DwarfFortress;
+
+        set $AssetsTitle = df-ai shared assets;
+
+        set $AssetsDescription = Shared files for df-ai [version $ReleaseNumber](https://github.com/BenLubar/df-ai/releases/tag/$ReleaseNumber);
+
+        if !$PluginTagged
+        {
+            set $FeedName = DwarfFortress-prerelease;
+
+            set $AssetsTitle = df-ai shared assets (prerelease);
+
+            if $ReleaseNumber == 0.0.0
+            {
+                set $AssetsDescription = Shared files for df-ai (prerelease);
+            }
+            else
+            {
+                set $AssetsDescription = Shared files for df-ai (prerelease, dfhack $DFHackTag);
+            }
+        }
+
+        ProGet::Push-Package
+        (
+            Credentials: ProGet,
+            Feed: $FeedName,
+            FilePath: $WorkingDirectory/df-ai-assets.zip,
+            Group: dfhack/plugin/df-ai,
+            Name: assets$Suffix,
+            Version: $VersionNumber,
+            Description: $AssetsDescription,
+            Title: $AssetsTitle,
+            Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/plugin/df-ai.png
+        );
+
+        set @BaseDependencies = @ListInsert(@BaseDependencies, dfhack/plugin/df-ai/assets$Suffix:$VersionNumber);
+    }
+}
+
+# Windows
+{
+    # Windows (32)
+    {
+        call DFHack-Publish-Package
+        (
+            ArtifactName: Windows32,
+            PackageName: plugin/$ApplicationName,
+            OSArch: win32$Suffix,
+            PackageVersion: $VersionNumber,
+            PackageDescription: $Description,
+            PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/win32$DFHackSuffix:$DFHackVersion),
+            WindowsBuilder: $WindowsBuilder,
+            LinuxBuilder: $LinuxBuilder,
+            Tagged: $PluginTagged,
+            Plugin: true
+        );
+    }
+
+    # Windows (64)
+    {
+        call DFHack-Publish-Package
+        (
+            ArtifactName: Windows64,
+            PackageName: plugin/$ApplicationName,
+            OSArch: win64$Suffix,
+            PackageVersion: $VersionNumber,
+            PackageDescription: $Description,
+            PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/win64$DFHackSuffix:$DFHackVersion),
+            WindowsBuilder: $WindowsBuilder,
+            LinuxBuilder: $LinuxBuilder,
+            Tagged: $PluginTagged,
+            Plugin: true
+        );
+    }
+}
+
+# Linux
+{
+    # GCC Latest
+    {
+        # Linux (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux32,
+                PackageName: plugin/$ApplicationName,
+                OSArch: linux32$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/linux32$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+
+        # Linux (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux64,
+                PackageName: plugin/$ApplicationName,
+                OSArch: linux64$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/linux64$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+    }
+
+    # GCC 4.8
+    {
+        # Linux (gcc 4.8) (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux32-4.8,
+                PackageName: plugin/$ApplicationName,
+                OSArch: linux32-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/linux32-gcc48$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+
+        # Linux (gcc 4.8) (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux64-4.8,
+                PackageName: plugin/$ApplicationName,
+                OSArch: linux64-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/linux64-gcc48$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+    }
+}
+
+# OS X
+{
+    # GCC Latest
+    {
+        # OS X (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX32,
+                PackageName: plugin/$ApplicationName,
+                OSArch: osx32$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/osx32$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+
+        # OS X (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX64,
+                PackageName: plugin/$ApplicationName,
+                OSArch: osx64$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/osx64$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+    }
+
+    # GCC 4.8
+    {
+        # OS X (gcc 4.8) (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX32-4.8,
+                PackageName: plugin/$ApplicationName,
+                OSArch: osx32-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/osx32$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+
+        # OS X (gcc 4.8) (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX64-4.8,
+                PackageName: plugin/$ApplicationName,
+                OSArch: osx64-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @ListInsert(@BaseDependencies, dfhack/core/osx64$DFHackSuffix:$DFHackVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $PluginTagged,
+                Plugin: true
+            );
+        }
+    }
+}
+
+# GitHub Release
+if $PluginTagged
+{
+    for server $WindowsBuilder
+    {
+        Deploy-Artifact Windows32
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact Windows64
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact Linux32
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact Linux32-4.8
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact Linux64
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact Linux64-4.8
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact OSX32
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact OSX32-4.8
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact OSX64
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        Deploy-Artifact OSX64-4.8
+        (
+            To: $WorkingDirectory/github-staging,
+            DoNotClearTarget: true
+        );
+
+        if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
+        {
+            Deploy-Artifact df-ai-assets
+            (
+                To: $WorkingDirectory/github-staging,
+                DeployAsZipFile: true
+            );
+        }
+
+        GitHub-Upload-Release-Assets
+        (
+            Credentials: GitHub-BenLubar,
+            Organization: BenLubar,
+            Repository: $ApplicationName,
+            Tag: $ReleaseNumber,
+            Include: @(*.tar.gz, *.tar.bz2),
+            Directory: $WorkingDirectory/github-staging,
+            ContentType: application/x-gtar
+        );
+
+        GitHub-Upload-Release-Assets
+        (
+            Credentials: GitHub-BenLubar,
+            Organization: BenLubar,
+            Repository: $ApplicationName,
+            Tag: $ReleaseNumber,
+            Include: *.zip,
+            Directory: $WorkingDirectory/github-staging,
+            ContentType: application/zip
+        );
+    }
+}

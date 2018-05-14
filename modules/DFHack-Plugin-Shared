@@ -1,0 +1,240 @@
+##AH:EvaluateStatementDescriptions
+module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $BuildType = Release, $ArtifactSuffix = "">
+{
+    Acquire-Server
+    (
+        Role: DFHack-Linux-Builders,
+        Verbose: true,
+        DoNotShare: true,
+        ServerName => $LinuxBuilder
+    );
+
+    try
+    {
+        set $Title = $OperatingSystem;
+
+        set $Suffix = "";
+
+        if $OperatingSystem == MacOSX
+        {
+            set $Title = OS X;
+
+            set $Suffix = $Suffix-osx;
+        }
+
+        if $OperatingSystem == Windows
+        {
+            set $Suffix = $Suffix-win;
+        }
+
+        set $CompilerSuffix = "";
+
+        if $ImageTag == gcc-4.8
+        {
+            set $Title = $Title (GCC 4.8);
+
+            set $CompilerSuffix = -4.8;
+        }
+
+        set $Suffix = $Suffix$CompilerSuffix;
+
+        set $Architecture = i386;
+
+        if $Bits == 64
+        {
+            set $Architecture = x86_64;
+        }
+
+        # $Title ($Bits) ($LinuxBuilder)
+        for server $LinuxBuilder
+        {
+            set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
+
+            set $DebugPrefix = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
+
+            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+            {
+                DFHack::Configure
+                (
+                    OperatingSystem: $OperatingSystem,
+                    Image: $ImageTag,
+                    Architecture: $Architecture,
+                    BuildType: $BuildType,
+                    InstallPrefix: $InstallPrefix,
+                    IncludeSupported: false,
+                    Trusted: $TrustedBuild
+                );
+
+                DFHack::Make
+                (
+                    Target: generate_headers,
+                    Image: $ImageTag,
+                    Trusted: $TrustedBuild
+                );
+            }
+
+            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix/plugins/$PluginName
+            {
+                DFHack::Make
+                (
+                    Target: preinstall,
+                    Image: $ImageTag,
+                    Trusted: $TrustedBuild
+                );
+
+                if $OperatingSystem == Linux
+                {
+                    SHCall split-debug-info
+                    (
+                        Arguments: $PluginName.plug.so $DebugPrefix,
+                        ErrorOutputLevel: Warning
+                    );
+                }
+                else
+                {
+                    if $OperatingSystem == MacOSX
+                    {
+                        SHCall macgcc-split-debug-info
+                        (
+                            Arguments: $BaseWorkingDirectory $PluginName.plug.dylib $DebugPrefix,
+                            ErrorOutputLevel: Warning
+                        );
+                    }
+                    else
+                    {
+                        if $OperatingSystem == Windows
+                        {
+                            if $BuildType == RelWithDebInfo && $TrustedBuild
+                            {
+                                Copy-Files
+                                (
+                                    Include: **.pdb,
+                                    From: $InstallPrefix/plugins/$PluginName,
+                                    To: $DebugPrefix/hack/plugins
+                                );
+                            }
+                        }
+                    }
+                }
+
+                DFHack::Make
+                (
+                    Target: install,
+                    Image: $ImageTag,
+                    Trusted: $TrustedBuild
+                );
+            }
+
+            # Release server early so the next build can run; we don't need much processing power to finish
+            Release-Server $LinuxBuilder
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true
+            );
+
+            if $OperatingSystem == Linux
+            {
+                InedoCore::Exec
+                (
+                    FileName: /bin/tar,
+                    Arguments: czvf $PluginName-$ReleaseNumber-linux-$Bits$CompilerSuffix.tar.gz -C hack/plugins $PluginName.plug.so,
+                    WorkingDirectory: $InstallPrefix,
+                    ErrorOutputLogLevel: Debug
+                );
+
+                Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix
+                (
+                    From: $InstallPrefix,
+                    Include: $PluginName-$ReleaseNumber-linux-*.tar.gz,
+                    Overwrite: true
+                );
+
+                if $BuildType == RelWithDebInfo && $TrustedBuild
+                {
+                    Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                    (
+                        From: $DebugPrefix,
+                        Include: **.debug,
+                        Overwrite: true
+                    );
+                }
+            }
+            else
+            {
+                if $OperatingSystem == MacOSX
+                {
+                    InedoCore::Exec
+                    (
+                        FileName: /bin/tar,
+                        Arguments: cjvf $PluginName-$ReleaseNumber-osx-$Bits$CompilerSuffix.tar.bz2 -C hack/plugins $PluginName.plug.dylib,
+                        WorkingDirectory: $InstallPrefix,
+                        ErrorOutputLogLevel: Debug
+                    );
+
+                    Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix
+                    (
+                        From: $InstallPrefix,
+                        Include: $PluginName-$ReleaseNumber-osx-*.tar.bz2,
+                        Overwrite: true
+                    );
+
+                    if $BuildType == RelWithDebInfo && $TrustedBuild
+                    {
+                        Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                        (
+                            From: $DebugPrefix,
+                            Include: **,
+                            Overwrite: true
+                        );
+                    }
+                }
+                else
+                {
+                    if $OperatingSystem == Windows
+                    {
+                        Copy-Files
+                        (
+                            Include: $PluginName.plug.dll,
+                            From: $InstallPrefix/hack/plugins,
+                            To: $InstallPrefix/staging
+                        );
+
+                        Create-ZipFile
+                        (
+                            Name: $InstallPrefix/$PluginName-$ReleaseNumber-windows-$Bits.zip,
+                            Directory: $InstallPrefix/staging
+                        );
+
+                        Create-Artifact Windows$Bits$ArtifactSuffix
+                        (
+                            From: $InstallPrefix,
+                            Include: $PluginName-$ReleaseNumber-windows-$Bits.zip,
+                            Overwrite: true
+                        );
+
+                        if $BuildType == RelWithDebInfo && $TrustedBuild
+                        {
+                            Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
+                            (
+                                From: $DebugPrefix,
+                                Include: **.pdb,
+                                IgnoreEmptyArtifact: true,
+                                Overwrite: true
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    catch
+    {
+        Release-Server $LinuxBuilder
+        (
+            Role: DFHack-Linux-Builders,
+            Verbose: true
+        );
+
+        throw;
+    }
+}

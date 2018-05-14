@@ -1,0 +1,64 @@
+{
+  "Name": "DFHack-Plugin-Pull-Request",
+  "Color": null,
+  "Description": "",
+  "EnforceStageSequence": true,
+  "Stages": [
+    {
+      "Name": "Build",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Build DFHack Plugin Pull Request",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    },
+    {
+      "Name": "Merged",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Do Nothing",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    }
+  ],
+  "Variables": {},
+  "PostDeploymentOptions": {
+    "CreateRelease": false,
+    "CancelReleases": false,
+    "DeployRelease": true
+  }
+}

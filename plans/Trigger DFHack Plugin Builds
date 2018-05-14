@@ -1,0 +1,33 @@
+with lock = !DFHackTriggerPlugins
+{
+    set $DFHackVersion = $ReleaseNumber;
+
+    if $DFHackTag != ""
+    {
+        set $DFHackVersion = dfhack-$ReleaseNumber;
+    }
+
+    set %Variables = %(DFHackCommit: $DFHackCommit, PluginCommit: "", TriggeredByDFHack: true);
+
+    if $IsVariableDefined(OverrideStructuresCommit)
+    {
+        set %Variables = %MapAdd(%Variables, OverrideStructuresCommit, $OverrideStructuresCommit);
+    }
+
+    if $IsVariableDefined(NewDFVersion)
+    {
+        set %Variables = %MapAdd(%Variables, NewDFVersion, $NewDFVersion);
+    }
+
+    foreach $PluginName in @ApplicationsInGroup(DFHack Plugins)
+    {
+        Create-ReleasePackage
+        (
+            Application: $PluginName,
+            ReleaseNumber: $DFHackVersion,
+            Variables: %Variables,
+            Wait: false,
+            FailIfCannotCreate: true
+        );
+    }
+}

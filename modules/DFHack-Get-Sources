@@ -1,0 +1,39 @@
+module DFHack-Get-Sources
+{
+    # DFHack
+    {
+        call DFHack-Git
+        (
+            RepoID: dfhack,
+            Repository: https://github.com/DFHack/dfhack.git,
+            Directory: $WorkingDirectory/src,
+            Branch: $DFHackBranch,
+            Tag: $DFHackTag,
+            RequestedCommitHash: $DFHackCommit,
+            CommitHash => $CommitHash,
+            ResolvedTag => $ResolvedTag
+        );
+
+        with lock = !DFHackVariable
+        {
+            Set-ReleaseVariable ResolvedDFHackCommit
+            (
+                Value: $CommitHash,
+                Package: $PackageNumber
+            );
+
+            Set-ReleaseVariable ResolvedDFHackTag
+            (
+                Value: $ResolvedTag,
+                Package: $PackageNumber
+            );
+        }
+    }
+
+    # Fixes
+    call DFHack-Version-Specific-Fixes
+    (
+        DFHackTag: $DFHackTag,
+        ResolvedDFHackVersion: $ResolvedDFHackTag
+    );
+}

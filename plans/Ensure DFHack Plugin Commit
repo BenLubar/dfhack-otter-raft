@@ -1,0 +1,28 @@
+if $PluginCommit == ""
+{
+    with lock = !DFHackGit
+    {
+        for server $DFHackReleaseWindowsBuilder
+        {
+            call DFHack-Git
+            (
+                RepoID: $PluginOwner-$ApplicationName,
+                Repository: https://github.com/$PluginOwner/$ApplicationName.git,
+                Directory: $WorkingDirectory/src/plugins/$ApplicationName,
+                Branch: master,
+                Tag: $PluginTag,
+                CommitHash => $ResolvedPluginCommit,
+                ResolvedTag => $ResolvedPluginTag
+            );
+
+            with lock = !DFHackVariable
+            {
+                Set-ReleaseVariable PluginCommit
+                (
+                    Value: $ResolvedPluginCommit,
+                    Package: $PackageNumber
+                );
+            }
+        }
+    }
+}

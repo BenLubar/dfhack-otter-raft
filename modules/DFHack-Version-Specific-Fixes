@@ -1,0 +1,153 @@
+module DFHack-Version-Specific-Fixes<$DFHackTag, $PluginName = "", $PluginTag = "", $ResolvedDFHackVersion, $ResolvedPluginVersion = "">
+{
+    # https://github.com/DFHack/df-structures/commit/f04f55feaae9e234d88373cdf4491bde5fa346ef
+    if $ResolvedDFHackVersion == 0.44.02-beta1
+    {
+        Replace-Text
+        (
+            Include: StructFields.pm,
+            Directory: $WorkingDirectory/src/library/xml,
+            SearchText: "while (my (`$name, `$func) = each `$entry) {",
+            ReplaceWith: "while (my (`$name, `$func) = each `%{`$entry}) {"
+        );
+    }
+
+    # Allegro leaks X11 header defines
+    if $ResolvedDFHackVersion == 0.44.02-beta1
+    {
+        Replace-Text
+        (
+            Include: common.h,
+            Directory: $WorkingDirectory/src/plugins/stonesense,
+            SearchText: >>// allegro leaks X headers, undef some of it here:
+#undef TileShape
+#undef None>>,
+            ReplaceWith: >>// allegro leaks X headers, undef some of it here:
+#undef TileShape
+#undef None
+#undef Status>>
+        );
+    }
+
+    # https://github.com/DFHack/df-structures/issues/243
+    if $ResolvedDFHackTag == 0.44.05-r2 && $ApplicationName != DFHack
+    {
+        Replace-Text
+        (
+            Include: df.jobs.xml,
+            Directory: $WorkingDirectory/src/library/xml,
+            SearchText: <int8_t init-value='1'/>,
+            ReplaceWith: <int32_t init-value='1'/>
+        );
+
+        Replace-Text
+        (
+            Include: df.viewscreen.xml,
+            Directory: $WorkingDirectory/src/library/xml,
+            SearchText: >>
+    <class-type type-name='viewscreen_createquotast' inherits-from='viewscreen'>
+        <static-string name='str_filter' size='256'/>
+        <int32_t name='top_idx'/>
+        <int32_t name='sel_idx'/>
+        <stl-vector name='orders' pointer-type='manager_order_template' comment='filtered orders'/>
+        <stl-vector name='all_orders' pointer-type='manager_order_template'/>
+        <bool name='want_quantity'/>
+        <stl-string name='str_quantity'/>
+        <int32_t/>
+    </class-type>
+>>,
+            ReplaceWith: >>
+    <class-type type-name='viewscreen_createquotast' inherits-from='viewscreen'>
+        <int32_t name='building_id' ref-target='building'/>
+        <static-string name='str_filter' size='256'/>
+        <int32_t name='sel_idx'/>
+        <stl-vector name='orders' pointer-type='manager_order_template' comment='filtered orders'/>
+        <stl-vector name='all_orders' pointer-type='manager_order_template'/>
+        <bool name='want_quantity'/>
+        <stl-string name='str_quantity'/>
+        <pointer name='workshop_profile_orders' comment='assigned from viewscreen_workshop_profilest.orders'>
+            <stl-vector pointer-type='manager_order'/>
+        </pointer>
+    </class-type>
+>>
+        );
+    }
+
+    # stonesense 0.44.06 temp
+    if $ResolvedDFHackTag == 0.44.05-r2
+    {
+        set $StonesenseCommit = "";
+
+        for role Windows
+        {
+            set $StonesenseCommit = $PSEval(git -C $WorkingDirectory/src/plugins/stonesense rev-parse HEAD);
+        }
+
+        for role Linux
+        {
+            set $StonesenseCommit = $SHEval(git -C $WorkingDirectory/src/plugins/stonesense rev-parse HEAD);
+        }
+
+        if $StonesenseCommit == 5482849c52dfac9f8200af3827d16bfb3fabb899
+        {
+            InedoCore::Exec
+            (
+                FileName: $DefaultGitExePath,
+                Arguments: checkout 4c3728880a1b8d94046283be28d2078aac9fbe05,
+                WorkingDirectory: $WorkingDirectory/src/plugins/stonesense,
+                ErrorOutputLogLevel: Debug
+            );
+        }
+    }
+
+    # Override structure definitions
+    if $IsVariableDefined(OverrideStructuresCommit)
+    {
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: fetch https://github.com/BenLubar/df-structures.git $OverrideStructuresCommit,
+            WorkingDirectory: $WorkingDirectory/src/library/xml,
+            ErrorOutputLogLevel: Debug
+        );
+
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: checkout FETCH_HEAD,
+            WorkingDirectory: $WorkingDirectory/src/library/xml,
+            ErrorOutputLogLevel: Debug
+        );
+    }
+
+    # Override Dwarf Fortress version
+    if $IsVariableDefined(NewDFVersion)
+    {
+        Replace-Text
+        (
+            Include: CMakeLists.txt,
+            Directory: $WorkingDirectory/src,
+            SearchText: '^set(DF_VERSION ".*")$',
+            ReplaceWith: 'set(DF_VERSION "$NewDFVersion")',
+            Regex: true
+        );
+
+        Replace-Text
+        (
+            Include: CMakeLists.txt,
+            Directory: $WorkingDirectory/src,
+            SearchText: '^set(DFHACK_RELEASE ".*")$',
+            ReplaceWith: 'set(DFHACK_RELEASE "alpha0")',
+            Regex: true
+        );
+
+        Replace-Text
+        (
+            Include: CMakeLists.txt,
+            Directory: $WorkingDirectory/src,
+            SearchText: "^set(DFHACK_PRERELEASE .*)$",
+            ReplaceWith: "set(DFHACK_PRERELEASE TRUE)",
+            Regex: true
+        );
+    }
+}

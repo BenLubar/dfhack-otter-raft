@@ -1,0 +1,184 @@
+##AH:EvaluateStatementDescriptions
+module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildType = Release, $ArtifactSuffix = "">
+{
+    Acquire-Server
+    (
+        Role: DFHack-Linux-Builders,
+        Verbose: true,
+        DoNotShare: true,
+        ServerName => $LinuxBuilder
+    );
+
+    try
+    {
+        set $Title = $OperatingSystem;
+
+        set $Suffix = "";
+
+        if $OperatingSystem == MacOSX
+        {
+            set $Title = OS X;
+
+            set $Suffix = $Suffix-osx;
+        }
+
+        if $OperatingSystem == Windows
+        {
+            set $Suffix = $Suffix-win;
+        }
+
+        set $CompilerSuffix = "";
+
+        if $ImageTag == gcc-4.8
+        {
+            set $Title = $Title (GCC 4.8);
+
+            set $CompilerSuffix = -4.8;
+        }
+
+        set $Suffix = $Suffix$CompilerSuffix;
+
+        set $Architecture = i386;
+
+        if $Bits == 64
+        {
+            set $Architecture = x86_64;
+        }
+
+        # $Title ($Bits) ($LinuxBuilder)
+        for server $LinuxBuilder
+        {
+            set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
+
+            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+            {
+                DFHack::Configure
+                (
+                    OperatingSystem: $OperatingSystem,
+                    Image: $ImageTag,
+                    Architecture: $Architecture,
+                    BuildType: $BuildType,
+                    InstallPrefix: $InstallPrefix,
+                    IncludeDocumentation: true,
+                    IncludeStonesense: true,
+                    Trusted: $TrustedBuild
+                );
+
+                DFHack::Make
+                (
+                    Target: package,
+                    Image: $ImageTag,
+                    Trusted: $TrustedBuild
+                );
+            }
+
+            # Release server early so the next build can run; we don't need much processing power to finish
+            Release-Server $LinuxBuilder
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true
+            );
+
+            set $DebugDirectory = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
+
+            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+            {
+                if $OperatingSystem == Linux
+                {
+                    if $BuildType == RelWithDebInfo
+                    {
+                        SHCall dfhack-split-debug-info
+                        (
+                            Arguments: dfhack-*-Linux-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
+                            ErrorOutputLogLevel: Warning
+                        );
+
+                        if $TrustedBuild
+                        {
+                            Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                            (
+                                From: $DebugDirectory,
+                                Include: **.debug,
+                                Overwrite: true
+                            );
+                        }
+                    }
+
+                    Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix
+                    (
+                        From: $WorkingDirectory,
+                        Include: dfhack-*-Linux-*.tar.bz2,
+                        Overwrite: true
+                    );
+                }
+                else
+                {
+                    if $OperatingSystem == MacOSX
+                    {
+                        if $BuildType == RelWithDebInfo
+                        {
+                            SHCall dfhack-macgcc-split-debug-info
+                            (
+                                Arguments: $BaseWorkingDirectory dfhack-*-OSX-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
+                                ErrorOutputLogLevel: Warning
+                            );
+
+                            if $TrustedBuild
+                            {
+                                Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                                (
+                                    From: $DebugDirectory,
+                                    Include: **,
+                                    Overwrite: true
+                                );
+                            }
+                        }
+
+                        Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix
+                        (
+                            From: $WorkingDirectory,
+                            Include: dfhack-*-OSX-*.tar.bz2,
+                            Overwrite: true
+                        );
+                    }
+                    else
+                    {
+                        if $BuildType == RelWithDebInfo && $TrustedBuild
+                        {
+                            SHCall dfhack-collect-pdb
+                            (
+                                Arguments: $WorkingDirectory $DebugDirectory,
+                                ErrorOutputLogLevel: Warning
+                            );
+
+                            Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
+                            (
+                                From: $DebugDirectory,
+                                Include: **.pdb,
+                                IgnoreEmptyArtifact: true,
+                                Overwrite: true
+                            );
+                        }
+
+                        Create-Artifact Windows$Bits$ArtifactSuffix
+                        (
+                            From: $WorkingDirectory,
+                            Include: dfhack-*-Windows-$Bits.zip,
+                            Overwrite: true
+                        );
+                    }
+                }
+            }
+        }
+    }
+    catch
+    {
+        Release-Server $LinuxBuilder
+        (
+            Role: DFHack-Linux-Builders,
+            Verbose: true
+        );
+
+        throw;
+    }
+}

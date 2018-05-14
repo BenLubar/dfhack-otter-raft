@@ -1,0 +1,43 @@
+module DFHack-PR-Get-Sources
+{
+    if $IsVariableDefined(OverrideStructuresCommit)
+    {
+        call DFHack-Git
+        (
+            RepoID: dfhack,
+            Repository: https://github.com/DFHack/dfhack.git,
+            Directory: $WorkingDirectory/src,
+            Branch: develop,
+            CommitHash => $Dummy1,
+            ResolvedTag => $Dummy2
+        );
+
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: fetch https://github.com/DFHack/df-structures.git refs/pull/$ReleaseNumber/merge,
+            WorkingDirectory: $WorkingDirectory/src/library/xml,
+            ErrorOutputLogLevel: Warning
+        );
+
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: -c advice.detachedHead=false checkout -q $OverrideStructuresCommit,
+            WorkingDirectory: $WorkingDirectory/src/library/xml,
+            ErrorOutputLogLevel: Warning
+        );
+    }
+    else
+    {
+        call DFHack-PR-Git
+        (
+            RepoID: dfhack,
+            Repository: https://github.com/DFHack/dfhack.git,
+            Directory: $WorkingDirectory/src,
+            BaseBranch: develop,
+            PullRequest: $ReleaseNumber,
+            RequestedCommitHash: $DFHackCommit
+        );
+    }
+}

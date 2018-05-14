@@ -1,0 +1,113 @@
+##AH:Description Download a Git repository with submodules, caching it to make future downloads faster.
+module DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $RequestedCommitHash = "", out $CommitHash, out $ResolvedTag>
+{
+    set $CacheDir = $PathCombine($DFHackGitCache, $RepoID);
+
+    if $DirectoryExists($CacheDir)
+    {
+        # We already have a cached version of the repository. Update all remotes.
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: remote update,
+            WorkingDirectory: $CacheDir,
+            ErrorOutputLogLevel: Information
+        );
+    }
+    else
+    {
+        # Make a local mirror of the repository so we don't need to re-download it every time.
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: clone -q --mirror $Repository .,
+            WorkingDirectory: $CacheDir,
+            ErrorOutputLogLevel: Warning
+        );
+    }
+
+    set $Version = $Branch;
+
+    if $Tag != ""
+    {
+        set $Version = $Tag;
+    }
+
+    # Clone the repository using our local mirror as a base. Ignore "detached head" warnings that will occur when cloning a tag.
+    InedoCore::Exec
+    (
+        FileName: $DefaultGitExePath,
+        Arguments: -c advice.detachedHead=false clone -q -b $Version --reference $CacheDir $Repository .,
+        WorkingDirectory: $Directory,
+        ErrorOutputLogLevel: Warning
+    );
+
+    # Make sure all tags are available.
+    InedoCore::Exec
+    (
+        FileName: $DefaultGitExePath,
+        Arguments: fetch -q --tags,
+        WorkingDirectory: $Directory,
+        ErrorOutputLogLevel: Warning
+    );
+
+    if $RequestedCommitHash != ""
+    {
+        # Check out a specific commit if we requested one.
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: -c advice.detachedHead=false checkout -q $RequestedCommitHash,
+            WorkingDirectory: $Directory,
+            ErrorOutputLogLevel: Warning
+        );
+    }
+
+    # Clone submodules. Any we've previously downloaded are cached in the local mirror.
+    InedoCore::Exec
+    (
+        FileName: $DefaultGitExePath,
+        Arguments: submodule update -q --init --recursive --reference $CacheDir,
+        WorkingDirectory: $Directory,
+        ErrorOutputLogLevel: Warning
+    );
+
+    for role Linux
+    {
+        # Cache submodules in the local mirror to speed up future downloads.
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: submodule foreach 'git -C $CacheDir remote add -f "`$name" "``git remote get-url origin``" || :',
+            WorkingDirectory: $Directory,
+            OutputLogLevel: Debug,
+            ErrorOutputLogLevel: Debug
+        );
+
+        set $CommitHash = $Trim($SHEval(cd $Directory; git log -n 1 --format=%H));
+
+        set $ResolvedTag = $Trim($SHEval(cd $Directory; git describe --tags --abbrev=0 2> /dev/null || true));
+    }
+
+    for role Windows
+    {
+        # Work around a bug in Git for Windows that causes git submodule foreach to fail when executed without a standard input stream.
+        # https://github.com/git-for-windows/git/issues/181
+        Execute-PowerShell >>cd $Directory; '' | & $DefaultGitExePath submodule foreach ('git remote get-url origin | xargs git -C ''' + "$CacheDir" + ''' remote add -f $name 2>&1 || :')>>
+        (
+            Debug: true,
+            Verbose: true
+        );
+
+        set $CommitHash = $Trim($PSEval(cd $Directory; git log -n 1 --format=%H | Out-String));
+
+        try
+        {
+            set $ResolvedTag = $Trim($PSEval(cd $Directory; cmd /c "git describe --tags --abbrev=0 2> nul || exit 0" | Out-String));
+        }
+        catch
+        {
+            set $ResolvedTag = "";
+        }
+    }
+}

@@ -1,0 +1,428 @@
+Acquire-Server
+(
+    Role: DFHack-Windows-Publishers,
+    Verbose: true,
+    DoNotShare: true,
+    ServerName => $WindowsBuilder
+);
+
+Acquire-Server
+(
+    Role: DFHack-Linux-Publishers,
+    Verbose: true,
+    DoNotShare: true,
+    ServerName => $LinuxBuilder
+);
+
+set $DFVersion = $ListItem(@Split($ReleaseNumber, -), 0);
+
+set $Suffix = "";
+
+set $VersionNumber = $ReleaseNumber;
+
+set $Description = DFHack [version $ReleaseNumber](https://github.com/DFHack/dfhack/releases/tag/$ReleaseNumber);
+
+if $DFHackTagged
+{
+    # Debug
+    {
+        # Windows
+        {
+            # Windows (32)
+            {
+                call DFHack-Publish-Package
+                (
+                    ArtifactName: Windows32-dbg,
+                    PackageName: core,
+                    OSArch: win32-dbg,
+                    PackageVersion: $VersionNumber,
+                    PackageDescription: $Description,
+                    PackageDependencies: @(dwarffortress/core/win32:$DFVersion),
+                    WindowsBuilder: $WindowsBuilder,
+                    LinuxBuilder: $LinuxBuilder,
+                    Tagged: false
+                );
+            }
+
+            # Windows (64)
+            {
+                call DFHack-Publish-Package
+                (
+                    ArtifactName: Windows64-dbg,
+                    PackageName: core,
+                    OSArch: win64-dbg,
+                    PackageVersion: $VersionNumber,
+                    PackageDescription: $Description,
+                    PackageDependencies: @(dwarffortress/core/win64:$DFVersion),
+                    WindowsBuilder: $WindowsBuilder,
+                    LinuxBuilder: $LinuxBuilder,
+                    Tagged: false
+                );
+            }
+        }
+
+        # Linux
+        {
+            # GCC Latest
+            {
+                # Linux (32)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: Linux32-dbg,
+                        PackageName: core,
+                        OSArch: linux32-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/linux32:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+
+                # Linux (64)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: Linux64-dbg,
+                        PackageName: core,
+                        OSArch: linux64-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/linux64:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+            }
+
+            # GCC 4.8
+            {
+                # Linux (gcc 4.8) (32)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: Linux32-4.8-dbg,
+                        PackageName: core,
+                        OSArch: linux32-gcc48-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/linux32:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+
+                # Linux (gcc 4.8) (64)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: Linux64-4.8-dbg,
+                        PackageName: core,
+                        OSArch: linux64-gcc48-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/linux64:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+            }
+        }
+
+        # OS X
+        {
+            # GCC Latest
+            {
+                # OS X (32)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: OSX32-dbg,
+                        PackageName: core,
+                        OSArch: osx32-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/osx32:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+
+                # OS X (64)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: OSX64-dbg,
+                        PackageName: core,
+                        OSArch: osx64-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/osx64:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+            }
+
+            # GCC 4.8
+            {
+                # OS X (gcc 4.8) (32)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: OSX32-4.8-dbg,
+                        PackageName: core,
+                        OSArch: osx32-gcc48-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/osx32:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+
+                # OS X (gcc 4.8) (64)
+                {
+                    call DFHack-Publish-Package
+                    (
+                        ArtifactName: OSX64-4.8-dbg,
+                        PackageName: core,
+                        OSArch: osx64-gcc48-dbg,
+                        PackageVersion: $VersionNumber,
+                        PackageDescription: $Description,
+                        PackageDependencies: @(dwarffortress/core/osx64:$DFVersion),
+                        WindowsBuilder: $WindowsBuilder,
+                        LinuxBuilder: $LinuxBuilder,
+                        Tagged: false
+                    );
+                }
+            }
+        }
+    }
+}
+else
+{
+    if $IsVariableDefined(NewDFVersion)
+    {
+        set $DFVersion = $NewDFVersion;
+
+        set $Suffix = -auto;
+
+        set $Description = >>DFHack (automatically generated for Dwarf Fortress $DFVersion)
+
+DFHack commit: [$DFHackCommit](https://github.com/DFHack/dfhack/commit/$DFHackCommit)
+
+Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-structures/commit/$OverrideStructuresCommit)>>;
+
+        set $VersionNumber = $Replace($DFVersion, .0, .)-auto;
+    }
+    else
+    {
+        for server $WindowsBuilder
+        {
+            Deploy-Artifact Windows64
+            (
+                To: $WorkingDirectory/tmp_dfversion
+            );
+
+            set $FileName = $Trim($PSEval(Get-ChildItem $WorkingDirectory/tmp_dfversion -Name | Out-String));
+
+            set $DFVersion = $ListItem(@Split($FileName, -), 1);
+        }
+
+        set $Suffix = -dev;
+
+        set $Description = DFHack (prerelease, [commit $DFHackCommit](https://github.com/DFHack/dfhack/commit/$DFHackCommit));
+
+        set $VersionNumber = 0.0.0-p$PackageNumber;
+    }
+}
+
+# Windows
+{
+    # Windows (32)
+    {
+        call DFHack-Publish-Package
+        (
+            ArtifactName: Windows32,
+            PackageName: core,
+            OSArch: win32$Suffix,
+            PackageVersion: $VersionNumber,
+            PackageDescription: $Description,
+            PackageDependencies: @(dwarffortress/core/win32:$DFVersion),
+            WindowsBuilder: $WindowsBuilder,
+            LinuxBuilder: $LinuxBuilder,
+            Tagged: $DFHackTagged
+        );
+    }
+
+    # Windows (64)
+    {
+        call DFHack-Publish-Package
+        (
+            ArtifactName: Windows64,
+            PackageName: core,
+            OSArch: win64$Suffix,
+            PackageVersion: $VersionNumber,
+            PackageDescription: $Description,
+            PackageDependencies: @(dwarffortress/core/win64:$DFVersion),
+            WindowsBuilder: $WindowsBuilder,
+            LinuxBuilder: $LinuxBuilder,
+            Tagged: $DFHackTagged
+        );
+    }
+}
+
+# Linux
+{
+    # GCC Latest
+    {
+        # Linux (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux32,
+                PackageName: core,
+                OSArch: linux32$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/linux32:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+
+        # Linux (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux64,
+                PackageName: core,
+                OSArch: linux64$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/linux64:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+    }
+
+    # GCC 4.8
+    {
+        # Linux (gcc 4.8) (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux32-4.8,
+                PackageName: core,
+                OSArch: linux32-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/linux32:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+
+        # Linux (gcc 4.8) (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: Linux64-4.8,
+                PackageName: core,
+                OSArch: linux64-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/linux64:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+    }
+}
+
+# OS X
+{
+    # GCC Latest
+    {
+        # OS X (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX32,
+                PackageName: core,
+                OSArch: osx32$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/osx32:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+
+        # OS X (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX64,
+                PackageName: core,
+                OSArch: osx64-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/osx64:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+    }
+
+    # GCC 4.8
+    {
+        # OS X (32)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX32-4.8,
+                PackageName: core,
+                OSArch: osx32-gcc48$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/osx32:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+
+        # OS X (64)
+        {
+            call DFHack-Publish-Package
+            (
+                ArtifactName: OSX64-4.8,
+                PackageName: core,
+                OSArch: osx64$Suffix,
+                PackageVersion: $VersionNumber,
+                PackageDescription: $Description,
+                PackageDependencies: @(dwarffortress/core/osx64:$DFVersion),
+                WindowsBuilder: $WindowsBuilder,
+                LinuxBuilder: $LinuxBuilder,
+                Tagged: $DFHackTagged
+            );
+        }
+    }
+}

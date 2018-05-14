@@ -1,0 +1,243 @@
+module Publish-DFHack-Release
+{
+    # GitHub Release
+    {
+        for server $DFHackReleaseWindowsBuilder
+        {
+            try
+            {
+                GitHub-Set-Status
+                (
+                    Credentials: GitHub-DFHack,
+                    AdditionalContext: upload,
+                    CommitHash: $DFHackCommit,
+                    Organization: DFHack,
+                    Repository: dfhack,
+                    Description: Preparing to upload release packages...,
+                    Status: pending
+                );
+
+                Deploy-Artifact Windows32
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact Windows64
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact Linux32
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact Linux32-4.8
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact Linux64
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact Linux64-4.8
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact OSX32
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact OSX32-4.8
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact OSX64
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                Deploy-Artifact OSX64-4.8
+                (
+                    To: $WorkingDirectory/github-staging,
+                    DoNotClearTarget: true
+                );
+
+                GitHub-Set-Status
+                (
+                    Credentials: GitHub-DFHack,
+                    AdditionalContext: upload,
+                    CommitHash: $DFHackCommit,
+                    Organization: DFHack,
+                    Repository: dfhack,
+                    Description: Package upload in progress...,
+                    Status: pending
+                );
+
+                GitHub-Upload-Release-Assets
+                (
+                    Credentials: GitHub-DFHack,
+                    Organization: DFHack,
+                    Repository: dfhack,
+                    Tag: $DFHackTag,
+                    Include: @(*.tar.gz, *.tar.bz2),
+                    Directory: $WorkingDirectory/github-staging,
+                    ContentType: application/x-gtar
+                );
+
+                GitHub-Upload-Release-Assets
+                (
+                    Credentials: GitHub-DFHack,
+                    Organization: DFHack,
+                    Repository: dfhack,
+                    Tag: $DFHackTag,
+                    Include: *.zip,
+                    Directory: $WorkingDirectory/github-staging,
+                    ContentType: application/zip
+                );
+
+                # IRC Notification
+                try
+                {
+                    Execute-PowerShell & 'D:\ProgramData\BuildMaster\DFHackReleaseNotify.ps1' | Out-Null;
+
+                    try
+                    {
+                        GitHub-Set-Status
+                        (
+                            Credentials: GitHub-DFHack,
+                            AdditionalContext: upload,
+                            CommitHash: $DFHackCommit,
+                            Organization: DFHack,
+                            Repository: dfhack,
+                            Description: Release $DFHackTag packages uploaded successfully,
+                            Status: success
+                        );
+                    }
+                    catch
+                    {
+                    }
+                }
+                catch
+                {
+                    Log-Warning "IRC notification failed! Contact lethosor or BenLubar in irc://chat.freenode.net/#dfhack";
+
+                    try
+                    {
+                        GitHub-Set-Status
+                        (
+                            Credentials: GitHub-DFHack,
+                            AdditionalContext: upload,
+                            CommitHash: $DFHackCommit,
+                            Organization: DFHack,
+                            Repository: dfhack,
+                            Description: "Release $DFHackTag packages uploaded successfully, but IRC notification failed",
+                            Status: success
+                        );
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch
+            {
+                GitHub-Set-Status
+                (
+                    Credentials: GitHub-DFHack,
+                    AdditionalContext: upload,
+                    CommitHash: $DFHackCommit,
+                    Status: failure,
+                    Description: Uploading release packages failed! Contact BenLubar or lethosor.,
+                    Organization: DFHack,
+                    Repository: dfhack
+                );
+            }
+        }
+    }
+
+    # Docker
+    {
+        for server $DFHackReleaseLinuxBuilder
+        {
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/git,
+                Arguments: clone git@github.com:BenLubar/df-docker.git df-docker,
+                ErrorOutputLogLevel: Debug
+            );
+
+            Deploy-Artifact Linux64-4.8
+            (
+                To: $WorkingDirectory/df-docker-staging,
+                DoNotClearTarget: true
+            );
+
+            set $DFVersion = $ListItem(@Split($DFHackTag, -), 0);
+
+            set $DFHackArchive = $Trim($SHEval(ls "$WorkingDirectory/df-docker-staging/"));
+
+            set $SHA1Checksum = $Trim($SHEval(sha1sum -b "$WorkingDirectory/df-docker-staging/$DFHackArchive" | cut -f 1 -d " "));
+
+            InedoCore::Apply-Template DFHack::docker-dfhack
+            (
+                OutputFile: df-docker/dfhack/Dockerfile,
+                NewLines: Linux
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/git,
+                Arguments: add dfhack/Dockerfile,
+                WorkingDirectory: df-docker,
+                ErrorOutputLogLevel: Debug
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/git,
+                Arguments: commit -m "DFHack $ReleaseNumber",
+                ErrorOutputLogLevel: Debug,
+                WorkingDirectory: df-docker
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/git,
+                Arguments: tag "dfhack-$ReleaseNumber",
+                ErrorOutputLogLevel: Debug,
+                WorkingDirectory: df-docker
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/git,
+                Arguments: push,
+                ErrorOutputLogLevel: Debug,
+                WorkingDirectory: df-docker
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/git,
+                Arguments: push --tags,
+                ErrorOutputLogLevel: Debug,
+                WorkingDirectory: df-docker
+            );
+        }
+    }
+}
