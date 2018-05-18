@@ -84,38 +84,41 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                     Trusted: $TrustedBuild
                 );
 
-                if $OperatingSystem == Linux
+                if $BuildType == RelWithDebInfo
                 {
-                    SHCall split-debug-info
-                    (
-                        Arguments: $PluginName.plug.so $DebugPrefix,
-                        ErrorOutputLevel: Warning
-                    );
-                }
-                else
-                {
-                    if $OperatingSystem == MacOSX
+                    if $OperatingSystem == Linux
                     {
-                        SHCall macgcc-split-debug-info
+                        SHCall split-debug-info
                         (
-                            Arguments: $BaseWorkingDirectory $PluginName.plug.dylib $DebugPrefix,
+                            Arguments: $PluginName.plug.so $DebugPrefix,
                             ErrorOutputLevel: Warning
                         );
                     }
                     else
                     {
-                        if $OperatingSystem == Windows
+                        if $OperatingSystem == MacOSX
                         {
-                            if false
+                            SHCall macgcc-split-debug-info
+                            (
+                                Arguments: $BaseWorkingDirectory $PluginName.plug.dylib $DebugPrefix,
+                                ErrorOutputLevel: Warning
+                            );
+                        }
+                        else
+                        {
+                            if $OperatingSystem == Windows
                             {
-                                if $BuildType == RelWithDebInfo && $TrustedBuild
+                                if false
                                 {
-                                    Copy-Files
-                                    (
-                                        Include: **.pdb,
-                                        From: $InstallPrefix/plugins/$PluginName,
-                                        To: $DebugPrefix/hack/plugins
-                                    );
+                                    if $BuildType == RelWithDebInfo && $TrustedBuild
+                                    {
+                                        Copy-Files
+                                        (
+                                            Include: **.pdb,
+                                            From: $InstallPrefix/plugins/$PluginName,
+                                            To: $DebugPrefix/hack/plugins
+                                        );
+                                    }
                                 }
                             }
                         }
