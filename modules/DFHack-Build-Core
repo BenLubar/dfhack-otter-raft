@@ -27,12 +27,6 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                 ArtifactSuffix: $ArtifactSuffix
             );
         }
-
-        # Temporary, to speed up debugging.
-        if $ApplicationName == DFHack Pull Requests && $ReleaseNumber == 1271
-        {
-            await DFHackBuild;
-        }
     }
 
     # Linux
@@ -128,6 +122,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
         }
 
         # GCC 4.8
+        if false
         {
             # OS X (gcc 4.8) (32)
             with async = DFHackBuild

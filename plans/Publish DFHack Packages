@@ -172,6 +172,7 @@ if $DFHackTagged
             }
 
             # GCC 4.8
+            if false
             {
                 # OS X (gcc 4.8) (32)
                 {
@@ -392,6 +393,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
     }
 
     # GCC 4.8
+    if false
     {
         # OS X (32)
         {

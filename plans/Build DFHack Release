@@ -223,17 +223,20 @@ set CLCACHE_BASEDIR=$WorkingDirectory
                             Bits: 64
                         );
 
-                        call DFHack-Cache-OSX
-                        (
-                            TargetPath: $WorkingDirectory/out32-osx-4.8,
-                            Bits: 32
-                        );
+                        if false
+                        {
+                            call DFHack-Cache-OSX
+                            (
+                                TargetPath: $WorkingDirectory/out32-osx-4.8,
+                                Bits: 32
+                            );
 
-                        call DFHack-Cache-OSX
-                        (
-                            TargetPath: $WorkingDirectory/out64-osx-4.8,
-                            Bits: 64
-                        );
+                            call DFHack-Cache-OSX
+                            (
+                                TargetPath: $WorkingDirectory/out64-osx-4.8,
+                                Bits: 64
+                            );
+                        }
 
                         if $DFHackTagged
                         {
@@ -249,17 +252,20 @@ set CLCACHE_BASEDIR=$WorkingDirectory
                                 Bits: 64
                             );
 
-                            call DFHack-Cache-OSX
-                            (
-                                TargetPath: $WorkingDirectory/out32-osx-4.8-dbg,
-                                Bits: 32
-                            );
+                            if false
+                            {
+                                call DFHack-Cache-OSX
+                                (
+                                    TargetPath: $WorkingDirectory/out32-osx-4.8-dbg,
+                                    Bits: 32
+                                );
 
-                            call DFHack-Cache-OSX
-                            (
-                                TargetPath: $WorkingDirectory/out64-osx-4.8-dbg,
-                                Bits: 64
-                            );
+                                call DFHack-Cache-OSX
+                                (
+                                    TargetPath: $WorkingDirectory/out64-osx-4.8-dbg,
+                                    Bits: 64
+                                );
+                            }
                         }
                     }
                 }

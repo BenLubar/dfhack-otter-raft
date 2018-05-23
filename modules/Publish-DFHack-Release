@@ -59,11 +59,14 @@ module Publish-DFHack-Release
                     DoNotClearTarget: true
                 );
 
-                Deploy-Artifact OSX32-4.8
-                (
-                    To: $WorkingDirectory/github-staging,
-                    DoNotClearTarget: true
-                );
+                if false
+                {
+                    Deploy-Artifact OSX32-4.8
+                    (
+                        To: $WorkingDirectory/github-staging,
+                        DoNotClearTarget: true
+                    );
+                }
 
                 Deploy-Artifact OSX64
                 (
@@ -71,11 +74,14 @@ module Publish-DFHack-Release
                     DoNotClearTarget: true
                 );
 
-                Deploy-Artifact OSX64-4.8
-                (
-                    To: $WorkingDirectory/github-staging,
-                    DoNotClearTarget: true
-                );
+                if false
+                {
+                    Deploy-Artifact OSX64-4.8
+                    (
+                        To: $WorkingDirectory/github-staging,
+                        DoNotClearTarget: true
+                    );
+                }
 
                 GitHub-Set-Status
                 (

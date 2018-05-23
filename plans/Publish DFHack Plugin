@@ -283,6 +283,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
     }
 
     # GCC 4.8
+    if false
     {
         # OS X (gcc 4.8) (32)
         {
@@ -367,11 +368,14 @@ if $PluginTagged
             DoNotClearTarget: true
         );
 
-        Deploy-Artifact OSX32-4.8
-        (
-            To: $WorkingDirectory/github-staging,
-            DoNotClearTarget: true
-        );
+        if false
+        {
+            Deploy-Artifact OSX32-4.8
+            (
+                To: $WorkingDirectory/github-staging,
+                DoNotClearTarget: true
+            );
+        }
 
         Deploy-Artifact OSX64
         (
@@ -379,11 +383,14 @@ if $PluginTagged
             DoNotClearTarget: true
         );
 
-        Deploy-Artifact OSX64-4.8
-        (
-            To: $WorkingDirectory/github-staging,
-            DoNotClearTarget: true
-        );
+        if false
+        {
+            Deploy-Artifact OSX64-4.8
+            (
+                To: $WorkingDirectory/github-staging,
+                DoNotClearTarget: true
+            );
+        }
 
         if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
         {

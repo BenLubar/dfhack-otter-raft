@@ -141,6 +141,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
         }
 
         # GCC 4.8
+        if false
         {
             # OS X (gcc 4.8) (32)
             with async = PluginBuild
