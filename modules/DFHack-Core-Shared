@@ -50,128 +50,131 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
         # $Title ($Bits) ($LinuxBuilder)
         for server $LinuxBuilder
         {
-            set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
-
-            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+            with timeout = 3600
             {
-                DFHack::Configure
-                (
-                    OperatingSystem: $OperatingSystem,
-                    Image: $ImageTag,
-                    Architecture: $Architecture,
-                    BuildType: $BuildType,
-                    InstallPrefix: $InstallPrefix,
-                    IncludeDocumentation: true,
-                    IncludeStonesense: true,
-                    Trusted: $TrustedBuild
-                );
+                set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
 
-                DFHack::Make
-                (
-                    Target: package,
-                    Image: $ImageTag,
-                    Trusted: $TrustedBuild
-                );
-            }
-
-            # Release server early so the next build can run; we don't need much processing power to finish
-            Release-Server $LinuxBuilder
-            (
-                Role: DFHack-Linux-Builders,
-                Verbose: true
-            );
-
-            set $HaveServer = false;
-
-            set $DebugDirectory = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
-
-            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
-            {
-                if $OperatingSystem == Linux
+                for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
                 {
-                    if $BuildType == RelWithDebInfo
-                    {
-                        SHCall dfhack-split-debug-info
-                        (
-                            Arguments: dfhack-*-Linux-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
-                            ErrorOutputLogLevel: Warning
-                        );
-
-                        if $TrustedBuild
-                        {
-                            Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
-                            (
-                                From: $DebugDirectory,
-                                Include: **.debug,
-                                Overwrite: true
-                            );
-                        }
-                    }
-
-                    Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix
+                    DFHack::Configure
                     (
-                        From: $WorkingDirectory,
-                        Include: dfhack-*-Linux-*.tar.bz2,
-                        Overwrite: true
+                        OperatingSystem: $OperatingSystem,
+                        Image: $ImageTag,
+                        Architecture: $Architecture,
+                        BuildType: $BuildType,
+                        InstallPrefix: $InstallPrefix,
+                        IncludeDocumentation: true,
+                        IncludeStonesense: true,
+                        Trusted: $TrustedBuild
+                    );
+
+                    DFHack::Make
+                    (
+                        Target: package,
+                        Image: $ImageTag,
+                        Trusted: $TrustedBuild
                     );
                 }
-                else
+
+                # Release server early so the next build can run; we don't need much processing power to finish
+                Release-Server $LinuxBuilder
+                (
+                    Role: DFHack-Linux-Builders,
+                    Verbose: true
+                );
+
+                set $HaveServer = false;
+
+                set $DebugDirectory = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
+
+                for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
                 {
-                    if $OperatingSystem == MacOSX
+                    if $OperatingSystem == Linux
                     {
                         if $BuildType == RelWithDebInfo
                         {
-                            SHCall dfhack-macgcc-split-debug-info
+                            SHCall dfhack-split-debug-info
                             (
-                                Arguments: $BaseWorkingDirectory dfhack-*-OSX-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
+                                Arguments: dfhack-*-Linux-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
                                 ErrorOutputLogLevel: Warning
                             );
 
                             if $TrustedBuild
                             {
-                                Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                                Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
                                 (
                                     From: $DebugDirectory,
-                                    Include: **,
+                                    Include: **.debug,
                                     Overwrite: true
                                 );
                             }
                         }
 
-                        Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix
+                        Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix
                         (
                             From: $WorkingDirectory,
-                            Include: dfhack-*-OSX-*.tar.bz2,
+                            Include: dfhack-*-Linux-*.tar.bz2,
                             Overwrite: true
                         );
                     }
                     else
                     {
-                        if false
+                        if $OperatingSystem == MacOSX
                         {
-                            if $BuildType == RelWithDebInfo && $TrustedBuild
+                            if $BuildType == RelWithDebInfo
                             {
-                                SHCall dfhack-collect-pdb
+                                SHCall dfhack-macgcc-split-debug-info
                                 (
-                                    Arguments: $WorkingDirectory $DebugDirectory,
+                                    Arguments: $BaseWorkingDirectory dfhack-*-OSX-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
                                     ErrorOutputLogLevel: Warning
                                 );
 
-                                Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
-                                (
-                                    From: $DebugDirectory,
-                                    Include: **.pdb,
-                                    Overwrite: true
-                                );
+                                if $TrustedBuild
+                                {
+                                    Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                                    (
+                                        From: $DebugDirectory,
+                                        Include: **,
+                                        Overwrite: true
+                                    );
+                                }
                             }
-                        }
 
-                        Create-Artifact Windows$Bits$ArtifactSuffix
-                        (
-                            From: $WorkingDirectory,
-                            Include: dfhack-*-Windows-$Bits.zip,
-                            Overwrite: true
-                        );
+                            Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix
+                            (
+                                From: $WorkingDirectory,
+                                Include: dfhack-*-OSX-*.tar.bz2,
+                                Overwrite: true
+                            );
+                        }
+                        else
+                        {
+                            if false
+                            {
+                                if $BuildType == RelWithDebInfo && $TrustedBuild
+                                {
+                                    SHCall dfhack-collect-pdb
+                                    (
+                                        Arguments: $WorkingDirectory $DebugDirectory,
+                                        ErrorOutputLogLevel: Warning
+                                    );
+
+                                    Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
+                                    (
+                                        From: $DebugDirectory,
+                                        Include: **.pdb,
+                                        Overwrite: true
+                                    );
+                                }
+                            }
+
+                            Create-Artifact Windows$Bits$ArtifactSuffix
+                            (
+                                From: $WorkingDirectory,
+                                Include: dfhack-*-Windows-$Bits.zip,
+                                Overwrite: true
+                            );
+                        }
                     }
                 }
             }
