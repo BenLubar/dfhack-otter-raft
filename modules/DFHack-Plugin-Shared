@@ -47,6 +47,13 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
             set $Architecture = x86_64;
         }
 
+        if (!$TrustedBuild || $GetVariableValue(TriggeredByDFHack)) && $PackageNumber != $PackageNumber($ReleaseNumber, latest)
+        {
+            Log-Error Cancelling $Title ($Bits) build as a newer version is waiting to be built.;
+
+            throw;
+        }
+
         # $Title ($Bits) ($LinuxBuilder)
         for server $LinuxBuilder
         {
