@@ -1,5 +1,9 @@
+##AH:UseTextMode
 module DF-Handle-New-Version<$FileName, $VersionNumber>
 {
+    set $WindowsBuilder = GODZILLA;
+    set $LinuxBuilder = australium;
+
     set $ActualFileName = $FileName;
 
     # Zip
@@ -7,7 +11,7 @@ module DF-Handle-New-Version<$FileName, $VersionNumber>
     {
         set $LinuxWorkingDirectory = "";
 
-        for server LinuxBuilder
+        for server $LinuxBuilder
         {
             set $LinuxWorkingDirectory = $WorkingDirectory;
         }
@@ -18,12 +22,12 @@ module DF-Handle-New-Version<$FileName, $VersionNumber>
         (
             Include: $FileName,
             FromDirectory: $WorkingDirectory,
-            FromServer: WindowsBuilder,
+            FromServer: $WindowsBuilder,
             ToDirectory: $LinuxWorkingDirectory,
-            ToServer: LinuxBuilder
+            ToServer: $LinuxBuilder
         );
 
-        for server LinuxBuilder
+        for server $LinuxBuilder
         {
             SHExec >>mkdir temp
 cd temp
@@ -40,9 +44,9 @@ rm -rf temp>>
         (
             Include: $ActualFileName,
             FromDirectory: $LinuxWorkingDirectory,
-            FromServer: LinuxBuilder,
+            FromServer: $LinuxBuilder,
             ToDirectory: $WorkingDirectory,
-            ToServer: WindowsBuilder
+            ToServer: $WindowsBuilder
         );
     }
 
@@ -52,7 +56,7 @@ rm -rf temp>>
 
     if $Suffix == linux64
     {
-        for server LinuxBuilder
+        for server $LinuxBuilder
         {
             # Raws
             {
