@@ -1,7 +1,7 @@
-##AH:UseTextMode
 module DF-Handle-New-Version<$FileName, $VersionNumber>
 {
     set $WindowsBuilder = GODZILLA;
+
     set $LinuxBuilder = australium;
 
     set $ActualFileName = $FileName;
