@@ -16,18 +16,15 @@ for server GODZILLA
 
     set @VersionFiles = @FromJson($VersionFilesJson);
 
-    if false
+    foreach $FileName in @VersionFiles
     {
-        foreach $FileName in @VersionFiles
+        # File
         {
-            # File
-            {
-                call DF-Handle-New-Version
-                (
-                    FileName: $FileName,
-                    VersionNumber: $VersionNumber
-                );
-            }
+            call DF-Handle-New-Version
+            (
+                FileName: $FileName,
+                VersionNumber: $VersionNumber
+            );
         }
     }
 
