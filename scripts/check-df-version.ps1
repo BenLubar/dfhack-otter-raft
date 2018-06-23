@@ -61,4 +61,4 @@ $etag = $output['etag']
 $modified = $output['modified']
 $version = $output['version']
 $date = $output['date']
-$versions = $output['versions']
+$versions = (ConvertTo-Json $output['versions'])
