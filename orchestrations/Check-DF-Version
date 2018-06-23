@@ -9,8 +9,10 @@ PSCall dfhack::check-df-version
     modified => $NewModified,
     version => $VersionNumber,
     date => $Date,
-    versions => @VersionFiles
+    versions => $VersionFilesJson
 );
+
+set @VersionFiles = @FromJson($VersionFilesJson);
 
 foreach $FileName in @VersionFiles
 {
