@@ -1,5 +1,5 @@
 ##AH:EvaluateStatementDescriptions
-module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildType = Release, $ArtifactSuffix = "">
+module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildType = Release, $ArtifactSuffix = "", $SkipTests = false>
 {
     Acquire-Server
     (
@@ -17,16 +17,22 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
 
         set $Suffix = "";
 
+        set $DFOS = linux;
+
         if $OperatingSystem == MacOSX
         {
             set $Title = OS X;
 
             set $Suffix = $Suffix-osx;
+
+            set $DFOS = osx;
         }
 
         if $OperatingSystem == Windows
         {
             set $Suffix = $Suffix-win;
+
+            set $DFOS = win;
         }
 
         set $CompilerSuffix = "";
@@ -57,131 +63,181 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
         # $Title ($Bits) ($LinuxBuilder)
         for server $LinuxBuilder
         {
-            with timeout = 3600
+            set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
+
+            # Download Dwarf Fortress
+            if !$SkipTests || $OperatingSystem == MacOSX
             {
-                set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
-
-                for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
-                {
-                    DFHack::Configure
-                    (
-                        OperatingSystem: $OperatingSystem,
-                        Image: $ImageTag,
-                        Architecture: $Architecture,
-                        BuildType: $BuildType,
-                        InstallPrefix: $InstallPrefix,
-                        IncludeDocumentation: true,
-                        IncludeStonesense: true,
-                        Trusted: $TrustedBuild
-                    );
-
-                    DFHack::Make
-                    (
-                        Target: package,
-                        Image: $ImageTag,
-                        Trusted: $TrustedBuild
-                    );
-                }
-
-                # Release server early so the next build can run; we don't need much processing power to finish
-                Release-Server $LinuxBuilder
+                call DFHack-Cache-DF
                 (
-                    Role: DFHack-Linux-Builders,
-                    Verbose: true
+                    TargetPath: $InstallPrefix,
+                    OperatingSystem: $DFOS,
+                    Bits: $Bits
+                );
+            }
+
+            # Compile
+            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+            {
+                DFHack::Configure
+                (
+                    OperatingSystem: $OperatingSystem,
+                    Image: $ImageTag,
+                    Architecture: $Architecture,
+                    BuildType: $BuildType,
+                    InstallPrefix: $InstallPrefix,
+                    IncludeDocumentation: true,
+                    IncludeStonesense: true,
+                    Trusted: $TrustedBuild
                 );
 
-                set $HaveServer = false;
+                DFHack::Make
+                (
+                    Target: package,
+                    Image: $ImageTag,
+                    Trusted: $TrustedBuild
+                );
+            }
 
-                set $DebugDirectory = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
+            if !$SkipTests && (!$TrustedBuild || $GetVariableValue(TriggeredByDFHack)) && $PackageNumber != $PackageNumber($ReleaseNumber, latest)
+            {
+                Log-Warning Cancelling tests for $Title ($Bits) as a newer version is waiting to be built.;
 
-                for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+                set $SkipTests = true;
+            }
+
+            if !$SkipTests && false
+            {
+                # Integration Tests
+                try
                 {
-                    if $OperatingSystem == Linux
+                    for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+                    {
+                        DFHack::Make
+                        (
+                            Target: install,
+                            Image: $ImageTag,
+                            Trusted: $TrustedBuild
+                        );
+                    }
+
+                    for directory $InstallPrefix
+                    {
+                        DFHack::Test
+                        (
+                            OperatingSystem: $OperatingSystem,
+                            Image: $ImageTag,
+                            Architecture: $Architecture,
+                            Command: test/main,
+                            Trusted: $TrustedBuild
+                        );
+                    }
+                }
+                catch
+                {
+                    # Continue plan, but fail build.
+                    error;
+                }
+            }
+
+            # Release server early so the next build can run; we don't need much processing power to finish
+            Release-Server $LinuxBuilder
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true
+            );
+
+            set $HaveServer = false;
+
+            set $DebugDirectory = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
+
+            for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+            {
+                if $OperatingSystem == Linux
+                {
+                    if $BuildType == RelWithDebInfo
+                    {
+                        SHCall dfhack-split-debug-info
+                        (
+                            Arguments: dfhack-*-Linux-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
+                            ErrorOutputLogLevel: Warning
+                        );
+
+                        if $TrustedBuild
+                        {
+                            Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                            (
+                                From: $DebugDirectory,
+                                Include: **.debug,
+                                Overwrite: true
+                            );
+                        }
+                    }
+
+                    Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix
+                    (
+                        From: $WorkingDirectory,
+                        Include: dfhack-*-Linux-*.tar.bz2,
+                        Overwrite: true
+                    );
+                }
+                else
+                {
+                    if $OperatingSystem == MacOSX
                     {
                         if $BuildType == RelWithDebInfo
                         {
-                            SHCall dfhack-split-debug-info
+                            SHCall dfhack-macgcc-split-debug-info
                             (
-                                Arguments: dfhack-*-Linux-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
+                                Arguments: $BaseWorkingDirectory dfhack-*-OSX-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
                                 ErrorOutputLogLevel: Warning
                             );
 
                             if $TrustedBuild
                             {
-                                Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
+                                Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
                                 (
                                     From: $DebugDirectory,
-                                    Include: **.debug,
+                                    Include: **,
                                     Overwrite: true
                                 );
                             }
                         }
 
-                        Create-Artifact Linux$Bits$CompilerSuffix$ArtifactSuffix
+                        Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix
                         (
                             From: $WorkingDirectory,
-                            Include: dfhack-*-Linux-*.tar.bz2,
+                            Include: dfhack-*-OSX-*.tar.bz2,
                             Overwrite: true
                         );
                     }
                     else
                     {
-                        if $OperatingSystem == MacOSX
+                        if false
                         {
-                            if $BuildType == RelWithDebInfo
+                            if $BuildType == RelWithDebInfo && $TrustedBuild
                             {
-                                SHCall dfhack-macgcc-split-debug-info
+                                SHCall dfhack-collect-pdb
                                 (
-                                    Arguments: $BaseWorkingDirectory dfhack-*-OSX-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
+                                    Arguments: $WorkingDirectory $DebugDirectory,
                                     ErrorOutputLogLevel: Warning
                                 );
 
-                                if $TrustedBuild
-                                {
-                                    Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix-dbgsym
-                                    (
-                                        From: $DebugDirectory,
-                                        Include: **,
-                                        Overwrite: true
-                                    );
-                                }
+                                Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
+                                (
+                                    From: $DebugDirectory,
+                                    Include: **.pdb,
+                                    Overwrite: true
+                                );
                             }
-
-                            Create-Artifact OSX$Bits$CompilerSuffix$ArtifactSuffix
-                            (
-                                From: $WorkingDirectory,
-                                Include: dfhack-*-OSX-*.tar.bz2,
-                                Overwrite: true
-                            );
                         }
-                        else
-                        {
-                            if false
-                            {
-                                if $BuildType == RelWithDebInfo && $TrustedBuild
-                                {
-                                    SHCall dfhack-collect-pdb
-                                    (
-                                        Arguments: $WorkingDirectory $DebugDirectory,
-                                        ErrorOutputLogLevel: Warning
-                                    );
 
-                                    Create-Artifact Windows$Bits$ArtifactSuffix-dbgsym
-                                    (
-                                        From: $DebugDirectory,
-                                        Include: **.pdb,
-                                        Overwrite: true
-                                    );
-                                }
-                            }
-
-                            Create-Artifact Windows$Bits$ArtifactSuffix
-                            (
-                                From: $WorkingDirectory,
-                                Include: dfhack-*-Windows-$Bits.zip,
-                                Overwrite: true
-                            );
-                        }
+                        Create-Artifact Windows$Bits$ArtifactSuffix
+                        (
+                            From: $WorkingDirectory,
+                            Include: dfhack-*-Windows-$Bits.zip,
+                            Overwrite: true
+                        );
                     }
                 }
             }

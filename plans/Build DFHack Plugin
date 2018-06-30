@@ -1,5 +1,6 @@
 ##AH:EvaluateStatementDescriptions
 
+
 set $GitHubBuildContext = "";
 
 if $IsVariableDefined(OverrideStructuresCommit)
@@ -49,28 +50,13 @@ try
         Status: pending
     );
 
+    set $SkipTests = false;
+
     # Get Source
     {
-        Wait-For-Higher-Priority-Executions
-        (
-            Verbose: true
-        );
-
         # Git
         with lock = !DFHackGit
         {
-            if false
-            {
-                foreach server in @ServersInRole(DFHack-Windows-Builders)
-                {
-                    # Windows ($ServerName)
-                    with async = Git
-                    {
-                        call DFHack-Plugin-Get-Sources();
-                    }
-                }
-            }
-
             foreach server in @ServersInRole(DFHack-Linux-Builders)
             {
                 # Linux ($ServerName)
@@ -81,6 +67,14 @@ try
             }
 
             await Git;
+        }
+
+        for server $ListItem(@ServersInRole(DFHack-Linux-Builders), 0)
+        {
+            if !$FileExists($WorkingDirectory/src/plugins/$ApplicationName/test/main.lua)
+            {
+                set $SkipTests = true;
+            }
         }
 
         GitHub-Set-Status
@@ -94,58 +88,8 @@ try
             Status: pending
         );
 
-        Wait-For-Higher-Priority-Executions
-        (
-            Verbose: true
-        );
-
         with lock = !DFHackDependencies
         {
-            if false
-            {
-                # Windows
-                foreach server in @ServersInRole(DFHack-Windows-Builders)
-                {
-                    # Windows Dependencies ($ServerName)
-                    {
-                        with async = Dependencies
-                        {
-                            Create-File $WorkingDirectory/src/plugins/CMakeLists.custom.txt
-                            (
-                                Text: "add_subdirectory($ApplicationName)",
-                                Overwrite: true
-                            );
-                        }
-
-                        with async = Dependencies
-                        {
-                            call DFHack-Cache-Dependencies
-                            (
-                                DependencyPath: $WorkingDirectory/src/CMake/downloads
-                            );
-                        }
-
-                        with async = Dependencies
-                        {
-                            Execute-PowerShell >>Set-Location $WorkingDirectory
-NuGet.exe install -NonInteractive -Source https://api.nuget.org/v3/index.json clcache
-Move-Item .\clcache.*\clcache-*\ .\clcache
-Remove-Item -Recurse .\clcache.*\>>;
-
-                            Create-File $WorkingDirectory\clcache.bat
-                            (
-                                Text: >>`@echo off
-`@setlocal
-set CLCACHE_DIR=$BaseWorkingDirectory\dfhack-clcache
-set CLCACHE_BASEDIR=$WorkingDirectory
-"$WorkingDirectory\clcache\clcache.exe" `%*
->>
-                            );
-                        }
-                    }
-                }
-            }
-
             # Linux
             foreach server in @ServersInRole(DFHack-Linux-Builders)
             {
@@ -206,33 +150,6 @@ set CLCACHE_BASEDIR=$WorkingDirectory
                             Arguments: "-c 'mkdir -p `$HOME/.ccache {out,build}{32,64}{{,-osx}{,-4.8},-win}'",
                             WorkingDirectory: $WorkingDirectory
                         );
-
-                        call DFHack-Cache-OSX
-                        (
-                            TargetPath: $WorkingDirectory/out32-osx,
-                            Bits: 32
-                        );
-
-                        call DFHack-Cache-OSX
-                        (
-                            TargetPath: $WorkingDirectory/out64-osx,
-                            Bits: 64
-                        );
-
-                        if false
-                        {
-                            call DFHack-Cache-OSX
-                            (
-                                TargetPath: $WorkingDirectory/out32-osx-4.8,
-                                Bits: 32
-                            );
-
-                            call DFHack-Cache-OSX
-                            (
-                                TargetPath: $WorkingDirectory/out64-osx-4.8,
-                                Bits: 64
-                            );
-                        }
                     }
                 }
             }
@@ -252,17 +169,13 @@ set CLCACHE_BASEDIR=$WorkingDirectory
         Status: pending
     );
 
-    Wait-For-Higher-Priority-Executions
-    (
-        Verbose: true
-    );
-
     if $PluginTagged
     {
         call DFHack-Plugin-Build
         (
             BuildType: Release,
-            GitHubBuildContext: $GitHubBuildContext
+            GitHubBuildContext: $GitHubBuildContext,
+            SkipTests: $SkipTests
         );
     }
     else
@@ -270,7 +183,8 @@ set CLCACHE_BASEDIR=$WorkingDirectory
         call DFHack-Plugin-Build
         (
             BuildType: RelWithDebInfo,
-            GitHubBuildContext: $GitHubBuildContext
+            GitHubBuildContext: $GitHubBuildContext,
+            SkipTests: $SkipTests
         );
     }
 }

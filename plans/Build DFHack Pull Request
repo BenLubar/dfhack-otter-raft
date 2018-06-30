@@ -1,5 +1,6 @@
 ##AH:EvaluateStatementDescriptions
 
+
 set $GitHubBuildContext = pr-$ReleaseNumber;
 
 set $GitHubBuildRepo = dfhack;
@@ -34,33 +35,9 @@ try
 
     # Get Source
     {
-        Wait-For-Higher-Priority-Executions
-        (
-            Verbose: true
-        );
-
         # Git
         with lock = !DFHackGit
         {
-            if false
-            {
-                foreach server in @ServersInRole(DFHack-Windows-Builders)
-                {
-                    # Windows ($ServerName)
-                    if true
-                    {
-                        Log-Information Windows builds are not yet supported for pull requests.;
-                    }
-                    else
-                    {
-                        with async = Git
-                        {
-                            call DFHack-PR-Get-Sources();
-                        }
-                    }
-                }
-            }
-
             foreach server in @ServersInRole(DFHack-Linux-Builders)
             {
                 # Linux ($ServerName)
@@ -84,56 +61,8 @@ try
             Status: pending
         );
 
-        Wait-For-Higher-Priority-Executions
-        (
-            Verbose: true
-        );
-
         with lock = !DFHackDependencies
         {
-            if false
-            {
-                # Windows
-                foreach server in @ServersInRole(DFHack-Windows-Builders)
-                {
-                    # Windows Dependencies ($ServerName)
-                    {
-                        if true
-                        {
-                            Log-Information Windows builds are not yet supported for pull requests.;
-                        }
-                        else
-                        {
-                            with async = Dependencies
-                            {
-                                call DFHack-Cache-Dependencies
-                                (
-                                    DependencyPath: $WorkingDirectory/src/CMake/downloads
-                                );
-                            }
-
-                            with async = Dependencies
-                            {
-                                Execute-PowerShell >>Set-Location $WorkingDirectory
-NuGet.exe install -NonInteractive -Source https://api.nuget.org/v3/index.json clcache
-Move-Item .\clcache.*\clcache-*\ .\clcache
-Remove-Item -Recurse .\clcache.*\>>;
-
-                                Create-File $WorkingDirectory\clcache.bat
-                                (
-                                    Text: >>`@echo off
-`@setlocal
-set CLCACHE_DIR=$BaseWorkingDirectory\dfhack-clcache
-set CLCACHE_BASEDIR=$WorkingDirectory
-"$WorkingDirectory\clcache\clcache.exe" `%*
->>
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-
             # Linux
             foreach server in @ServersInRole(DFHack-Linux-Builders)
             {
@@ -184,33 +113,6 @@ set CLCACHE_BASEDIR=$WorkingDirectory
                             FileName: /bin/bash,
                             Arguments: "-c 'mkdir -p `$HOME/.ccache .ccache {out,build}{32,64}{{,-osx}{,-4.8},-win}'"
                         );
-
-                        call DFHack-Cache-OSX
-                        (
-                            TargetPath: $WorkingDirectory/out32-osx,
-                            Bits: 32
-                        );
-
-                        call DFHack-Cache-OSX
-                        (
-                            TargetPath: $WorkingDirectory/out64-osx,
-                            Bits: 64
-                        );
-
-                        if false
-                        {
-                            call DFHack-Cache-OSX
-                            (
-                                TargetPath: $WorkingDirectory/out32-osx-4.8,
-                                Bits: 32
-                            );
-
-                            call DFHack-Cache-OSX
-                            (
-                                TargetPath: $WorkingDirectory/out64-osx-4.8,
-                                Bits: 64
-                            );
-                        }
                     }
                 }
             }
@@ -228,11 +130,6 @@ set CLCACHE_BASEDIR=$WorkingDirectory
         CommitHash: $GitHubBuildCommit,
         Description: "#$ExecutionId waiting to build...",
         Status: pending
-    );
-
-    Wait-For-Higher-Priority-Executions
-    (
-        Verbose: true
     );
 
     GitHub-Set-Status

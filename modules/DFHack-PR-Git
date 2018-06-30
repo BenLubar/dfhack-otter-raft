@@ -67,6 +67,6 @@ module DFHack-PR-Git<$RepoID, $Repository, $Directory, $BaseBranch, $PullRequest
         FileName: $DefaultGitExePath,
         Arguments: submodule update -q --init --recursive --reference $CacheDir,
         WorkingDirectory: $Directory,
-        ErrorOutputLogLevel: Warning
+        ErrorOutputLogLevel: Debug
     );
 }

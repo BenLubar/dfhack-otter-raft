@@ -65,7 +65,14 @@ module DFHack-Publish-Package<$ArtifactName, $PackageName, $OSArch, $PackageVers
             To: $WorkingDirectory/tmp_$ArtifactName
         );
 
-        set $FileName = $Trim($PSEval(Get-ChildItem $WorkingDirectory/tmp_$ArtifactName -Name | Out-String));
+        set $FileName = "";
+
+        for directory $WorkingDirectory/tmp_$ArtifactName
+        {
+            set @PathParts = @Split($Replace($ListItem(@FileMask(*), 0), \, /), /);
+
+            set $FileName = $ListItem(@PathParts, $Decrement($ListCount(@PathParts)));
+        }
 
         if $MatchesRegex($FileName, \.zip`$)
         {
@@ -177,7 +184,7 @@ $PackageDescription>>,
             }
         }
 
-        if !$Tagged
+        if !$Tagged && !$MatchesRegex($ArtifactName, Windows.*)
         {
             Deploy-Artifact $ArtifactName-dbgsym
             (

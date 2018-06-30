@@ -1,4 +1,4 @@
-module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersion, $OutputPath, $FeedName = Universal>
+template DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersion, $OutputPath, $FeedName = Universal>
 {
     if $GroupName != ""
     {

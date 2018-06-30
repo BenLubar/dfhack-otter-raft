@@ -2,7 +2,7 @@ if $PluginCommit == ""
 {
     with lock = !DFHackGit
     {
-        for server $DFHackReleaseWindowsBuilder
+        for server $DFHackReleaseLinuxBuilder
         {
             call DFHack-Git
             (

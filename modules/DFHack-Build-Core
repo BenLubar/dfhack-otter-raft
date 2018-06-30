@@ -1,4 +1,4 @@
-module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
+module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
 {
     # Windows
     {
@@ -11,7 +11,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                 Bits: 32,
                 ImageTag: msvc,
                 BuildType: $BuildType,
-                ArtifactSuffix: $ArtifactSuffix
+                ArtifactSuffix: $ArtifactSuffix,
+                SkipTests: $SkipTests
             );
         }
 
@@ -24,7 +25,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                 Bits: 64,
                 ImageTag: msvc,
                 BuildType: $BuildType,
-                ArtifactSuffix: $ArtifactSuffix
+                ArtifactSuffix: $ArtifactSuffix,
+                SkipTests: $SkipTests
             );
         }
     }
@@ -42,7 +44,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                     Bits: 32,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
+                    ArtifactSuffix: $ArtifactSuffix,
+                    SkipTests: $SkipTests
                 );
             }
 
@@ -55,7 +58,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                     Bits: 64,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
+                    ArtifactSuffix: $ArtifactSuffix,
+                    SkipTests: $SkipTests
                 );
             }
         }
@@ -71,7 +75,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                     Bits: 32,
                     ImageTag: gcc-4.8,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
+                    ArtifactSuffix: $ArtifactSuffix,
+                    SkipTests: $SkipTests
                 );
             }
 
@@ -84,7 +89,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                     Bits: 64,
                     ImageTag: gcc-4.8,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
+                    ArtifactSuffix: $ArtifactSuffix,
+                    SkipTests: $SkipTests
                 );
             }
         }
@@ -103,7 +109,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                     Bits: 32,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
+                    ArtifactSuffix: $ArtifactSuffix,
+                    SkipTests: $SkipTests
                 );
             }
 
@@ -116,37 +123,8 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "">
                     Bits: 64,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
-                );
-            }
-        }
-
-        # GCC 4.8
-        if false
-        {
-            # OS X (gcc 4.8) (32)
-            with async = DFHackBuild
-            {
-                call DFHack-Core-Shared
-                (
-                    OperatingSystem: MacOSX,
-                    Bits: 32,
-                    ImageTag: gcc-4.8,
-                    BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
-                );
-            }
-
-            # OS X (gcc 4.8) (64)
-            with async = DFHackBuild
-            {
-                call DFHack-Core-Shared
-                (
-                    OperatingSystem: MacOSX,
-                    Bits: 64,
-                    ImageTag: gcc-4.8,
-                    BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix
+                    ArtifactSuffix: $ArtifactSuffix,
+                    SkipTests: $SkipTests
                 );
             }
         }

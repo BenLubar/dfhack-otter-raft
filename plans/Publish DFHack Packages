@@ -227,14 +227,14 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
     }
     else
     {
-        for server $WindowsBuilder
+        for server $LinuxBuilder
         {
             Deploy-Artifact Windows64
             (
                 To: $WorkingDirectory/tmp_dfversion
             );
 
-            set $FileName = $Trim($PSEval(Get-ChildItem $WorkingDirectory/tmp_dfversion -Name | Out-String));
+            set $FileName = $Trim($SHEval(ls $WorkingDirectory/tmp_dfversion));
 
             set $DFVersion = $ListItem(@Split($FileName, -), 1);
         }

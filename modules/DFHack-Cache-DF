@@ -1,0 +1,41 @@
+module DFHack-Cache-DF<$TargetPath, $OperatingSystem, $Bits>
+{
+    set $Version = $ListItem(@Split($GetVariableValue(ResolvedDFHackTag), -), 0);
+
+    if $Version == ""
+    {
+        Get-Http https://proget.local.lubar.me/upack/DwarfFortress/packages?group=dwarffortress/core&name=$OperatingSystem$Bits
+        (
+            MaxResponseLength: 2147483647,
+            ProxyRequest: false,
+            ResponseBody => $PackageInfo
+        );
+
+        set $Version = $MapItem(%FromJson($PackageInfo), latestVersion);
+    }
+
+    set $ProGetVersion = $Replace($Version, .0, .);
+
+    try
+    {
+        call DFHack-Universal-Package
+        (
+            GroupName: dwarffortress/core,
+            PackageName: $OperatingSystem$Bits,
+            NormalizedVersion: $ProGetVersion,
+            OutputPath: $TargetPath,
+            FeedName: DwarfFortress
+        );
+    }
+    catch
+    {
+        ProGet::Get-Package
+        (
+            Credentials: ProGet,
+            Feed: DwarfFortress,
+            Name: dwarffortress/core/$OperatingSystem$Bits,
+            Version: $Version,
+            Directory: $TargetPath
+        );
+    }
+}

@@ -1,5 +1,5 @@
 ##AH:Description Download a Git repository with submodules, caching it to make future downloads faster.
-module DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $RequestedCommitHash = "", out $CommitHash, out $ResolvedTag>
+template DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $RequestedCommitHash = "", out $CommitHash, out $ResolvedTag>
 {
     set $CacheDir = $PathCombine($DFHackGitCache, $RepoID);
 
