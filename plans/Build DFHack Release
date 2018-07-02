@@ -89,6 +89,16 @@ try
             await Git;
         }
 
+        for server $ListItem(@ServersInRole(DFHack-Linux-Builders), 0)
+        {
+            Create-Artifact test-scripts
+            (
+                From: $WorkingDirectory/src/test,
+                Verbose: true,
+                Overwrite: true
+            );
+        }
+
         GitHub-Set-Status
         (
             Credentials: GitHub-DFHack,

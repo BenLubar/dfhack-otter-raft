@@ -30,6 +30,31 @@
       "Variables": {}
     },
     {
+      "Name": "Test",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Do Nothing",
+          "EnvironmentName": "Integration",
+          "BuildImporterTemplate": null,
+          "ServerNames": [],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 0
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": true,
+      "Variables": {}
+    },
+    {
       "Name": "Publish",
       "Description": null,
       "TargetExecutionMode": "Parallel",

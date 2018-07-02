@@ -18,8 +18,6 @@ try
         Status: pending
     );
 
-    set $SkipTests = false;
-
     # Get Source
     {
         # Git
@@ -39,9 +37,14 @@ try
 
         for server $ListItem(@ServersInRole(DFHack-Linux-Builders), 0)
         {
-            if !$FileExists($WorkingDirectory/src/plugins/$PluginRepo/test/main.lua)
+            if $FileExists($WorkingDirectory/src/plugins/$PluginRepo/test/main.lua)
             {
-                set $SkipTests = true;
+                Create-Artifact test-scripts
+                (
+                    From: $WorkingDirectory/src/plugins/$PluginRepo/test,
+                    Verbose: true,
+                    Overwrite: true
+                );
             }
         }
 
@@ -141,8 +144,7 @@ try
     (
         BuildType: RelWithDebInfo,
         GitHubBuildContext: $GitHubBuildContext,
-        PluginName: $PluginRepo,
-        SkipTests: $SkipTests
+        PluginName: $PluginRepo
     );
 }
 catch

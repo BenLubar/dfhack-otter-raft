@@ -1,5 +1,5 @@
 ##AH:EvaluateStatementDescriptions
-module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $BuildType = Release, $ArtifactSuffix = "", $SkipTests = false>
+module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $BuildType = Release, $ArtifactSuffix = "">
 {
     Acquire-Server
     (
@@ -68,7 +68,7 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
             set $DebugPrefix = $WorkingDirectory/dbg$Bits$Suffix$ArtifactSuffix;
 
             # Download Dwarf Fortress
-            if !$SkipTests || $OperatingSystem == MacOSX
+            if $OperatingSystem == MacOSX
             {
                 call DFHack-Cache-DF
                 (
@@ -157,47 +157,6 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                         Image: $ImageTag,
                         Trusted: $TrustedBuild
                     );
-                }
-            }
-
-            if !$SkipTests && (!$TrustedBuild || $GetVariableValue(TriggeredByDFHack)) && $PackageNumber != $PackageNumber($ReleaseNumber, latest)
-            {
-                Log-Warning Cancelling tests for $Title ($Bits) as a newer version is waiting to be built.;
-
-                set $SkipTests = true;
-            }
-
-            if !$SkipTests && false
-            {
-                # Integration Tests
-                try
-                {
-                    for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
-                    {
-                        DFHack::Make
-                        (
-                            Target: install,
-                            Image: $ImageTag,
-                            Trusted: $TrustedBuild
-                        );
-                    }
-
-                    for directory $InstallPrefix
-                    {
-                        DFHack::Test
-                        (
-                            OperatingSystem: $OperatingSystem,
-                            Image: $ImageTag,
-                            Architecture: $Architecture,
-                            Command: plugins/$PluginName/test/main,
-                            Trusted: $TrustedBuild
-                        );
-                    }
-                }
-                catch
-                {
-                    # Continue plan, but fail build.
-                    error;
                 }
             }
 

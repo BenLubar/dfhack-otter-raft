@@ -1,4 +1,4 @@
-module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $ApplicationName, $ArtifactSuffix = "", $SkipTests = false>
+module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $ApplicationName, $ArtifactSuffix = "">
 {
     GitHub-Set-Status
     (
@@ -23,8 +23,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                 PluginName: $PluginName,
                 ImageTag: msvc,
                 BuildType: $BuildType,
-                ArtifactSuffix: $ArtifactSuffix,
-                SkipTests: $SkipTests
+                ArtifactSuffix: $ArtifactSuffix
             );
         }
 
@@ -38,8 +37,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                 PluginName: $PluginName,
                 ImageTag: msvc,
                 BuildType: $BuildType,
-                ArtifactSuffix: $ArtifactSuffix,
-                SkipTests: $SkipTests
+                ArtifactSuffix: $ArtifactSuffix
             );
         }
     }
@@ -58,8 +56,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                     PluginName: $PluginName,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix,
-                    SkipTests: $SkipTests
+                    ArtifactSuffix: $ArtifactSuffix
                 );
             }
 
@@ -73,8 +70,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                     PluginName: $PluginName,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix,
-                    SkipTests: $SkipTests
+                    ArtifactSuffix: $ArtifactSuffix
                 );
             }
         }
@@ -91,8 +87,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                     PluginName: $PluginName,
                     ImageTag: gcc-4.8,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix,
-                    SkipTests: $SkipTests
+                    ArtifactSuffix: $ArtifactSuffix
                 );
             }
 
@@ -106,8 +101,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                     PluginName: $PluginName,
                     ImageTag: gcc-4.8,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix,
-                    SkipTests: $SkipTests
+                    ArtifactSuffix: $ArtifactSuffix
                 );
             }
         }
@@ -127,8 +121,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                     PluginName: $PluginName,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix,
-                    SkipTests: $SkipTests
+                    ArtifactSuffix: $ArtifactSuffix
                 );
             }
 
@@ -142,8 +135,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
                     PluginName: $PluginName,
                     ImageTag: latest,
                     BuildType: $BuildType,
-                    ArtifactSuffix: $ArtifactSuffix,
-                    SkipTests: $SkipTests
+                    ArtifactSuffix: $ArtifactSuffix
                 );
             }
         }

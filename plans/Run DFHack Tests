@@ -1,0 +1,129 @@
+if $ListIndexOf(@ArtifactsInPackage, test-scripts) == -1
+{
+    Log-Debug Skipping tests - no test scripts.;
+}
+else
+{
+    Acquire-Server
+    (
+        Role: DFHack-Linux-Testers,
+        Verbose: true,
+        ServerName => $TestServer
+    );
+
+    for server $TestServer
+    {
+        InedoCore::Exec
+        (
+            FileName: /usr/bin/docker,
+            Arguments: pull $DFHackBuildEnv:latest,
+            ErrorOutputLogLevel: Debug
+        );
+
+        call DFHack-Cache-DF
+        (
+            TargetPath: $WorkingDirectory/DF,
+            OperatingSystem: Linux,
+            Bits: 64
+        );
+
+        if $GetVariableValue(PluginCommit) != ""
+        {
+            if $GetVariableValue(DFHackTag) == ""
+            {
+                call DFHack-Universal-Package
+                (
+                    GroupName: dfhack/core,
+                    PackageName: linux64,
+                    OutputPath: $WorkingDirectory/DF,
+                    FeedName: DwarfFortress-prerelease
+                );
+            }
+            else
+            {
+                call DFHack-Universal-Package
+                (
+                    GroupName: dfhack/core,
+                    PackageName: linux64,
+                    NormalizedVersion: $Replace($DFHackTag, .0, .),
+                    OutputPath: $WorkingDirectory/DF,
+                    FeedName: DwarfFortress
+                );
+            }
+
+            Deploy-Artifact Linux64
+            (
+                To: $WorkingDirectory/DF/hack/plugins_temp,
+                TransferAll: true,
+                DoNotClearTarget: true,
+                Verbose: true,
+                OverwriteReadOnly: true
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /bin/tar,
+                Arguments: "xf ../plugins_temp/*",
+                WorkingDirectory: $WorkingDirectory/DF/hack/plugins
+            );
+
+            if $ListIndexOf(@ArtifactsInPackage, df-ai-blueprints) != -1
+            {
+                Deploy-Artifact df-ai-blueprints
+                (
+                    To: $WorkingDirectory/DF,
+                    TransferAll: true,
+                    DoNotClearTarget: true,
+                    Verbose: true,
+                    OverwriteReadOnly: true
+                );
+            }
+        }
+        else
+        {
+            Deploy-Artifact Linux64
+            (
+                To: $WorkingDirectory/DF/hack_temp,
+                TransferAll: true,
+                DoNotClearTarget: true,
+                Verbose: true,
+                OverwriteReadOnly: true
+            );
+
+            InedoCore::Exec
+            (
+                FileName: /bin/tar,
+                Arguments: "xf hack_temp/*",
+                WorkingDirectory: $WorkingDirectory/DF
+            );
+        }
+
+        InedoCore::Exec
+        (
+            FileName: /bin/chmod,
+            Arguments: +x libs/Dwarf_Fortress,
+            WorkingDirectory: $WorkingDirectory/DF
+        );
+
+        Deploy-Artifact test-scripts
+        (
+            To: $WorkingDirectory/DF/hack/scripts/test,
+            TransferAll: true,
+            DoNotClearTarget: true,
+            Verbose: true,
+            OverwriteReadOnly: true
+        );
+
+        for directory $WorkingDirectory/DF
+        {
+            DFHack::Test
+            (
+                OperatingSystem: Linux,
+                Architecture: x86_64,
+                Command: test/main,
+                Image: latest,
+                Trusted: $TrustedBuild
+            );
+        }
+    }
+}
