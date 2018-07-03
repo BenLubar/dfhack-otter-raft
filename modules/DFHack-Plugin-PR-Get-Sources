@@ -2,17 +2,32 @@ module DFHack-Plugin-PR-Get-Sources
 {
     # DFHack
     {
-        call DFHack-Git
-        (
-            RepoID: dfhack,
-            Repository: https://github.com/DFHack/dfhack.git,
-            Directory: $WorkingDirectory/src,
-            Branch: $Coalesce($GetVariableValue(DFHackBranch), develop),
-            Tag: $GetVariableValue(DFHackTag),
-            RequestedCommitHash: $GetVariableValue(DFHackCommit),
-            CommitHash => $ResolvedDFHackCommit,
-            ResolvedTag => $ResolvedDFHackTag
-        );
+        if $IsVariableDefined(DFHackPR)
+        {
+            call DFHack-PR-Git
+            (
+                RepoID: dfhack,
+                Repository: https://github.com/DFHack/dfhack.git,
+                Directory: $WorkingDirectory/src,
+                BaseBranch: develop,
+                PullRequest: $DFHackPR,
+                RequestedCommitHash: $GetVariableValue(DFHackCommit)
+            );
+        }
+        else
+        {
+            call DFHack-Git
+            (
+                RepoID: dfhack,
+                Repository: https://github.com/DFHack/dfhack.git,
+                Directory: $WorkingDirectory/src,
+                Branch: $Coalesce($GetVariableValue(DFHackBranch), develop),
+                Tag: $GetVariableValue(DFHackTag),
+                RequestedCommitHash: $GetVariableValue(DFHackCommit),
+                CommitHash => $ResolvedDFHackCommit,
+                ResolvedTag => $ResolvedDFHackTag
+            );
+        }
     }
 
     # Plugin

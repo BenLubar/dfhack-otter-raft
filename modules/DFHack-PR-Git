@@ -52,14 +52,17 @@ module DFHack-PR-Git<$RepoID, $Repository, $Directory, $BaseBranch, $PullRequest
         ErrorOutputLogLevel: Information
     );
 
-    # Check out the specific commit requested.
-    InedoCore::Exec
-    (
-        FileName: $DefaultGitExePath,
-        Arguments: -c advice.detachedHead=false checkout -q $RequestedCommitHash,
-        WorkingDirectory: $Directory,
-        ErrorOutputLogLevel: Warning
-    );
+    if $RequestedCommitHash != ""
+    {
+        # Check out the specific commit requested.
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: -c advice.detachedHead=false checkout -q $RequestedCommitHash,
+            WorkingDirectory: $Directory,
+            ErrorOutputLogLevel: Warning
+        );
+    }
 
     # Clone submodules. Any we've previously downloaded are cached in the local mirror.
     InedoCore::Exec
