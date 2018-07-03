@@ -7,9 +7,9 @@ module DFHack-Plugin-PR-Get-Sources
             RepoID: dfhack,
             Repository: https://github.com/DFHack/dfhack.git,
             Directory: $WorkingDirectory/src,
-            Branch: $DFHackBranch,
-            Tag: $DFHackTag,
-            RequestedCommitHash: $DFHackCommit,
+            Branch: $Coalesce($GetVariableValue(DFHackBranch), develop),
+            Tag: $GetVariableValue(DFHackTag),
+            RequestedCommitHash: $GetVariableValue(DFHackCommit),
             CommitHash => $ResolvedDFHackCommit,
             ResolvedTag => $ResolvedDFHackTag
         );
