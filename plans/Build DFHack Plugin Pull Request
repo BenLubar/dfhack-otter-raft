@@ -70,7 +70,7 @@ try
                     {
                         Create-File $WorkingDirectory/src/plugins/CMakeLists.custom.txt
                         (
-                            Text: "add_subdirectory($ApplicationName)",
+                            Text: "add_subdirectory($PluginRepo)",
                             Overwrite: true
                         );
                     }
