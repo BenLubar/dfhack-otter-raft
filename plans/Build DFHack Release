@@ -224,7 +224,7 @@ try
             }
         }
 
-        Set-Execution-Priority 40;
+        Set-Execution-Priority 5;
 
         GitHub-Set-Status
         (
