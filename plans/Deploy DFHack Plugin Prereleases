@@ -7,6 +7,6 @@ foreach $PluginName in @ApplicationsInGroup(DFHack Plugins)
         From: Publish,
         To: Deployed,
         Wait: false,
-        FailIfCannotDeploy: true
+        FailIfCannotDeploy: false
     );
 }

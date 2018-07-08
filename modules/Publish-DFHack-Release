@@ -2,6 +2,20 @@ module Publish-DFHack-Release
 {
     # GitHub Release
     {
+        set $ReleaseNotes = "";
+
+        for server $ListItem(@ServersInRole(DFHack-Linux-Builders), 0)
+        {
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/python,
+                Arguments: docs/gen_changelog.py -a,
+                WorkingDirectory: $WorkingDirectory/src
+            );
+
+            set $ReleaseNotes = $FileContents($WorkingDirectory/src/docs/_changelogs/$ReleaseNumber-github.txt);
+        }
+
         for server $DFHackReleaseWindowsBuilder
         {
             try
@@ -59,29 +73,11 @@ module Publish-DFHack-Release
                     DoNotClearTarget: true
                 );
 
-                if false
-                {
-                    Deploy-Artifact OSX32-4.8
-                    (
-                        To: $WorkingDirectory/github-staging,
-                        DoNotClearTarget: true
-                    );
-                }
-
                 Deploy-Artifact OSX64
                 (
                     To: $WorkingDirectory/github-staging,
                     DoNotClearTarget: true
                 );
-
-                if false
-                {
-                    Deploy-Artifact OSX64-4.8
-                    (
-                        To: $WorkingDirectory/github-staging,
-                        DoNotClearTarget: true
-                    );
-                }
 
                 GitHub-Set-Status
                 (
@@ -93,6 +89,22 @@ module Publish-DFHack-Release
                     Description: Package upload in progress...,
                     Status: pending
                 );
+
+                if false
+                {
+                    Ensure-GitHub-Release
+                    (
+                        Credentials: GitHub-DFHack,
+                        Organization: DFHack,
+                        Repository: dfhack,
+                        Tag: $ReleaseNumber,
+                        Target: $ReleaseNumber,
+                        Title: DFHack $ReleaseNumber,
+                        Description: $ReleaseNotes,
+                        Draft: false,
+                        Prerelease: "$MatchesRegex($ReleaseNumber, .*-(alpha|beta).*)"
+                    );
+                }
 
                 GitHub-Upload-Release-Assets
                 (
