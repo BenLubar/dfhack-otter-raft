@@ -131,45 +131,20 @@ module Publish-DFHack-Release
                 # IRC Notification
                 try
                 {
-                    Execute-PowerShell & 'D:\ProgramData\BuildMaster\DFHackReleaseNotify.ps1' | Out-Null;
-
-                    try
-                    {
-                        GitHub-Set-Status
-                        (
-                            Credentials: GitHub-DFHack,
-                            AdditionalContext: upload,
-                            CommitHash: $DFHackCommit,
-                            Organization: DFHack,
-                            Repository: dfhack,
-                            Description: Release $DFHackTag packages uploaded successfully,
-                            Status: success
-                        );
-                    }
-                    catch
-                    {
-                    }
+                    GitHub-Set-Status
+                    (
+                        Credentials: GitHub-DFHack,
+                        AdditionalContext: upload,
+                        CommitHash: $DFHackCommit,
+                        Organization: DFHack,
+                        Repository: dfhack,
+                        Description: Release $DFHackTag packages uploaded successfully,
+                        Status: success
+                    );
                 }
                 catch
                 {
                     Log-Warning "IRC notification failed! Contact lethosor or BenLubar in irc://chat.freenode.net/#dfhack";
-
-                    try
-                    {
-                        GitHub-Set-Status
-                        (
-                            Credentials: GitHub-DFHack,
-                            AdditionalContext: upload,
-                            CommitHash: $DFHackCommit,
-                            Organization: DFHack,
-                            Repository: dfhack,
-                            Description: "Release $DFHackTag packages uploaded successfully, but IRC notification failed",
-                            Status: success
-                        );
-                    }
-                    catch
-                    {
-                    }
                 }
             }
             catch
