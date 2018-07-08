@@ -106,6 +106,18 @@ module Publish-DFHack-Release
                     );
                 }
 
+                Ensure-GitHub-Release
+                (
+                    Credentials: GitHub-DFHack,
+                    Organization: DFHack,
+                    Repository: dfhack,
+                    Tag: $ReleaseNumber,
+                    Target: $ReleaseNumber,
+                    Title: DFHack $ReleaseNumber,
+                    Draft: true,
+                    Prerelease: "$MatchesRegex($ReleaseNumber, .*-(alpha|beta).*)"
+                );
+
                 GitHub-Upload-Release-Assets
                 (
                     Credentials: GitHub-DFHack,
@@ -146,6 +158,15 @@ module Publish-DFHack-Release
                 {
                     Log-Warning "IRC notification failed! Contact lethosor or BenLubar in irc://chat.freenode.net/#dfhack";
                 }
+
+                Ensure-GitHub-Release
+                (
+                    Credentials: GitHub-DFHack,
+                    Organization: DFHack,
+                    Repository: dfhack,
+                    Tag: $ReleaseNumber,
+                    Draft: false
+                );
             }
             catch
             {
