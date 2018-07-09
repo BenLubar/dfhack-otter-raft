@@ -30,14 +30,12 @@ module Update-DF-Structures<$VersionNumber>
                 Branch: master
             );
 
-            call DFHack-PR-Git
+            call DFHack-Git
             (
-                RepoID: jjyg-df_misc,
-                Repository: https://github.com/jjyg/df_misc.git,
+                RepoID: DFHack-df_misc,
+                Repository: https://github.com/DFHack/df_misc.git,
                 Directory: $WorkingDirectory/df_misc,
-                BaseBranch: master,
-                PullRequest: 9,
-                RequestedCommitHash: cbcc8ba38a97aeb2ce45fbcab00e374de49255dc
+                Branch: master
             );
 
             call DFHack-Git
