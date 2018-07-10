@@ -79,15 +79,37 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
             # Compile
             for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
             {
+                set @AdditionalArgs = @();
+
+                if $TrustedBuild
+                {
+                    if $ReleaseNumber == 0.0.0
+                    {
+                        set @AdditionalArgs = @ListInsert(@AdditionalArgs, -DDFHACK_BUILD_ID=$PackageNumber);
+                    }
+                }
+                else
+                {
+                    if $IsVariableDefined(OverrideStructuresCommit)
+                    {
+                        set @AdditionalArgs = @ListInsert(@AdditionalArgs, -DDFHACK_BUILD_ID=structures-pr$ReleaseNumber-$PackageNumber);
+                    }
+                    else
+                    {
+                        set @AdditionalArgs = @ListInsert(@AdditionalArgs, -DDFHACK_BUILD_ID=pr$ReleaseNumber-$PackageNumber);
+                    }
+                }
+
                 DFHack::Configure
                 (
                     OperatingSystem: $OperatingSystem,
-                    Image: $ImageTag,
                     Architecture: $Architecture,
                     BuildType: $BuildType,
+                    AdditionalArgs: @AdditionalArgs,
                     InstallPrefix: $InstallPrefix,
                     IncludeDocumentation: true,
                     IncludeStonesense: true,
+                    Image: $ImageTag,
                     Trusted: $TrustedBuild
                 );
 
