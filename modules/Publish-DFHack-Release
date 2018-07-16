@@ -115,7 +115,7 @@ module Publish-DFHack-Release
                     Target: $ReleaseNumber,
                     Title: DFHack $ReleaseNumber,
                     Draft: true,
-                    Prerelease: "$MatchesRegex($ReleaseNumber, .*-(alpha|beta).*)"
+                    Prerelease: $MatchesRegex($ReleaseNumber, .*-`(alpha|beta`).*)
                 );
 
                 GitHub-Upload-Release-Assets

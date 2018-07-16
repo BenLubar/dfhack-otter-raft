@@ -109,28 +109,45 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                         Architecture: $Architecture,
                         BuildType: $BuildType,
                         AdditionalArgs: @AdditionalArgs,
+                        UseNinja: $Coalesce($GetVariableValue(UseNinja), false),
                         InstallPrefix: $InstallPrefix,
                         IncludeSupported: false,
                         Image: $ImageTag,
                         Trusted: $TrustedBuild
                     );
 
-                    DFHack::Make
-                    (
-                        Target: generate_headers,
-                        Image: $ImageTag,
-                        Trusted: $TrustedBuild
-                    );
+                    if $Coalesce($GetVariableValue(UseNinja), false)
+                    {
+                        DFHack::Make
+                        (
+                            Target: $PluginName,
+                            UseNinja: true,
+                            Image: $ImageTag,
+                            Trusted: $TrustedBuild
+                        );
+                    }
+                    else
+                    {
+                        DFHack::Make
+                        (
+                            Target: generate_headers,
+                            Image: $ImageTag,
+                            Trusted: $TrustedBuild
+                        );
+                    }
                 }
 
                 for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix/plugins/$PluginName
                 {
-                    DFHack::Make
-                    (
-                        Target: preinstall,
-                        Image: $ImageTag,
-                        Trusted: $TrustedBuild
-                    );
+                    if !$Coalesce($GetVariableValue(UseNinja), false)
+                    {
+                        DFHack::Make
+                        (
+                            Target: preinstall,
+                            Image: $ImageTag,
+                            Trusted: $TrustedBuild
+                        );
+                    }
 
                     if $BuildType == RelWithDebInfo
                     {
@@ -173,9 +190,23 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                         }
                     }
 
+                    if !$Coalesce($GetVariableValue(UseNinja), false)
+                    {
+                        DFHack::Make
+                        (
+                            Target: install,
+                            Image: $ImageTag,
+                            Trusted: $TrustedBuild
+                        );
+                    }
+                }
+
+                if $Coalesce($GetVariableValue(UseNinja), false)
+                {
                     DFHack::Make
                     (
-                        Target: install,
+                        Target: plugins/$PluginName/install,
+                        UseNinja: true,
                         Image: $ImageTag,
                         Trusted: $TrustedBuild
                     );

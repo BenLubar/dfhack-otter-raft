@@ -30,6 +30,26 @@ module DFHack-Plugin-PR-Get-Sources
         }
     }
 
+    # Structures
+    if $IsVariableDefined(StructuresPR)
+    {
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: fetch https://github.com/DFHack/df-structures.git refs/pull/$StructuresPR/merge,
+            WorkingDirectory: $WorkingDirectory/src/library/xml,
+            ErrorOutputLogLevel: Information
+        );
+
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: -c advice.detachedHead=false checkout -q FETCH_HEAD,
+            WorkingDirectory: $WorkingDirectory/src/library/xml,
+            ErrorOutputLogLevel: Warning
+        );
+    }
+
     # Plugin
     {
         call DFHack-PR-Git
