@@ -106,7 +106,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                     Architecture: $Architecture,
                     BuildType: $BuildType,
                     AdditionalArgs: @AdditionalArgs,
-                    UseNinja: $Coalesce($GetVariableValue(UseNinja), false),
+                    UseNinja: $Coalesce($GetVariableValue(UseNinja), true),
                     InstallPrefix: $InstallPrefix,
                     IncludeDocumentation: true,
                     IncludeStonesense: true,
@@ -117,7 +117,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                 DFHack::Make
                 (
                     Target: package,
-                    UseNinja: $Coalesce($GetVariableValue(UseNinja), false),
+                    UseNinja: $Coalesce($GetVariableValue(UseNinja), true),
                     Image: $ImageTag,
                     Trusted: $TrustedBuild
                 );

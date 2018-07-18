@@ -109,14 +109,14 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                         Architecture: $Architecture,
                         BuildType: $BuildType,
                         AdditionalArgs: @AdditionalArgs,
-                        UseNinja: $Coalesce($GetVariableValue(UseNinja), false),
+                        UseNinja: $Coalesce($GetVariableValue(UseNinja), true),
                         InstallPrefix: $InstallPrefix,
                         IncludeSupported: false,
                         Image: $ImageTag,
                         Trusted: $TrustedBuild
                     );
 
-                    if $Coalesce($GetVariableValue(UseNinja), false)
+                    if $Coalesce($GetVariableValue(UseNinja), true)
                     {
                         DFHack::Make
                         (
@@ -139,7 +139,7 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
 
                 for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix/plugins/$PluginName
                 {
-                    if !$Coalesce($GetVariableValue(UseNinja), false)
+                    if !$Coalesce($GetVariableValue(UseNinja), true)
                     {
                         DFHack::Make
                         (
@@ -190,7 +190,7 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                         }
                     }
 
-                    if !$Coalesce($GetVariableValue(UseNinja), false)
+                    if !$Coalesce($GetVariableValue(UseNinja), true)
                     {
                         DFHack::Make
                         (
@@ -201,7 +201,7 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
                     }
                 }
 
-                if $Coalesce($GetVariableValue(UseNinja), false)
+                if $Coalesce($GetVariableValue(UseNinja), true)
                 {
                     DFHack::Make
                     (
