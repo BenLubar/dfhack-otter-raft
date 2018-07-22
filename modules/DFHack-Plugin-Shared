@@ -203,13 +203,16 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
 
                 if $Coalesce($GetVariableValue(UseNinja), true)
                 {
-                    DFHack::Make
-                    (
-                        Target: plugins/$PluginName/install,
-                        UseNinja: true,
-                        Image: $ImageTag,
-                        Trusted: $TrustedBuild
-                    );
+                    for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
+                    {
+                        DFHack::Make
+                        (
+                            Target: plugins/$PluginName/install,
+                            UseNinja: true,
+                            Image: $ImageTag,
+                            Trusted: $TrustedBuild
+                        );
+                    }
                 }
             }
 

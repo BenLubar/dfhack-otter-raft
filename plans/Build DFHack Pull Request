@@ -18,7 +18,7 @@ else
     set $GitHubBuildCommit = $DFHackCommit;
 }
 
-Set-Execution-Priority 20;
+Set-Execution-Priority 40;
 
 try
 {

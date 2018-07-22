@@ -19,7 +19,7 @@ else
     {
         if $DFHackTag != ""
         {
-            Set-Execution-Priority 25;
+            Set-Execution-Priority 10;
 
             set $GitHubBuildContext = pre-$DFHackTag;
         }

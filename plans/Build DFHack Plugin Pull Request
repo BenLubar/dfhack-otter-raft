@@ -3,7 +3,7 @@
 
 set $GitHubBuildContext = pr-$ReleaseNumber;
 
-Set-Execution-Priority 10;
+Set-Execution-Priority 30;
 
 try
 {

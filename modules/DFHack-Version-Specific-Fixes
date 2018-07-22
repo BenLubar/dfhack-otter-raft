@@ -100,6 +100,26 @@ module DFHack-Version-Specific-Fixes<$DFHackTag, $PluginName = "", $PluginTag = 
         }
     }
 
+    # df-ai wants to be able to use dfhack_lua_viewscreen::_identity.
+    if $PluginName == df-ai && $ResolvedDFHackTag == 0.44.12-r1
+    {
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: fetch refs/pull/1372/merge,
+            WorkingDirectory: $WorkingDirectory,
+            ErrorOutputLogLevel: Debug
+        );
+
+        InedoCore::Exec
+        (
+            FileName: $DefaultGitExePath,
+            Arguments: merge --no-commit FETCH_HEAD,
+            WorkingDirectory: $WorkingDirectory,
+            ErrorOutputLogLevel: Debug
+        );
+    }
+
     # Override structure definitions
     if $IsVariableDefined(OverrideStructuresCommit)
     {
