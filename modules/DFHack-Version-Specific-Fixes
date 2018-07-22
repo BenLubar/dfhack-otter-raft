@@ -107,7 +107,7 @@ module DFHack-Version-Specific-Fixes<$DFHackTag, $PluginName = "", $PluginTag = 
         (
             FileName: $DefaultGitExePath,
             Arguments: fetch refs/pull/1372/merge,
-            WorkingDirectory: $WorkingDirectory,
+            WorkingDirectory: $WorkingDirectory/src,
             ErrorOutputLogLevel: Debug
         );
 
@@ -115,7 +115,7 @@ module DFHack-Version-Specific-Fixes<$DFHackTag, $PluginName = "", $PluginTag = 
         (
             FileName: $DefaultGitExePath,
             Arguments: merge --no-commit FETCH_HEAD,
-            WorkingDirectory: $WorkingDirectory,
+            WorkingDirectory: $WorkingDirectory/src,
             ErrorOutputLogLevel: Debug
         );
     }
