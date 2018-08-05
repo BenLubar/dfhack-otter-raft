@@ -97,7 +97,7 @@ rm -rf temp>>
             Version: $VersionNumber,
             Description: "Dwarf Fortress [version $VersionNumber](https://dwarffortresswiki.org/index.php/Release_information/$VersionNumber) for $MapItem(%FriendlyOSArch, $Suffix), released on $Date.",
             Title: "Dwarf Fortress ($MapItem(%FriendlyOSArch, $Suffix))",
-            Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
+            Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
         );
     }
 }
