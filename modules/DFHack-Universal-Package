@@ -1,25 +1,33 @@
-module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersion, $OutputPath, $FeedName = Universal>
+module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersion = "", $OutputPath, $FeedName = Universal>
 {
+    if $NormalizedVersion == ""
+    {
+        Get-Http https://proget.lubar.me/upack/$FeedName/packages?group=$GroupName&name=$PackageName
+        (
+            MaxResponseLength: 2147483647,
+            ProxyRequest: false,
+            ResponseBody => $PackageInfo
+        );
+
+        set $NormalizedVersion = $MapItem(%FromJson($PackageInfo), latestVersion);
+    }
+
     if $GroupName != ""
     {
         set $GroupName = $GroupName/;
     }
 
-    for role Windows
-    {
-        Execute-PowerShell Invoke-WebRequest -Uri "https://proget.local.lubar.me/upack/${FeedName}/download/${GroupName}${PackageName}/${NormalizedVersion}?contentOnly=zip" -OutFile "${WorkingDirectory}/${PackageName}.zip";
-    }
+    Ensure-Directory $WorkingDirectory;
 
-    for role Linux
-    {
-        InedoCore::Exec
-        (
-            FileName: /usr/bin/wget,
-            Arguments: -q "https://proget.local.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip" -O "${PackageName}.zip"
-        );
-    }
+    Download-Http https://proget.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip
+    (
+        FileName: $WorkingDirectory/$PackageName.zip,
+        LogResponseBody: false,
+        MaxResponseLength: 2147483647,
+        ProxyRequest: false
+    );
 
-    Extract-ZipFile $WorkingDirectory/${PackageName}.zip
+    Extract-ZipFile $WorkingDirectory/$PackageName.zip
     (
         Directory: $OutputPath,
         Overwrite: true
