@@ -2,7 +2,7 @@ module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersio
 {
     if $NormalizedVersion == ""
     {
-        Get-Http https://proget.local.lubar.me/upack/$FeedName/packages?group=$GroupName&name=$PackageName
+        Get-Http https://proget.lubar.me/upack/$FeedName/packages?group=$GroupName&name=$PackageName
         (
             MaxResponseLength: 2147483647,
             ProxyRequest: false,
@@ -19,7 +19,7 @@ module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersio
 
     Ensure-Directory $WorkingDirectory;
 
-    Download-Http https://proget.local.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip
+    Download-Http https://proget.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip
     (
         FileName: $WorkingDirectory/$PackageName.zip,
         LogResponseBody: false,

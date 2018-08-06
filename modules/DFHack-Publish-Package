@@ -104,7 +104,7 @@ module DFHack-Publish-Package<$ArtifactName, $PackageName, $OSArch, $PackageVers
                     Description: >>DFHack $PackageName ($MapItem(%FriendlyOSArch, $OSArch))
 
 $PackageDescription>>,
-                    Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
+                    Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
                     Dependencies: @PackageDependencies
                 );
             }
@@ -178,7 +178,7 @@ rm -rf temp>>
                     Description: >>DFHack $PackageName ($MapItem(%FriendlyOSArch, $OSArch))
 
 $PackageDescription>>,
-                    Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
+                    Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
                     Dependencies: @PackageDependencies
                 );
             }
@@ -207,7 +207,7 @@ $PackageDescription>>,
 This is a debug symbol package. If you don't know what that means, this is probably not the package you are looking for. Check the "dependencies" tab for a link to the package containing the content.
 
 $PackageDescription>>,
-                    Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
+                    Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/$PackageName.png,
                     Dependencies: @(dfhack/$PackageName/$OSArch:$PackageVersion)
                 );
             }
