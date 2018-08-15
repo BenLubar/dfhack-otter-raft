@@ -62,7 +62,7 @@ module Update-DF-Structures<$VersionNumber>
 
             call DFHack-Git
             (
-                RepoID: DFHack-dfhack,
+                RepoID: dfhack,
                 Repository: https://github.com/DFHack/dfhack.git,
                 Directory: $WorkingDirectory/dfhack,
                 Branch: develop
