@@ -2,7 +2,7 @@ module DF-Handle-New-Version<$FileName, $VersionNumber>
 {
     set $WindowsBuilder = GODZILLA;
 
-    set $LinuxBuilder = australium;
+    set $LinuxBuilder = urist;
 
     set $ActualFileName = $FileName;
 
