@@ -4,7 +4,7 @@ module DFHack-Cache-DF<$TargetPath, $OperatingSystem, $Bits>
 
     if $Version == ""
     {
-        Get-Http https://proget.local.lubar.me/upack/DwarfFortress/packages?group=dwarffortress/core&name=$OperatingSystem$Bits
+        Get-Http https://proget.lubar.me/upack/DwarfFortress/packages?group=dwarffortress/core&name=$OperatingSystem$Bits
         (
             MaxResponseLength: 2147483647,
             ProxyRequest: false,

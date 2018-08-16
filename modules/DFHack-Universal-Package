@@ -19,15 +19,36 @@ module DFHack-Universal-Package<$GroupName = "", $PackageName, $NormalizedVersio
 
     Ensure-Directory $WorkingDirectory;
 
-    Download-Http https://proget.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip
-    (
-        FileName: $WorkingDirectory/$PackageName.zip,
-        LogResponseBody: false,
-        MaxResponseLength: 2147483647,
-        ProxyRequest: false
-    );
+    set $CachePath = $PathCombine($DFHackCache, $UrlEncode($GroupName$PackageName/$NormalizedVersion).zip);
 
-    Extract-ZipFile $WorkingDirectory/$PackageName.zip
+    if !$FileExists($CachePath)
+    {
+        Download-Http https://proget.lubar.me/upack/$FeedName/download/$GroupName$PackageName/$NormalizedVersion?contentOnly=zip
+        (
+            FileName: $WorkingDirectory/$PackageName.zip.tmp,
+            LogResponseBody: false,
+            MaxResponseLength: 2147483647,
+            ProxyRequest: false
+        );
+
+        for role Linux
+        {
+            SHExec mv -f "$WorkingDirectory/$PackageName.zip.tmp" "$CachePath"
+            (
+                Verbose: true
+            );
+        }
+
+        for role Windows
+        {
+            PSExec Move-Item -Force "$WorkingDirectory/$PackageName.zip.tmp" "$CachePath"
+            (
+                Verbose: true
+            );
+        }
+    }
+
+    Extract-ZipFile $CachePath
     (
         Directory: $OutputPath,
         Overwrite: true

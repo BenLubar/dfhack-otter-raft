@@ -69,4 +69,13 @@ module DFHack-PR-Git<$RepoID, $Repository, $Directory, $BaseBranch, $PullRequest
         WorkingDirectory: $Directory,
         ErrorOutputLogLevel: Debug
     );
+
+    # Last step: fix up file modification timestamps.
+    InedoCore::Exec
+    (
+        FileName: /usr/bin/docker,
+        Arguments: run --rm -v $BaseWorkingDirectory:$BaseWorkingDirectory -w $Directory $DFHackBuildEnv git last-modified -v,
+        WorkingDirectory: $Directory,
+        ErrorOutputLogLevel: Debug
+    );
 }

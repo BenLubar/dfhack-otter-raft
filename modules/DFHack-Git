@@ -1,5 +1,5 @@
 ##AH:Description Download a Git repository with submodules, caching it to make future downloads faster.
-template DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $RequestedCommitHash = "", out $CommitHash, out $ResolvedTag>
+module DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $RequestedCommitHash = "", out $CommitHash, out $ResolvedTag>
 {
     set $CacheDir = $PathCombine($DFHackGitCache, $RepoID);
 
@@ -84,6 +84,15 @@ template DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $Reque
             ErrorOutputLogLevel: Debug
         );
 
+        # Last step: fix up file modification timestamps.
+        InedoCore::Exec
+        (
+            FileName: /usr/bin/docker,
+            Arguments: run --rm -v $BaseWorkingDirectory:$BaseWorkingDirectory -w $Directory $DFHackBuildEnv git last-modified,
+            WorkingDirectory: $Directory,
+            ErrorOutputLogLevel: Debug
+        );
+
         set $CommitHash = $Trim($SHEval(cd $Directory; git log -n 1 --format=%H));
 
         set $ResolvedTag = $Trim($SHEval(cd $Directory; git describe --tags --abbrev=0 2> /dev/null || true));
@@ -98,6 +107,8 @@ template DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $Reque
             Debug: true,
             Verbose: true
         );
+
+        Log-Warning TODO: run git-last-modified on Windows;
 
         set $CommitHash = $Trim($PSEval(cd $Directory; git log -n 1 --format=%H | Out-String));
 
