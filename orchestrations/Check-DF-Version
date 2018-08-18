@@ -2,6 +2,10 @@ for server GODZILLA
 {
     Ensure-Directory $WorkingDirectory;
 
+    Log-Debug Last ETag: $LastDFReleaseETag;
+
+    Log-Debug Last Modified: $LastDFReleaseModified;
+
     PSCall dfhack::check-df-version
     (
         workingDirectory: $WorkingDirectory,
@@ -13,6 +17,14 @@ for server GODZILLA
         date => $Date,
         versions => $VersionFilesJson
     );
+
+    Log-Debug ETag: $NewETag;
+
+    Log-Debug Modified: $NewModified;
+
+    Log-Debug Version: $VersionNumber;
+
+    Log-Debug Date: $Date;
 
     set @VersionFiles = @FromJson($VersionFilesJson);
 
