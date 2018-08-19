@@ -74,7 +74,7 @@ module DFHack-PR-Git<$RepoID, $Repository, $Directory, $BaseBranch, $PullRequest
     InedoCore::Exec
     (
         FileName: /usr/bin/docker,
-        Arguments: run --rm -v $BaseWorkingDirectory:$BaseWorkingDirectory -w $Directory $DFHackBuildEnv git last-modified -v,
+        Arguments: run --rm -v $BaseWorkingDirectory:$BaseWorkingDirectory -w $Directory $DFHackBuildEnv git last-modified,
         WorkingDirectory: $Directory,
         ErrorOutputLogLevel: Debug
     );
