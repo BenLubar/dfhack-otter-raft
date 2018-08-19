@@ -34,7 +34,7 @@ else
                 call DFHack-Universal-Package
                 (
                     GroupName: dfhack/core,
-                    PackageName: linux64,
+                    PackageName: linux64-dev,
                     OutputPath: $WorkingDirectory/DF,
                     FeedName: DwarfFortress-prerelease
                 );
@@ -67,9 +67,9 @@ else
                 WorkingDirectory: $WorkingDirectory/DF/hack/plugins
             );
 
-            if $ListIndexOf(@ArtifactsInPackage, df-ai-blueprints) != -1
+            if $ListIndexOf(@ArtifactsInPackage, df-ai-assets) != -1
             {
-                Deploy-Artifact df-ai-blueprints
+                Deploy-Artifact df-ai-assets
                 (
                     To: $WorkingDirectory/DF,
                     TransferAll: true,
@@ -101,7 +101,7 @@ else
         InedoCore::Exec
         (
             FileName: /bin/chmod,
-            Arguments: +x libs/Dwarf_Fortress,
+            Arguments: +x dfhack libs/Dwarf_Fortress,
             WorkingDirectory: $WorkingDirectory/DF
         );
 
