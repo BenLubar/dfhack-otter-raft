@@ -60,7 +60,7 @@
       "TargetExecutionMode": "Parallel",
       "Targets": [
         {
-          "PlanName": "Do Nothing",
+          "PlanName": "Run DFHack Tests",
           "EnvironmentName": "Integration",
           "BuildImporterTemplate": null,
           "ServerNames": [],
