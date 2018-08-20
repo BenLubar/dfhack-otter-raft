@@ -122,7 +122,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
             Version: $VersionNumber,
             Description: $AssetsDescription,
             Title: $AssetsTitle,
-            Icon: https://proget.local.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/plugin/df-ai.png
+            Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/plugin/df-ai.png
         );
 
         set @BaseDependencies = @ListInsert(@BaseDependencies, dfhack/plugin/df-ai/assets$Suffix:$VersionNumber);
