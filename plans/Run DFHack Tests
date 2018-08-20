@@ -4,6 +4,16 @@ if $ListIndexOf(@ArtifactsInPackage, test-scripts) == -1
 }
 else
 {
+    GitHub-Set-Status
+    (
+        Credentials: GitHub-DFHack,
+        Organization: $Coalesce($GetVariableValue(PluginOwner), DFHack),
+        Repository: $Coalesce($GetVariableValue(PluginRepo), $ApplicationName),
+        AdditionalContext: tests,
+        CommitHash: $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(DFHackCommit)),
+        Status: pending
+    );
+
     Acquire-Server
     (
         Role: DFHack-Linux-Testers,
@@ -130,4 +140,14 @@ else
             );
         }
     }
+
+    GitHub-Set-Status
+    (
+        Credentials: GitHub-DFHack,
+        Organization: $Coalesce($GetVariableValue(PluginOwner), DFHack),
+        Repository: $Coalesce($GetVariableValue(PluginRepo), $ApplicationName),
+        AdditionalContext: tests,
+        CommitHash: $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(DFHackCommit)),
+        Status: auto
+    );
 }
