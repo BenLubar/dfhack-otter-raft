@@ -27,6 +27,8 @@ else
             Bits: 64
         );
 
+        set $DoneCommand = "";
+
         if $GetVariableValue(PluginCommit) != ""
         {
             if $GetVariableValue(DFHackTag) == ""
@@ -81,6 +83,8 @@ else
         }
         else
         {
+            set $DoneCommand = die;
+
             Deploy-Artifact Linux64
             (
                 To: $WorkingDirectory/DF/hack_temp,
@@ -120,7 +124,7 @@ else
             (
                 OperatingSystem: Linux,
                 Architecture: x86_64,
-                Command: test/main,
+                Command: test/main $DoneCommand,
                 Image: latest,
                 Trusted: $TrustedBuild
             );
