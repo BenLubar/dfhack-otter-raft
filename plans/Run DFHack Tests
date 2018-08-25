@@ -8,7 +8,7 @@ else
     (
         Credentials: GitHub-DFHack,
         Organization: $Coalesce($GetVariableValue(PluginOwner), DFHack),
-        Repository: $Coalesce($GetVariableValue(PluginRepo), $ApplicationName),
+        Repository: $Coalesce($GetVariableValue(PluginRepo), $GetVariableValue(PullRepo), $ApplicationName),
         AdditionalContext: tests,
         CommitHash: $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(DFHackCommit)),
         Status: pending
@@ -145,7 +145,7 @@ else
     (
         Credentials: GitHub-DFHack,
         Organization: $Coalesce($GetVariableValue(PluginOwner), DFHack),
-        Repository: $Coalesce($GetVariableValue(PluginRepo), $ApplicationName),
+        Repository: $Coalesce($GetVariableValue(PluginRepo), $GetVariableValue(PullRepo), $ApplicationName),
         AdditionalContext: tests,
         CommitHash: $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(DFHackCommit)),
         Status: auto
