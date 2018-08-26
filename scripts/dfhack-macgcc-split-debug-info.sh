@@ -22,7 +22,7 @@ tar xjf "$pkg_file" -C "$tmp_dir"
 echo "Splitting debug info..."
 split_debug_info "$tmp_dir/hack/dfhack-run" "$dbg_dir"
 split_debug_info "$tmp_dir/hack/binpatch" "$dbg_dir"
-find "$tmp_dir" -name '*.dylib' -print0 | while read -d $'\0' lib_name; do
+find "$tmp_dir" -name '*.dylib' -not -name 'libstdc++.6.dylib' -print0 | while read -d $'\0' lib_name; do
     split_debug_info "$lib_name" "$dbg_dir"
 done
 echo "Re-packaging $pkg_file"
