@@ -4,13 +4,23 @@ if $ListIndexOf(@ArtifactsInPackage, test-scripts) == -1
 }
 else
 {
+    set $GitHubOrg = $Coalesce($GetVariableValue(PluginOwner), DFHack);
+
+    set $GitHubRepo = $Coalesce($GetVariableValue(PluginRepo), $GetVariableValue(PullRepo), $ApplicationName);
+
+    set $CommitHash = $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(OverrideStructuresCommit), $GetVariableValue(DFHackCommit));
+
+    Log-Debug Detected repository: $GitHubOrg/$GitHubRepo;
+
+    Log-Debug Detected commit: $CommitHash;
+
     GitHub-Set-Status
     (
         Credentials: GitHub-DFHack,
-        Organization: $Coalesce($GetVariableValue(PluginOwner), DFHack),
-        Repository: $Coalesce($GetVariableValue(PluginRepo), $GetVariableValue(PullRepo), $ApplicationName),
+        Organization: $GitHubOrg,
+        Repository: $GitHubRepo,
         AdditionalContext: tests,
-        CommitHash: $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(DFHackCommit)),
+        CommitHash: $CommitHash,
         Status: pending
     );
 
@@ -144,10 +154,13 @@ else
     GitHub-Set-Status
     (
         Credentials: GitHub-DFHack,
-        Organization: $Coalesce($GetVariableValue(PluginOwner), DFHack),
-        Repository: $Coalesce($GetVariableValue(PluginRepo), $GetVariableValue(PullRepo), $ApplicationName),
+        Organization: $GitHubOrg,
+        Repository: $GitHubRepo,
         AdditionalContext: tests,
-        CommitHash: $Coalesce($GetVariableValue(PluginCommit), $GetVariableValue(DFHackCommit)),
-        Status: auto
+        CommitHash: $CommitHash,
+        Status: auto,
+        NormalDescription: "All tests passed (#$ExecutionId)",
+        WarningDescription: "Tests passed with warnings (#$ExecutionId)",
+        ErrorDescription: "Tests failed! (#$ExecutionId)"
     );
 }

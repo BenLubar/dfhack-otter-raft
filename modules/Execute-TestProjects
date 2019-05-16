@@ -1,0 +1,37 @@
+##AH:UseTextMode
+module Execute-TestProjects<$In>
+{
+    # Run Unit Tests
+    for directory $In
+    {
+        Log-Debug Source path: $WorkingDirectory;
+
+        foreach $csprojFile in @FileMask(**.csproj)
+        {
+            Log-Debug csproj: $csprojFile;
+
+            set $projContents = $FileContents($csprojFile);
+
+            if $MatchesRegex($projContents, "<TestProjectType>\s*UnitTest\s*</TestProjectType>")
+            {
+                set $projName = @RegexFind($csprojFile, ".*\\(?<1>.+)\.csproj$", 1)[0];
+
+                Log-Debug Found $projName unit test project at $csprojFile;
+
+                set $testOutPath = $PathCombine($ApplicationDirectory, $projName)-Test;
+
+                MSBuild::Build-Project $csprojFile
+                (
+                    Configuration: Release,
+                    To: $testOutPath
+                );
+
+                WindowsSdk::Execute-VSTest
+                (
+                    TestContainer: $PathCombine($testOutPath, $projName.dll),
+                    Group: $projName
+                );
+            }
+        }
+    }
+}

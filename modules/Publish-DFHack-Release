@@ -98,7 +98,7 @@ module Publish-DFHack-Release
                         Organization: DFHack,
                         Repository: dfhack,
                         Tag: $ReleaseNumber,
-                        Target: $ReleaseNumber,
+                        Target: $DFHackCommit,
                         Title: DFHack $ReleaseNumber,
                         Description: $ReleaseNotes,
                         Draft: false,
@@ -112,7 +112,7 @@ module Publish-DFHack-Release
                     Organization: DFHack,
                     Repository: dfhack,
                     Tag: $ReleaseNumber,
-                    Target: $ReleaseNumber,
+                    Target: $DFHackCommit,
                     Title: DFHack $ReleaseNumber,
                     Draft: true,
                     Prerelease: $MatchesRegex($ReleaseNumber, .*-`(alpha|beta`).*)

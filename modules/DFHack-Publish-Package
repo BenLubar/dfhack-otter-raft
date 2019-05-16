@@ -80,7 +80,7 @@ module DFHack-Publish-Package<$ArtifactName, $PackageName, $OSArch, $PackageVers
             {
                 Extract-ZipFile $WorkingDirectory/tmp_$ArtifactName/$FileName
                 (
-                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin/hack/plugins
+                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin
                 );
 
                 Create-ZipFile
@@ -154,7 +154,7 @@ rm -rf temp>>
             {
                 Extract-ZipFile $WorkingDirectory/tmp_$ArtifactName/converted.zip
                 (
-                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin/hack/plugins
+                    Directory: $WorkingDirectory/tmp_$ArtifactName/plugin
                 );
 
                 Create-ZipFile

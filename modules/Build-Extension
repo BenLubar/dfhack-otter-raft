@@ -1,0 +1,31 @@
+##AH:UseTextMode
+module Build-Extension<$Name, $ProjectPath>
+{
+    set $targetDir = ${Name}Extension;
+
+    # Build Extension
+    {
+        MSBuild::Build-Project ~\Src\$ProjectPath
+        (
+            Platform: AnyCPU,
+            To: ~\$targetDir
+        );
+    }
+
+    # Package Extension
+    {
+        Exec
+        (
+            FileName: C:\Tools\inedoxpack\inedoxpack.exe,
+            Arguments: '"$PathCombine($ApplicationDirectory, $targetDir, $Name).dll" "$PathCombine($ApplicationDirectory, $Name).upack"'
+        );
+
+        ProGet::Push-Package
+        (
+            Credentials: ProGet,
+            Feed: Extensions,
+            FilePath: $PathCombine($ApplicationDirectory, $Name.upack),
+            Version: $PrereleaseExtensionVersion
+        );
+    }
+}

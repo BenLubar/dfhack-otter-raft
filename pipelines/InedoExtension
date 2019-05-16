@@ -1,0 +1,41 @@
+{
+  "Name": "InedoExtension",
+  "Color": "#48729d",
+  "Description": "",
+  "EnforceStageSequence": true,
+  "Stages": [
+    {
+      "Name": "Build",
+      "Description": null,
+      "TargetExecutionMode": "Parallel",
+      "Targets": [
+        {
+          "PlanName": "Build Inedo Extension",
+          "EnvironmentName": "Build",
+          "BuildImporterTemplate": null,
+          "ServerNames": [
+            "localhost"
+          ],
+          "ServerRoleNames": [],
+          "DefaultServerContext": 1
+        }
+      ],
+      "Gate": {
+        "UserApprovals": [],
+        "GroupApprovals": [],
+        "DeploymentWindows": [],
+        "AutomaticApprovals": []
+      },
+      "PostDeploymentPlan": null,
+      "PostDeploymentEventListeners": [],
+      "AutoPromote": false,
+      "Variables": {}
+    }
+  ],
+  "Variables": {},
+  "PostDeploymentOptions": {
+    "CreateRelease": true,
+    "CancelReleases": false,
+    "DeployRelease": false
+  }
+}
