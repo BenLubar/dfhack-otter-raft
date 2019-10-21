@@ -88,7 +88,7 @@ module DFHack-Git<$RepoID, $Repository, $Directory, $Branch, $Tag = "", $Request
         InedoCore::Exec
         (
             FileName: /usr/bin/docker,
-            Arguments: run --rm -v /home/buildmaster:/home/buildmaster -w $Directory $DFHackBuildEnv git last-modified,
+            Arguments: run --rm -v $BaseWorkingDirectory:$BaseWorkingDirectory -w $Directory $DFHackBuildEnv git last-modified,
             WorkingDirectory: $Directory,
             ErrorOutputLogLevel: Debug
         );
