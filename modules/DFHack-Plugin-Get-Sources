@@ -16,16 +16,14 @@ module DFHack-Plugin-Get-Sources
 
         with lock = !DFHackVariable
         {
-            Set-ReleaseVariable ResolvedDFHackCommit
+            Set-BuildVariable ResolvedDFHackCommit
             (
-                Value: $ResolvedDFHackCommit,
-                Package: $PackageNumber
+                Value: $ResolvedDFHackCommit
             );
 
-            Set-ReleaseVariable ResolvedDFHackTag
+            Set-BuildVariable ResolvedDFHackTag
             (
-                Value: $ResolvedDFHackTag,
-                Package: $PackageNumber
+                Value: $ResolvedDFHackTag
             );
         }
     }
@@ -46,16 +44,14 @@ module DFHack-Plugin-Get-Sources
 
         with lock = !DFHackVariable
         {
-            Set-ReleaseVariable ResolvedPluginCommit
+            Set-BuildVariable ResolvedPluginCommit
             (
-                Value: $ResolvedPluginCommit,
-                Package: $PackageNumber
+                Value: $ResolvedPluginCommit
             );
 
-            Set-ReleaseVariable ResolvedPluginTag
+            Set-BuildVariable ResolvedPluginTag
             (
-                Value: $ResolvedPluginTag,
-                Package: $PackageNumber
+                Value: $ResolvedPluginTag
             );
         }
     }

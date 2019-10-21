@@ -17,10 +17,9 @@ if $GetVariableValue(PluginCommit) == ""
 
             with lock = !DFHackVariable
             {
-                Set-ReleaseVariable PluginCommit
+                Set-BuildVariable PluginCommit
                 (
-                    Value: $ResolvedPluginCommit,
-                    Package: $PackageNumber
+                    Value: $ResolvedPluginCommit
                 );
             }
         }

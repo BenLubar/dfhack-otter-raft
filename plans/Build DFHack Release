@@ -218,10 +218,9 @@ try
 
                 with lock = !DFHackVariable
                 {
-                    Set-ReleaseVariable DFHackReleaseDeployed
+                    Set-BuildVariable DFHackReleaseDeployed
                     (
-                        Value: true,
-                        Package: $PackageNumber
+                        Value: true
                     );
                 }
             }

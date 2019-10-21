@@ -16,16 +16,14 @@ module DFHack-Get-Sources
 
         with lock = !DFHackVariable
         {
-            Set-ReleaseVariable ResolvedDFHackCommit
+            Set-BuildVariable ResolvedDFHackCommit
             (
-                Value: $CommitHash,
-                Package: $PackageNumber
+                Value: $CommitHash
             );
 
-            Set-ReleaseVariable ResolvedDFHackTag
+            Set-BuildVariable ResolvedDFHackTag
             (
-                Value: $ResolvedTag,
-                Package: $PackageNumber
+                Value: $ResolvedTag
             );
         }
     }
