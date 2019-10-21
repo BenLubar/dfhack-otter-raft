@@ -28,7 +28,7 @@ set $DFHackVersion = $DFHackTag;
 
 if !$PluginTagged
 {
-    if $ReleaseNumber == 0.0.0
+    if $ReleaseNumber == ""
     {
         if $IsVariableDefined(NewDFVersion)
         {
@@ -102,7 +102,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 
             set $AssetsTitle = df-ai shared assets (prerelease);
 
-            if $ReleaseNumber == 0.0.0
+            if $ReleaseNumber == ""
             {
                 set $AssetsDescription = Shared files for df-ai (prerelease);
             }

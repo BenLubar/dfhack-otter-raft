@@ -3,28 +3,31 @@
 
 with lock = !DFHackTriggerPlugins
 {
-    set $DFHackVersion = $ReleaseNumber;
-
-    if $DFHackTag != ""
+    if $ReleaseNumber != ""
     {
-        set $DFHackVersion = dfhack-$ReleaseNumber;
-    }
+        set $DFHackVersion = $ReleaseNumber;
 
-    foreach $PluginName in @ApplicationsInGroup(DFHack Plugins)
-    {
-        try
+        if $DFHackTag != ""
         {
-            Create-Release
-            (
-                Application: $PluginName,
-                ReleaseNumber: $DFHackVersion,
-                Pipeline: DFHack-Plugin,
-                ReleaseName: $ReleaseName,
-                Variables: %(DFHackBranch: $DFHackBranch, DFHackTag: $DFHackTag, PluginTagged: false)
-            );
+            set $DFHackVersion = dfhack-$ReleaseNumber;
         }
-        catch
+
+        foreach $PluginName in @ApplicationsInGroup(DFHack Plugins)
         {
+            try
+            {
+                Create-Release
+                (
+                    Application: $PluginName,
+                    ReleaseNumber: $DFHackVersion,
+                    Pipeline: DFHack-Plugin,
+                    ReleaseName: DFHack $ReleaseName,
+                    Variables: %(DFHackBranch: $DFHackBranch, DFHackTag: $DFHackTag, PluginTagged: false)
+                );
+            }
+            catch
+            {
+            }
         }
     }
 }

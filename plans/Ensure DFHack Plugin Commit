@@ -1,4 +1,4 @@
-if $PluginCommit == ""
+if $GetVariableValue(PluginCommit) == ""
 {
     with lock = !DFHackGit
     {

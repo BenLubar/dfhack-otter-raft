@@ -83,7 +83,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
 
                 if $TrustedBuild
                 {
-                    if $ReleaseNumber == 0.0.0
+                    if $ReleaseNumber == ""
                     {
                         set @AdditionalArgs = @ListInsert(@AdditionalArgs, -DDFHACK_BUILD_ID=$PackageNumber);
                     }

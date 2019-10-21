@@ -12,7 +12,6 @@
         {
           "PlanName": "Build DFHack Plugin Pull Request",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -27,6 +26,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": true,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -37,7 +37,6 @@
         {
           "PlanName": "Run DFHack Tests",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -52,6 +51,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": false,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -62,7 +62,6 @@
         {
           "PlanName": "Do Nothing",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -77,6 +76,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": false,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     }
   ],

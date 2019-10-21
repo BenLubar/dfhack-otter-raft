@@ -12,7 +12,6 @@
         {
           "PlanName": "Build Inedo Extension",
           "EnvironmentName": "Build",
-          "BuildImporterTemplate": null,
           "ServerNames": [
             "localhost"
           ],
@@ -29,6 +28,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": false,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     }
   ],

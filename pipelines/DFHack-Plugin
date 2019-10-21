@@ -12,7 +12,6 @@
         {
           "PlanName": "Ensure DFHack Plugin Commit",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -27,6 +26,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": true,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -37,7 +37,6 @@
         {
           "PlanName": "Build DFHack Plugin",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -52,6 +51,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": true,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -62,7 +62,6 @@
         {
           "PlanName": "Run DFHack Tests",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -77,6 +76,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": true,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -87,7 +87,6 @@
         {
           "PlanName": "Publish DFHack Plugin",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -102,6 +101,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": true,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -112,7 +112,6 @@
         {
           "PlanName": "Update DF-AI Docker Image",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -127,6 +126,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": false,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     },
     {
@@ -137,7 +137,6 @@
         {
           "PlanName": "Do Nothing",
           "EnvironmentName": "Integration",
-          "BuildImporterTemplate": null,
           "ServerNames": [],
           "ServerRoleNames": [],
           "DefaultServerContext": 0
@@ -152,6 +151,7 @@
       "PostDeploymentPlan": null,
       "PostDeploymentEventListeners": [],
       "AutoPromote": false,
+      "AllowMultipleActiveBuilds": null,
       "Variables": {}
     }
   ],
