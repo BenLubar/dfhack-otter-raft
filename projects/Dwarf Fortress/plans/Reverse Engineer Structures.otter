@@ -1,0 +1,90 @@
+foreach $OSArch in @OSArchList
+{
+    for directory $WorkingDirectory/$OSArch
+    {
+        Deploy-Artifact $OSArch;
+
+        set $ArchiveName = $ListItem(@FileMask(*), 0);
+
+        if $MatchesRegex($ArchiveName, \.tar\.bz2`$)
+        {
+            InedoCore::Exec
+            (
+                FileName: /bin/tar,
+                Arguments: xf "$ArchiveName" --strip-components=1 --warning no-timestamp,
+                WorkingDirectory: $WorkingDirectory
+            );
+        }
+        else
+        {
+            InedoCore::Exec
+            (
+                FileName: /usr/bin/unzip,
+                Arguments: '"$ArchiveName"',
+                WorkingDirectory: $WorkingDirectory
+            );
+        }
+    }
+}
+
+call DFHack-Git
+(
+    RepoID: DFHack-df-structures,
+    Repository: https://github.com/DFHack/df-structures.git,
+    Directory: $WorkingDirectory/df-structures,
+    Branch: master,
+    CommitHash => $_,
+    ResolvedTag => $_
+);
+
+call DFHack-Git
+(
+    RepoID: DFHack-df_misc,
+    Repository: https://github.com/DFHack/df_misc.git,
+    Directory: $WorkingDirectory/df_misc,
+    Branch: master,
+    CommitHash => $_,
+    ResolvedTag => $_
+);
+
+call DFHack-Git
+(
+    RepoID: jjyg-metasm,
+    Repository: https://github.com/jjyg/metasm.git,
+    Directory: $WorkingDirectory/metasm,
+    Branch: master,
+    CommitHash => $_,
+    ResolvedTag => $_
+);
+
+SHCall Dwarf Fortress::dfhack-structures-update
+(
+    Arguments: '"$WorkingDirectory" "$ReleaseNumber"',
+    Verbose: true,
+    ErrorOutputLogLevel: Debug
+);
+
+SHExec >>curl -n -i -d '{"title":"Automated df-structures update for DF ${VersionNumber}","head":"BenLubar:auto-symbols-update","base":"master","body":"This is an automated pull request. Only one such pull request should be made for each Dwarf Fortress release. If this bot is malfunctioning, contact BenLubar on IRC.<!-- buildmaster:skip-pr -->"}' https://api.github.com/repos/DFHack/df-structures/pulls>>
+(
+    ErrorOutputLogLevel: Debug
+);
+
+set $CommitHash = $Trim($SHEval(cd $WorkingDirectory/df-structures; git log -n 1 --format=%H));
+
+call DFHack-Git
+(
+    RepoID: dfhack,
+    Repository: https://github.com/DFHack/dfhack.git,
+    Directory: $WorkingDirectory/dfhack,
+    Branch: develop,
+    CommitHash => $DFHackCommit,
+    ResolvedTag => $_
+);
+
+Create-Build
+(
+    Application: DFHack,
+    ReleaseNumber: 0.0.0,
+    Variables: %(DFHackCommit: $DFHackCommit, NewDFVersion: $ReleaseNumber, OverrideStructuresCommit: $CommitHash),
+    Wait: false
+);

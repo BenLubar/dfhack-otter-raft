@@ -1,4 +1,4 @@
-if $ListIndexOf(@ArtifactsInPackage, test-scripts) == -1
+if $ListIndexOf(@ArtifactsInBuild, test-scripts) == -1
 {
     Log-Debug Skipping tests - no test scripts.;
 }

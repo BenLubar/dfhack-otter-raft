@@ -1,0 +1,44 @@
+set %FriendlyOSArch = %(osx32: 32-bit Mac OS X, osx64: 64-bit Mac OS X, linux32: 32-bit Linux, linux64: 64-bit Linux, win32: 32-bit Windows, win64: 64-bit Windows);
+
+foreach $OSArch in @OSArchList
+{
+    for directory $WorkingDirectory/$OSArch
+    {
+        Deploy-Artifact $OSArch;
+
+        set $ArchiveName = $ListItem(@FileMask(*), 0);
+
+        set $ZipArchiveName = $ArchiveName;
+
+        if $MatchesRegex($ArchiveName, \.tar\.bz2`$)
+        {
+            set $ZipArchiveName = $Replace($ArchiveName, .tar.bz2, .zip);
+
+            InedoCore::Exec
+            (
+                FileName: C:\Windows\System32\tar.exe,
+                Arguments: -xf "..\$ArchiveName" --strip-components=1 --warning no-timestamp,
+                WorkingDirectory: $WorkingDirectory/temp
+            );
+
+            Create-ZipFile
+            (
+                Name: $ZipArchiveName,
+                Directory: $WorkingDirectory/temp
+            );
+        }
+
+        ProGet::Push-Package
+        (
+            Credentials: ProGet,
+            Feed: DwarfFortress,
+            FilePath: $ZipArchiveName,
+            Group: dwarffortress/core,
+            Name: $OSArch,
+            Version: $ReleaseNumber,
+            Description: "Dwarf Fortress [version $ReleaseNumber](https://dwarffortresswiki.org/index.php/Release_information/$ReleaseNumber) for $MapItem(%FriendlyOSArch, $OSArch), released on $ReleaseDate.",
+            Title: "Dwarf Fortress ($MapItem(%FriendlyOSArch, $OSArch))",
+            Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dwarffortress/core.png
+        );
+    }
+}

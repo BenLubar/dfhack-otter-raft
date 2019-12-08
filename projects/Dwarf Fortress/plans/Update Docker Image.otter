@@ -1,0 +1,62 @@
+Deploy-Artifact Linux64;
+
+set $FileName = $FileMask(*.tar.bz2);
+
+InedoCore::Exec
+(
+    FileName: /usr/bin/git,
+    Arguments: clone git@github.com:BenLubar/df-docker.git df-docker,
+    ErrorOutputLogLevel: Debug
+);
+
+set @Parts = @Split($FileName, _);
+
+set $VersionUnderscore2 = $ListItem(@Parts, 1)_$ListItem(@Parts, 2);
+
+set $SHA256Checksum = $Trim($SHEval(sha256sum -b "$FileName" | cut -f 1 -d " "));
+
+InedoCore::Apply-Template Dwarf Fortress::docker-dwarffortress
+(
+    OutputFile: df-docker/dwarffortress/Dockerfile,
+    NewLines: Linux
+);
+
+InedoCore::Exec
+(
+    FileName: /usr/bin/git,
+    Arguments: add dwarffortress/Dockerfile,
+    ErrorOutputLogLevel: Debug,
+    WorkingDirectory: df-docker
+);
+
+InedoCore::Exec
+(
+    FileName: /usr/bin/git,
+    Arguments: commit -m "Dwarf Fortress $ReleaseNumber",
+    ErrorOutputLogLevel: Debug,
+    WorkingDirectory: df-docker
+);
+
+InedoCore::Exec
+(
+    FileName: /usr/bin/git,
+    Arguments: tag -f "$ReleaseNumber",
+    ErrorOutputLogLevel: Debug,
+    WorkingDirectory: df-docker
+);
+
+InedoCore::Exec
+(
+    FileName: /usr/bin/git,
+    Arguments: push,
+    ErrorOutputLogLevel: Debug,
+    WorkingDirectory: df-docker
+);
+
+InedoCore::Exec
+(
+    FileName: /usr/bin/git,
+    Arguments: push --tags,
+    ErrorOutputLogLevel: Debug,
+    WorkingDirectory: df-docker
+);

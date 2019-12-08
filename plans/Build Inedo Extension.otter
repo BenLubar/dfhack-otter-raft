@@ -1,0 +1,61 @@
+##AH:UseTextMode
+
+# Get Source
+{
+    Git::Get-Source
+    (
+        RepositoryUrl: $Coalesce($VariableValue(GitRepositoryUrl), https://github.com/Inedo/inedox-$ToLower($ApplicationName).git),
+        DiskPath: ~\Src,
+        CommitHash => $commit
+    );
+
+    Set-ReleaseVariable CommitHash
+    (
+        Value: $commit,
+        Release: $ReleaseNumber,
+        Build: $BuildNumber
+    );
+
+    Write-AssemblyVersion
+    (
+        FromDirectory: ~\Src
+    );
+
+    NuGet::Restore-Packages
+    (
+        Target: ~\Src\$ApplicationName,
+        Source: https://proget.inedo.com/nuget/ExternalBuild/
+    );
+}
+
+Set-ReleaseVariable PrereleaseExtensionVersion
+(
+    Value: $ReleaseNumber-CI.$BuildNumber,
+    Release: $ReleaseNumber,
+    Build: $BuildNumber
+);
+
+call Execute-TestProjects
+(
+    In: $PathCombine($ApplicationDirectory, Src)
+);
+
+if $IsVariableDefined(ExtensionNames)
+{
+    foreach $extensionName in @ExtensionNames
+    {
+        call Build-Extension
+        (
+            Name: $extensionName,
+            ProjectPath: $ApplicationName\$extensionName.InedoExtension\$extensionName.InedoExtension.csproj
+        );
+    }
+}
+else
+{
+    call Build-Extension
+    (
+        Name: $ApplicationName,
+        ProjectPath: $ApplicationName\InedoExtension\InedoExtension.csproj
+    );
+}

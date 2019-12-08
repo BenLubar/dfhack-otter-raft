@@ -1,0 +1,16 @@
+for directory $ArtifactsPath
+{
+    foreach $FileName in @VersionFiles
+    {
+        set $Parts = @Split($FileName, _);
+
+        set $AssetName = $Replace($ListItem(@Parts, 3), .tar.bz2, .zip);
+
+        set $AssetName = $Replace($Replace($AssetName, .zip, 64), 3264, 32);
+
+        Create-Artifact $ArtifactName
+        (
+            Include: $FileName
+        );
+    }
+}

@@ -1,0 +1,57 @@
+Ensure-Directory $WorkingDirectory;
+
+Log-Debug Last ETag: $LastDFReleaseETag;
+
+Log-Debug Last Modified: $LastDFReleaseModified;
+
+PSCall Dwarf Fortress::check-df-version
+(
+    workingDirectory: $WorkingDirectory,
+    lastETag: $LastDFReleaseETag,
+    lastModified: $LastDFReleaseModified,
+    etag => $NewETag,
+    modified => $NewModified,
+    version => $VersionNumber,
+    date => $Date,
+    versions => $VersionFilesJson
+);
+
+Log-Debug ETag: $NewETag;
+
+Log-Debug Modified: $NewModified;
+
+Log-Debug Version: $VersionNumber;
+
+Log-Debug Date: $Date;
+
+set @VersionFiles = @FromJson($VersionFilesJson);
+
+if $ListCount(@VersionFiles) != 0
+{
+    Ensure-Release
+    (
+        Application: Dwarf Fortress,
+        ReleaseNumber: $VersionNumber,
+        Pipeline: Dwarf-Fortress
+    );
+
+    Create-Build
+    (
+        Application: Dwarf Fortress,
+        ReleaseNumber: $VersionNumber,
+        Variables: %(VersionFiles: @VersionFiles, ReleaseDate: $Date, ArtifactsPath: $WorkingDirectory),
+        Wait: true
+    );
+}
+
+Set-ConfigurationVariable LastDFReleaseETag
+(
+    Value: $NewETag,
+    Application: Dwarf Fortress
+);
+
+Set-ConfigurationVariable LastDFReleaseModified
+(
+    Value: $NewModified,
+    Application: Dwarf Fortress
+);
