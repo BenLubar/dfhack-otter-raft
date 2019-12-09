@@ -60,7 +60,7 @@ try
                 # Linux ($ServerName)
                 with async = Git
                 {
-                    call DFHack-Plugin-Get-Sources();
+                    call global::DFHack-Plugin-Get-Sources();
                 }
             }
 
@@ -109,7 +109,7 @@ try
 
                     with async = Dependencies
                     {
-                        call DFHack-Cache-Dependencies
+                        call global::DFHack-Cache-Dependencies
                         (
                             DependencyPath: $WorkingDirectory/src/CMake/downloads
                         );
@@ -174,7 +174,7 @@ try
 
     if $PluginTagged
     {
-        call DFHack-Plugin-Build
+        call global::DFHack-Plugin-Build
         (
             BuildType: Release,
             GitHubBuildContext: $GitHubBuildContext
@@ -182,7 +182,7 @@ try
     }
     else
     {
-        call DFHack-Plugin-Build
+        call global::DFHack-Plugin-Build
         (
             BuildType: RelWithDebInfo,
             GitHubBuildContext: $GitHubBuildContext
