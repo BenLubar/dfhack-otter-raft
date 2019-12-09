@@ -40,7 +40,7 @@ else
             ErrorOutputLogLevel: Debug
         );
 
-        call global::DFHack-Cache-DF
+        call dfhack-raft::DFHack-Cache-DF
         (
             TargetPath: $WorkingDirectory/DF,
             OperatingSystem: Linux,
@@ -53,7 +53,7 @@ else
         {
             if $GetVariableValue(DFHackTag) == ""
             {
-                call global::DFHack-Universal-Package
+                call dfhack-raft::DFHack-Universal-Package
                 (
                     GroupName: dfhack/core,
                     PackageName: linux64-dev,
@@ -63,7 +63,7 @@ else
             }
             else
             {
-                call global::DFHack-Universal-Package
+                call dfhack-raft::DFHack-Universal-Package
                 (
                     GroupName: dfhack/core,
                     PackageName: linux64,

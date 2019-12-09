@@ -85,7 +85,7 @@ try
                 # Linux ($ServerName)
                 with async = Git
                 {
-                    call global::DFHack-Get-Sources();
+                    call dfhack-raft::DFHack-Get-Sources();
                 }
             }
 
@@ -122,7 +122,7 @@ try
                 {
                     with async = Dependencies
                     {
-                        call global::DFHack-Cache-Dependencies
+                        call dfhack-raft::DFHack-Cache-Dependencies
                         (
                             DependencyPath: $WorkingDirectory/src/CMake/downloads
                         );
@@ -204,7 +204,7 @@ try
                         Status: pending
                     );
 
-                    call global::DFHack-Build-Core
+                    call dfhack-raft::DFHack-Build-Core
                     (
                         BuildType: Release,
                         SkipTests: true
@@ -213,7 +213,7 @@ try
 
                 # Publish
                 {
-                    call global::Publish-DFHack-Release();
+                    call dfhack-raft::Publish-DFHack-Release();
                 }
 
                 with lock = !DFHackVariable
@@ -239,7 +239,7 @@ try
             Status: pending
         );
 
-        call global::DFHack-Build-Core
+        call dfhack-raft::DFHack-Build-Core
         (
             BuildType: RelWithDebInfo,
             ArtifactSuffix: -dbg
@@ -258,7 +258,7 @@ try
             Status: pending
         );
 
-        call global::DFHack-Build-Core
+        call dfhack-raft::DFHack-Build-Core
         (
             BuildType: RelWithDebInfo
         );

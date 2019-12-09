@@ -28,7 +28,7 @@ try
                 # Linux ($ServerName)
                 with async = Git
                 {
-                    call global::DFHack-Plugin-PR-Get-Sources();
+                    call dfhack-raft::DFHack-Plugin-PR-Get-Sources();
                 }
             }
 
@@ -77,7 +77,7 @@ try
 
                     with async = Dependencies
                     {
-                        call global::DFHack-Cache-Dependencies
+                        call dfhack-raft::DFHack-Cache-Dependencies
                         (
                             DependencyPath: $WorkingDirectory/src/CMake/downloads
                         );
@@ -140,7 +140,7 @@ try
         Status: pending
     );
 
-    call global::DFHack-Plugin-Build
+    call dfhack-raft::DFHack-Plugin-Build
     (
         BuildType: RelWithDebInfo,
         GitHubBuildContext: $GitHubBuildContext,

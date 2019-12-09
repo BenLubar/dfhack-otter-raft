@@ -30,7 +30,7 @@ if $DFHackTagged
         {
             # Windows (32)
             {
-                call global::DFHack-Publish-Package
+                call dfhack-raft::DFHack-Publish-Package
                 (
                     ArtifactName: Windows32-dbg,
                     PackageName: core,
@@ -46,7 +46,7 @@ if $DFHackTagged
 
             # Windows (64)
             {
-                call global::DFHack-Publish-Package
+                call dfhack-raft::DFHack-Publish-Package
                 (
                     ArtifactName: Windows64-dbg,
                     PackageName: core,
@@ -67,7 +67,7 @@ if $DFHackTagged
             {
                 # Linux (32)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: Linux32-dbg,
                         PackageName: core,
@@ -83,7 +83,7 @@ if $DFHackTagged
 
                 # Linux (64)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: Linux64-dbg,
                         PackageName: core,
@@ -102,7 +102,7 @@ if $DFHackTagged
             {
                 # Linux (gcc 4.8) (32)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: Linux32-4.8-dbg,
                         PackageName: core,
@@ -118,7 +118,7 @@ if $DFHackTagged
 
                 # Linux (gcc 4.8) (64)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: Linux64-4.8-dbg,
                         PackageName: core,
@@ -140,7 +140,7 @@ if $DFHackTagged
             {
                 # OS X (32)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: OSX32-dbg,
                         PackageName: core,
@@ -156,7 +156,7 @@ if $DFHackTagged
 
                 # OS X (64)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: OSX64-dbg,
                         PackageName: core,
@@ -176,7 +176,7 @@ if $DFHackTagged
             {
                 # OS X (gcc 4.8) (32)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: OSX32-4.8-dbg,
                         PackageName: core,
@@ -192,7 +192,7 @@ if $DFHackTagged
 
                 # OS X (gcc 4.8) (64)
                 {
-                    call global::DFHack-Publish-Package
+                    call dfhack-raft::DFHack-Publish-Package
                     (
                         ArtifactName: OSX64-4.8-dbg,
                         PackageName: core,
@@ -251,7 +251,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
 {
     # Windows (32)
     {
-        call global::DFHack-Publish-Package
+        call dfhack-raft::DFHack-Publish-Package
         (
             ArtifactName: Windows32,
             PackageName: core,
@@ -267,7 +267,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
 
     # Windows (64)
     {
-        call global::DFHack-Publish-Package
+        call dfhack-raft::DFHack-Publish-Package
         (
             ArtifactName: Windows64,
             PackageName: core,
@@ -288,7 +288,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
     {
         # Linux (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux32,
                 PackageName: core,
@@ -304,7 +304,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
 
         # Linux (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux64,
                 PackageName: core,
@@ -323,7 +323,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
     {
         # Linux (gcc 4.8) (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux32-4.8,
                 PackageName: core,
@@ -339,7 +339,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
 
         # Linux (gcc 4.8) (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux64-4.8,
                 PackageName: core,
@@ -361,7 +361,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
     {
         # OS X (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX32,
                 PackageName: core,
@@ -377,7 +377,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
 
         # OS X (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX64,
                 PackageName: core,
@@ -397,7 +397,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
     {
         # OS X (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX32-4.8,
                 PackageName: core,
@@ -413,7 +413,7 @@ Structures commit: [$OverrideStructuresCommit](https://github.com/DFHack/df-stru
 
         # OS X (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX64-4.8,
                 PackageName: core,

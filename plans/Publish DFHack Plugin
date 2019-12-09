@@ -133,7 +133,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 {
     # Windows (32)
     {
-        call global::DFHack-Publish-Package
+        call dfhack-raft::DFHack-Publish-Package
         (
             ArtifactName: Windows32,
             PackageName: plugin/$ApplicationName,
@@ -150,7 +150,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 
     # Windows (64)
     {
-        call global::DFHack-Publish-Package
+        call dfhack-raft::DFHack-Publish-Package
         (
             ArtifactName: Windows64,
             PackageName: plugin/$ApplicationName,
@@ -172,7 +172,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
     {
         # Linux (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux32,
                 PackageName: plugin/$ApplicationName,
@@ -189,7 +189,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 
         # Linux (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux64,
                 PackageName: plugin/$ApplicationName,
@@ -209,7 +209,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
     {
         # Linux (gcc 4.8) (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux32-4.8,
                 PackageName: plugin/$ApplicationName,
@@ -226,7 +226,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 
         # Linux (gcc 4.8) (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: Linux64-4.8,
                 PackageName: plugin/$ApplicationName,
@@ -249,7 +249,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
     {
         # OS X (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX32,
                 PackageName: plugin/$ApplicationName,
@@ -266,7 +266,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 
         # OS X (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX64,
                 PackageName: plugin/$ApplicationName,
@@ -287,7 +287,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
     {
         # OS X (gcc 4.8) (32)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX32-4.8,
                 PackageName: plugin/$ApplicationName,
@@ -304,7 +304,7 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
 
         # OS X (gcc 4.8) (64)
         {
-            call global::DFHack-Publish-Package
+            call dfhack-raft::DFHack-Publish-Package
             (
                 ArtifactName: OSX64-4.8,
                 PackageName: plugin/$ApplicationName,
