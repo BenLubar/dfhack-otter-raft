@@ -181,7 +181,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                 {
                     if $BuildType == RelWithDebInfo
                     {
-                        SHCall dfhack-split-debug-info
+                        SHCall dfhack-raft::dfhack-split-debug-info
                         (
                             Arguments: dfhack-*-Linux-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
                             ErrorOutputLogLevel: Warning
@@ -211,7 +211,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                     {
                         if $BuildType == RelWithDebInfo
                         {
-                            SHCall dfhack-macgcc-split-debug-info
+                            SHCall dfhack-raft::dfhack-macgcc-split-debug-info
                             (
                                 Arguments: $BaseWorkingDirectory dfhack-*-OSX-*.tar.bz2 $DebugDirectory $WorkingDirectory/tmp-strip-dbg,
                                 ErrorOutputLogLevel: Warning
@@ -241,7 +241,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                         {
                             if $BuildType == RelWithDebInfo && $TrustedBuild
                             {
-                                SHCall dfhack-collect-pdb
+                                SHCall dfhack-raft::dfhack-collect-pdb
                                 (
                                     Arguments: $WorkingDirectory $DebugDirectory,
                                     ErrorOutputLogLevel: Warning
