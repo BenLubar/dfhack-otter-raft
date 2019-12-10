@@ -2,7 +2,7 @@ module DFHack-Get-Sources
 {
     # DFHack
     {
-        call DFHack-Git
+        call dfhack-raft::DFHack-Git
         (
             RepoID: dfhack,
             Repository: https://github.com/DFHack/dfhack.git,
@@ -29,7 +29,7 @@ module DFHack-Get-Sources
     }
 
     # Fixes
-    call DFHack-Version-Specific-Fixes
+    call dfhack-raft::DFHack-Version-Specific-Fixes
     (
         DFHackTag: $DFHackTag,
         ResolvedDFHackVersion: $ResolvedDFHackTag

@@ -27,7 +27,7 @@ foreach $OSArch in @OSArchList
     }
 }
 
-call DFHack-Git
+call dfhack-raft::DFHack-Git
 (
     RepoID: DFHack-df-structures,
     Repository: https://github.com/DFHack/df-structures.git,
@@ -37,7 +37,7 @@ call DFHack-Git
     ResolvedTag => $_
 );
 
-call DFHack-Git
+call dfhack-raft::DFHack-Git
 (
     RepoID: DFHack-df_misc,
     Repository: https://github.com/DFHack/df_misc.git,
@@ -47,7 +47,7 @@ call DFHack-Git
     ResolvedTag => $_
 );
 
-call DFHack-Git
+call dfhack-raft::DFHack-Git
 (
     RepoID: jjyg-metasm,
     Repository: https://github.com/jjyg/metasm.git,
@@ -71,7 +71,7 @@ SHExec >>curl -n -i -d '{"title":"Automated df-structures update for DF ${Versio
 
 set $CommitHash = $Trim($SHEval(cd $WorkingDirectory/df-structures; git log -n 1 --format=%H));
 
-call DFHack-Git
+call dfhack-raft::DFHack-Git
 (
     RepoID: dfhack,
     Repository: https://github.com/DFHack/dfhack.git,

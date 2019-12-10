@@ -16,7 +16,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
         # Windows (32)
         with async = PluginBuild
         {
-            call DFHack-Plugin-Shared
+            call dfhack-raft::DFHack-Plugin-Shared
             (
                 OperatingSystem: Windows,
                 Bits: 32,
@@ -30,7 +30,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
         # Windows (64)
         with async = PluginBuild
         {
-            call DFHack-Plugin-Shared
+            call dfhack-raft::DFHack-Plugin-Shared
             (
                 OperatingSystem: Windows,
                 Bits: 64,
@@ -49,7 +49,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
             # Linux (32)
             with async = PluginBuild
             {
-                call DFHack-Plugin-Shared
+                call dfhack-raft::DFHack-Plugin-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 32,
@@ -63,7 +63,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
             # Linux (64)
             with async = PluginBuild
             {
-                call DFHack-Plugin-Shared
+                call dfhack-raft::DFHack-Plugin-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 64,
@@ -80,7 +80,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
             # Linux (gcc 4.8) (32)
             with async = PluginBuild
             {
-                call DFHack-Plugin-Shared
+                call dfhack-raft::DFHack-Plugin-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 32,
@@ -94,7 +94,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
             # Linux (gcc 4.8) (64)
             with async = PluginBuild
             {
-                call DFHack-Plugin-Shared
+                call dfhack-raft::DFHack-Plugin-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 64,
@@ -114,7 +114,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
             # OS X (32)
             with async = PluginBuild
             {
-                call DFHack-Plugin-Shared
+                call dfhack-raft::DFHack-Plugin-Shared
                 (
                     OperatingSystem: MacOSX,
                     Bits: 32,
@@ -128,7 +128,7 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
             # OS X (64)
             with async = PluginBuild
             {
-                call DFHack-Plugin-Shared
+                call dfhack-raft::DFHack-Plugin-Shared
                 (
                     OperatingSystem: MacOSX,
                     Bits: 64,

@@ -68,7 +68,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
             # Download Dwarf Fortress
             if !$SkipTests || $OperatingSystem == MacOSX
             {
-                call DFHack-Cache-DF
+                call dfhack-raft::DFHack-Cache-DF
                 (
                     TargetPath: $InstallPrefix,
                     OperatingSystem: $DFOS,

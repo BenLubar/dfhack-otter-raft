@@ -5,7 +5,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
         # Windows (32)
         with async = DFHackBuild
         {
-            call DFHack-Core-Shared
+            call dfhack-raft::DFHack-Core-Shared
             (
                 OperatingSystem: Windows,
                 Bits: 32,
@@ -19,7 +19,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
         # Windows (64)
         with async = DFHackBuild
         {
-            call DFHack-Core-Shared
+            call dfhack-raft::DFHack-Core-Shared
             (
                 OperatingSystem: Windows,
                 Bits: 64,
@@ -38,7 +38,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
             # Linux (32)
             with async = DFHackBuild
             {
-                call DFHack-Core-Shared
+                call dfhack-raft::DFHack-Core-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 32,
@@ -52,7 +52,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
             # Linux (64)
             with async = DFHackBuild
             {
-                call DFHack-Core-Shared
+                call dfhack-raft::DFHack-Core-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 64,
@@ -69,7 +69,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
             # Linux (gcc 4.8) (32)
             with async = DFHackBuild
             {
-                call DFHack-Core-Shared
+                call dfhack-raft::DFHack-Core-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 32,
@@ -83,7 +83,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
             # Linux (gcc 4.8) (64)
             with async = DFHackBuild
             {
-                call DFHack-Core-Shared
+                call dfhack-raft::DFHack-Core-Shared
                 (
                     OperatingSystem: Linux,
                     Bits: 64,
@@ -103,7 +103,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
             # OS X (32)
             with async = DFHackBuild
             {
-                call DFHack-Core-Shared
+                call dfhack-raft::DFHack-Core-Shared
                 (
                     OperatingSystem: MacOSX,
                     Bits: 32,
@@ -117,7 +117,7 @@ module DFHack-Build-Core<$BuildType, $ArtifactSuffix = "", $SkipTests = false>
             # OS X (64)
             with async = DFHackBuild
             {
-                call DFHack-Core-Shared
+                call dfhack-raft::DFHack-Core-Shared
                 (
                     OperatingSystem: MacOSX,
                     Bits: 64,

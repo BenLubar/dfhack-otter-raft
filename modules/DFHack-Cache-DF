@@ -18,7 +18,7 @@ module DFHack-Cache-DF<$TargetPath, $OperatingSystem, $Bits>
 
     try
     {
-        call DFHack-Universal-Package
+        call dfhack-raft::DFHack-Universal-Package
         (
             GroupName: dwarffortress/core,
             PackageName: $OperatingSystem$Bits,

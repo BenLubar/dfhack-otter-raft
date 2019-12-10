@@ -5,7 +5,7 @@ module DFHack-PR-Get-Sources
         # DFHack
         if $IsVariableDefined(DFHackPR)
         {
-            call DFHack-PR-Git
+            call dfhack-raft::DFHack-PR-Git
             (
                 RepoID: dfhack,
                 Repository: https://github.com/DFHack/dfhack.git,
@@ -17,7 +17,7 @@ module DFHack-PR-Get-Sources
         }
         else
         {
-            call DFHack-Git
+            call dfhack-raft::DFHack-Git
             (
                 RepoID: dfhack,
                 Repository: https://github.com/DFHack/dfhack.git,
@@ -53,7 +53,7 @@ module DFHack-PR-Get-Sources
     {
         # DFHack
         {
-            call DFHack-PR-Git
+            call dfhack-raft::DFHack-PR-Git
             (
                 RepoID: dfhack,
                 Repository: https://github.com/DFHack/dfhack.git,

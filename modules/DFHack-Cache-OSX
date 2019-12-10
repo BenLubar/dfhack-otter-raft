@@ -1,6 +1,6 @@
 module DFHack-Cache-OSX<$TargetPath, $Bits>
 {
-    call DFHack-Cache-DF
+    call dfhack-raft::DFHack-Cache-DF
     (
         TargetPath: $TargetPath,
         OperatingSystem: osx,

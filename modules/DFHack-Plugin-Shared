@@ -70,7 +70,7 @@ module DFHack-Plugin-Shared<$OperatingSystem, $Bits, $PluginName, $ImageTag, $Bu
             # Download Dwarf Fortress
             if $OperatingSystem == MacOSX
             {
-                call DFHack-Cache-DF
+                call dfhack-raft::DFHack-Cache-DF
                 (
                     TargetPath: $InstallPrefix,
                     OperatingSystem: $DFOS,

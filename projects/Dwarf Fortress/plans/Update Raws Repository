@@ -1,6 +1,6 @@
 Deploy-Artifact linux64;
 
-SHCall dfhack::df-raws-make
+SHCall Dwarf Fortress::df-raws-make
 (
     Arguments: '"$ReleaseNumber" "$ReleaseDate"'
 );

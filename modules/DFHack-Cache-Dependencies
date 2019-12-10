@@ -14,7 +14,7 @@ module DFHack-Cache-Dependencies<$DependencyPath>
 
     try
     {
-        call DFHack-Universal-Package
+        call dfhack-raft::DFHack-Universal-Package
         (
             PackageName: dfhack-depends,
             NormalizedVersion: $Version,
@@ -27,7 +27,7 @@ module DFHack-Cache-Dependencies<$DependencyPath>
         {
             try
             {
-                call DFHack-Universal-Package
+                call dfhack-raft::DFHack-Universal-Package
                 (
                     PackageName: dfhack-depends,
                     NormalizedVersion: $Version,
@@ -124,7 +124,7 @@ module DFHack-Cache-Dependencies<$DependencyPath>
                     Verbose: true
                 );
 
-                call DFHack-Universal-Package
+                call dfhack-raft::DFHack-Universal-Package
                 (
                     PackageName: dfhack-depends,
                     NormalizedVersion: $Version,
