@@ -14,6 +14,12 @@ module DFHack-PR-Get-Sources
                 PullRequest: $DFHackPR,
                 RequestedCommitHash: $GetVariableValue(DFHackCommit)
             );
+
+            Set-BuildVariable
+            (
+                Variable: DFHackCommit,
+                Value: $Trim($SHEval(cd $WorkingDirectory/src; git log -n 1 --format=%H))
+            );
         }
         else
         {
@@ -81,6 +87,12 @@ module DFHack-PR-Get-Sources
                 Arguments: -c advice.detachedHead=false checkout -q FETCH_HEAD,
                 WorkingDirectory: $WorkingDirectory/src/library/xml,
                 ErrorOutputLogLevel: Warning
+            );
+
+            Set-BuildVariable
+            (
+                Variable: OverrideStructuresCommit,
+                Value: $Trim($SHEval(cd $WorkingDirectory/src/library/xml; git log -n 1 --format=%H))
             );
         }
     }
