@@ -129,6 +129,56 @@ if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
     }
 }
 
+# bingo shared assets
+if $ApplicationName == bingo
+{
+    for server $WindowsBuilder
+    {
+        Deploy-Artifact bingo-assets
+        (
+            To: $WorkingDirectory,
+            DeployAsZipFile: true
+        );
+
+        set $FeedName = DwarfFortress;
+
+        set $AssetsTitle = bingo shared assets;
+
+        set $AssetsDescription = Shared files for bingo [version $ReleaseNumber](https://github.com/BenLubar/bingo/releases/tag/$ReleaseNumber);
+
+        if !$PluginTagged
+        {
+            set $FeedName = DwarfFortress-prerelease;
+
+            set $AssetsTitle = bingo shared assets (prerelease);
+
+            if $ReleaseNumber == ""
+            {
+                set $AssetsDescription = Shared files for bingo (prerelease);
+            }
+            else
+            {
+                set $AssetsDescription = Shared files for bingo (prerelease, dfhack $DFHackTag);
+            }
+        }
+
+        ProGet::Push-Package
+        (
+            Credentials: ProGet,
+            Feed: $FeedName,
+            FilePath: $WorkingDirectory/bingo-assets.zip,
+            Group: dfhack/plugin/bingo,
+            Name: assets$Suffix,
+            Version: $VersionNumber,
+            Description: $AssetsDescription,
+            Title: $AssetsTitle,
+            Icon: https://proget.lubar.me/endpoints/public-assets/content/dwarffortress-icons/dfhack/plugin/bingo.png
+        );
+
+        set @BaseDependencies = @ListInsert(@BaseDependencies, dfhack/plugin/bingo/assets$Suffix:$VersionNumber);
+    }
+}
+
 # Windows
 {
     # Windows (32)
@@ -395,6 +445,15 @@ if $PluginTagged
         if $ApplicationName == df-ai && $ReleaseNumber != 0.43.05-r2
         {
             Deploy-Artifact df-ai-assets
+            (
+                To: $WorkingDirectory/github-staging,
+                DeployAsZipFile: true
+            );
+        }
+
+        if $ApplicationName == bingo
+        {
+            Deploy-Artifact bingo-assets
             (
                 To: $WorkingDirectory/github-staging,
                 DeployAsZipFile: true

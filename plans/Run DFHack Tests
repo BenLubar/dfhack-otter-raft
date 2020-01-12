@@ -100,6 +100,18 @@ else
                     OverwriteReadOnly: true
                 );
             }
+
+            if $ListIndexOf(@ArtifactsInPackage, bingo-assets) != -1
+            {
+                Deploy-Artifact bingo-assets
+                (
+                    To: $WorkingDirectory/DF,
+                    TransferAll: true,
+                    DoNotClearTarget: true,
+                    Verbose: true,
+                    OverwriteReadOnly: true
+                );
+            }
         }
         else
         {

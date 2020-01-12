@@ -186,5 +186,50 @@ module DFHack-Plugin-Build<$BuildType, $GitHubBuildContext, $PluginName = $Appli
         }
     }
 
+    if $PluginName == bingo
+    {
+        # Assets
+        with async = PluginBuild
+        {
+            Acquire-Server
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true,
+                DoNotShare: true,
+                ServerName => $LinuxBuilder
+            );
+
+            try
+            {
+                for server $LinuxBuilder
+                {
+                    InedoCore::Exec
+                    (
+                        FileName: /bin/bash,
+                        Arguments: -c 'mkdir -p assets/hack/lua/plugins && cp -R src/plugins/bingo/lua/* assets/hack/lua/plugins/',
+                        WorkingDirectory: $WorkingDirectory
+                    );
+
+                    Create-Artifact bingo-assets
+                    (
+                        From: $WorkingDirectory/assets,
+                        Verbose: true,
+                        Overwrite: true
+                    );
+                }
+            }
+            catch
+            {
+                error;
+            }
+
+            Release-Server $LinuxBuilder
+            (
+                Role: DFHack-Linux-Builders,
+                Verbose: true
+            );
+        }
+    }
+
     await PluginBuild;
 }
