@@ -89,7 +89,7 @@ else
                 WorkingDirectory: $WorkingDirectory/DF/hack/plugins
             );
 
-            if $ListIndexOf(@ArtifactsInPackage, df-ai-assets) != -1
+            if $ListIndexOf(@ArtifactsInBuild, df-ai-assets) != -1
             {
                 Deploy-Artifact df-ai-assets
                 (
@@ -101,7 +101,7 @@ else
                 );
             }
 
-            if $ListIndexOf(@ArtifactsInPackage, bingo-assets) != -1
+            if $ListIndexOf(@ArtifactsInBuild, bingo-assets) != -1
             {
                 Deploy-Artifact bingo-assets
                 (
