@@ -21,10 +21,11 @@ with lock = !DFHackTriggerPlugins
 
     foreach $PluginName in @ApplicationsInGroup(DFHack Plugins)
     {
-        Create-ReleasePackage
+        Create-Build
         (
             Application: $PluginName,
             ReleaseNumber: $DFHackVersion,
+            Pipeline: dfhack-raft::DFHack-Plugin,
             Variables: %Variables,
             Wait: false,
             FailIfCannotCreate: true
