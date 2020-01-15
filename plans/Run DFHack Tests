@@ -136,13 +136,20 @@ else
 
         for directory $WorkingDirectory/DF
         {
-            DFHack::Test
-            (
-                OperatingSystem: Linux,
-                Architecture: x86_64,
-                Image: latest,
-                Trusted: $TrustedBuild
-            );
+            try
+            {
+                DFHack::Test
+                (
+                    OperatingSystem: Linux,
+                    Architecture: x86_64,
+                    Image: latest,
+                    Trusted: $TrustedBuild
+                );
+            }
+            catch
+            {
+                error;
+            }
         }
     }
 
