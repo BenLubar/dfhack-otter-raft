@@ -1,5 +1,5 @@
 ##AH:EvaluateStatementDescriptions
-module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildType = Release, $ArtifactSuffix = "", $SkipTests = false>
+module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildType = Release, $ArtifactSuffix = "">
 {
     Acquire-Server
     (
@@ -66,7 +66,7 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
             set $InstallPrefix = $WorkingDirectory/out$Bits$Suffix$ArtifactSuffix;
 
             # Download Dwarf Fortress
-            if !$SkipTests || $OperatingSystem == MacOSX
+            if $OperatingSystem == MacOSX
             {
                 call dfhack-raft::DFHack-Cache-DF
                 (
@@ -121,47 +121,6 @@ module DFHack-Core-Shared<$OperatingSystem, $Bits, $ImageTag = latest, $BuildTyp
                     Image: $ImageTag,
                     Trusted: $TrustedBuild
                 );
-            }
-
-            if !$SkipTests && (!$TrustedBuild || $GetVariableValue(TriggeredByDFHack)) && $PackageNumber != $PackageNumber($ReleaseNumber, latest)
-            {
-                Log-Warning Cancelling tests for $Title ($Bits) as a newer version is waiting to be built.;
-
-                set $SkipTests = true;
-            }
-
-            if !$SkipTests && false
-            {
-                # Integration Tests
-                try
-                {
-                    for directory $WorkingDirectory/build$Bits$Suffix$ArtifactSuffix
-                    {
-                        DFHack::Make
-                        (
-                            Target: install,
-                            Image: $ImageTag,
-                            Trusted: $TrustedBuild
-                        );
-                    }
-
-                    for directory $InstallPrefix
-                    {
-                        DFHack::Test
-                        (
-                            OperatingSystem: $OperatingSystem,
-                            Image: $ImageTag,
-                            Architecture: $Architecture,
-                            Command: test/main,
-                            Trusted: $TrustedBuild
-                        );
-                    }
-                }
-                catch
-                {
-                    # Continue plan, but fail build.
-                    error;
-                }
             }
 
             # Release server early so the next build can run; we don't need much processing power to finish

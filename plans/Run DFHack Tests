@@ -47,8 +47,6 @@ else
             Bits: 64
         );
 
-        set $DoneCommand = "";
-
         if $GetVariableValue(PluginCommit) != ""
         {
             if $GetVariableValue(DFHackTag) == ""
@@ -89,21 +87,9 @@ else
                 WorkingDirectory: $WorkingDirectory/DF/hack/plugins
             );
 
-            if $ListIndexOf(@ArtifactsInBuild, df-ai-assets) != -1
+            if $ListIndexOf(@ArtifactsInBuild, $PluginRepo-assets) != -1
             {
-                Deploy-Artifact df-ai-assets
-                (
-                    To: $WorkingDirectory/DF,
-                    TransferAll: true,
-                    DoNotClearTarget: true,
-                    Verbose: true,
-                    OverwriteReadOnly: true
-                );
-            }
-
-            if $ListIndexOf(@ArtifactsInBuild, bingo-assets) != -1
-            {
-                Deploy-Artifact bingo-assets
+                Deploy-Artifact $PluginRepo-assets
                 (
                     To: $WorkingDirectory/DF,
                     TransferAll: true,
@@ -115,8 +101,6 @@ else
         }
         else
         {
-            set $DoneCommand = die;
-
             Deploy-Artifact Linux64
             (
                 To: $WorkingDirectory/DF/hack_temp,
@@ -156,7 +140,6 @@ else
             (
                 OperatingSystem: Linux,
                 Architecture: x86_64,
-                Command: test/main $DoneCommand,
                 Image: latest,
                 Trusted: $TrustedBuild
             );
