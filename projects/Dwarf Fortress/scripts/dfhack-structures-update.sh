@@ -83,84 +83,43 @@ Linux64MD5="`md5sum -b "../linux64/libs/Dwarf_Fortress" | cut -d ' ' -f 1`"
 OSX32MD5="`md5sum -b "../osx32/dwarfort.exe" | cut -d ' ' -f 1`"
 OSX64MD5="`md5sum -b "../osx64/dwarfort.exe" | cut -d ' ' -f 1`"
 
+write_syms() {
+	symname=$1
+	ostype=$2
+	identifier=$3
+	symprefix=$4
+
+	echo "    <symbol-table name='v$Version $symprefix$symname' os-type='$ostype'>" >> symbols.xml.tmp
+	echo "        $identifier" >> symbols.xml.tmp
+	echo >> symbols.xml.tmp
+	cat ${symname}_startdwarfcount.xml.tmp >> symbols.xml.tmp
+	cat ${symname}_twbt.xml.tmp >> symbols.xml.tmp
+	echo >> symbols.xml.tmp
+	cat ${symname}_globals.xml.tmp >> symbols.xml.tmp
+	echo >> symbols.xml.tmp
+	cat ${symname}_vtable.xml.tmp >> symbols.xml.tmp
+	echo >> symbols.xml.tmp
+	echo "    </symbol-table>" >> symbols.xml.tmp
+}
+
 sed '/<!-- end windows -->/Q' symbols.xml > symbols.xml.tmp
-
 echo >> symbols.xml.tmp
-echo "    <symbol-table name='v$Version SDL win32' os-type='windows'>" >> symbols.xml.tmp
-echo "        <binary-timestamp value='$Win32Timestamp'/>" >> symbols.xml.tmp
+write_syms win32 windows "<binary-timestamp value='$Win32Timestamp'/>" "SDL "
 echo >> symbols.xml.tmp
-cat win32_startdwarfcount.xml.tmp >> symbols.xml.tmp
-cat win32_twbt.xml.tmp >> symbols.xml.tmp
-cat win32_globals.xml.tmp >> symbols.xml.tmp
+write_syms win64 windows "<binary-timestamp value='$Win64Timestamp'/>" "SDL "
 echo >> symbols.xml.tmp
-cat win32_vtable.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    </symbol-table>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    <symbol-table name='v$Version SDL win64' os-type='windows'>" >> symbols.xml.tmp
-echo "        <binary-timestamp value='$Win64Timestamp'/>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-cat win64_startdwarfcount.xml.tmp >> symbols.xml.tmp
-cat win64_twbt.xml.tmp >> symbols.xml.tmp
-cat win64_globals.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-cat win64_vtable.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    </symbol-table>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-
 sed -n '/<!-- end windows -->/,/<!-- end linux -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
-
 echo >> symbols.xml.tmp
-echo "    <symbol-table name='v$Version linux32' os-type='linux'>" >> symbols.xml.tmp
-echo "        <md5-hash value='$Linux32MD5'/>" >> symbols.xml.tmp
+write_syms linux32 linux "<md5-hash value='$Linux32MD5'/>"
 echo >> symbols.xml.tmp
-cat linux32_startdwarfcount.xml.tmp >> symbols.xml.tmp
-cat linux32_twbt.xml.tmp >> symbols.xml.tmp
-cat linux32_globals.xml.tmp >> symbols.xml.tmp
+write_syms linux64 linux "<md5-hash value='$Linux64MD5'/>"
 echo >> symbols.xml.tmp
-cat linux32_vtable.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    </symbol-table>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    <symbol-table name='v$Version linux64' os-type='linux'>" >> symbols.xml.tmp
-echo "        <md5-hash value='$Linux64MD5'/>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-cat linux64_startdwarfcount.xml.tmp >> symbols.xml.tmp
-cat linux64_twbt.xml.tmp >> symbols.xml.tmp
-cat linux64_globals.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-cat linux64_vtable.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    </symbol-table>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-
 sed -n '/<!-- end linux -->/,/<!-- end osx -->/ p' symbols.xml | sed '$d' >> symbols.xml.tmp
-
 echo >> symbols.xml.tmp
-echo "    <symbol-table name='v$Version osx32' os-type='darwin'>" >> symbols.xml.tmp
-echo "        <md5-hash value='$OSX32MD5'/>" >> symbols.xml.tmp
+write_syms osx32 darwin "<md5-hash value='$OSX32MD5'/>"
 echo >> symbols.xml.tmp
-cat osx32_startdwarfcount.xml.tmp >> symbols.xml.tmp
-cat osx32_twbt.xml.tmp >> symbols.xml.tmp
-cat osx32_globals.xml.tmp >> symbols.xml.tmp
+write_syms osx64 darwin "<md5-hash value='$OSX64MD5'/>"
 echo >> symbols.xml.tmp
-cat osx32_vtable.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    </symbol-table>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    <symbol-table name='v$Version osx64' os-type='darwin'>" >> symbols.xml.tmp
-echo "        <md5-hash value='$OSX64MD5'/>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-cat osx64_startdwarfcount.xml.tmp >> symbols.xml.tmp
-cat osx64_twbt.xml.tmp >> symbols.xml.tmp
-cat osx64_globals.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-cat osx64_vtable.xml.tmp >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-echo "    </symbol-table>" >> symbols.xml.tmp
-echo >> symbols.xml.tmp
-
 sed -n '/<!-- end osx -->/,$ p' symbols.xml >> symbols.xml.tmp
 
 mv -f symbols.xml.tmp symbols.xml
