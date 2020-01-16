@@ -33,106 +33,109 @@ else
 
     for server $TestServer
     {
-        InedoCore::Exec
-        (
-            FileName: /usr/bin/docker,
-            Arguments: pull $DFHackBuildEnv:latest,
-            ErrorOutputLogLevel: Debug
-        );
-
-        call dfhack-raft::DFHack-Cache-DF
-        (
-            TargetPath: $WorkingDirectory/DF,
-            OperatingSystem: Linux,
-            Bits: 64
-        );
-
-        if $GetVariableValue(PluginCommit) != ""
+        # Setup
         {
-            if $GetVariableValue(DFHackTag) == ""
-            {
-                call dfhack-raft::DFHack-Universal-Package
-                (
-                    GroupName: dfhack/core,
-                    PackageName: linux64-dev,
-                    OutputPath: $WorkingDirectory/DF,
-                    FeedName: DwarfFortress-prerelease
-                );
-            }
-            else
-            {
-                call dfhack-raft::DFHack-Universal-Package
-                (
-                    GroupName: dfhack/core,
-                    PackageName: linux64,
-                    NormalizedVersion: $Replace($DFHackTag, .0, .),
-                    OutputPath: $WorkingDirectory/DF,
-                    FeedName: DwarfFortress
-                );
-            }
-
-            Deploy-Artifact Linux64
-            (
-                To: $WorkingDirectory/DF/hack/plugins_temp,
-                TransferAll: true,
-                DoNotClearTarget: true,
-                Verbose: true,
-                OverwriteReadOnly: true
-            );
-
             InedoCore::Exec
             (
-                FileName: /bin/tar,
-                Arguments: "xf ../plugins_temp/*",
-                WorkingDirectory: $WorkingDirectory/DF/hack/plugins
+                FileName: /usr/bin/docker,
+                Arguments: pull $DFHackBuildEnv:latest,
+                ErrorOutputLogLevel: Debug
             );
 
-            if $ListIndexOf(@ArtifactsInBuild, $PluginRepo-assets) != -1
+            call dfhack-raft::DFHack-Cache-DF
+            (
+                TargetPath: $WorkingDirectory/DF,
+                OperatingSystem: Linux,
+                Bits: 64
+            );
+
+            if $GetVariableValue(PluginCommit) != ""
             {
-                Deploy-Artifact $PluginRepo-assets
+                if $GetVariableValue(DFHackTag) == ""
+                {
+                    call dfhack-raft::DFHack-Universal-Package
+                    (
+                        GroupName: dfhack/core,
+                        PackageName: linux64-dev,
+                        OutputPath: $WorkingDirectory/DF,
+                        FeedName: DwarfFortress-prerelease
+                    );
+                }
+                else
+                {
+                    call dfhack-raft::DFHack-Universal-Package
+                    (
+                        GroupName: dfhack/core,
+                        PackageName: linux64,
+                        NormalizedVersion: $Replace($DFHackTag, .0, .),
+                        OutputPath: $WorkingDirectory/DF,
+                        FeedName: DwarfFortress
+                    );
+                }
+
+                Deploy-Artifact Linux64
                 (
-                    To: $WorkingDirectory/DF,
+                    To: $WorkingDirectory/DF/hack/plugins_temp,
                     TransferAll: true,
                     DoNotClearTarget: true,
                     Verbose: true,
                     OverwriteReadOnly: true
                 );
+
+                InedoCore::Exec
+                (
+                    FileName: /bin/tar,
+                    Arguments: "xf ../plugins_temp/*",
+                    WorkingDirectory: $WorkingDirectory/DF/hack/plugins
+                );
+
+                if $ListIndexOf(@ArtifactsInBuild, $PluginRepo-assets) != -1
+                {
+                    Deploy-Artifact $PluginRepo-assets
+                    (
+                        To: $WorkingDirectory/DF,
+                        TransferAll: true,
+                        DoNotClearTarget: true,
+                        Verbose: true,
+                        OverwriteReadOnly: true
+                    );
+                }
             }
-        }
-        else
-        {
-            Deploy-Artifact Linux64
+            else
+            {
+                Deploy-Artifact Linux64
+                (
+                    To: $WorkingDirectory/DF/hack_temp,
+                    TransferAll: true,
+                    DoNotClearTarget: true,
+                    Verbose: true,
+                    OverwriteReadOnly: true
+                );
+
+                InedoCore::Exec
+                (
+                    FileName: /bin/tar,
+                    Arguments: "xf hack_temp/*",
+                    WorkingDirectory: $WorkingDirectory/DF
+                );
+            }
+
+            InedoCore::Exec
             (
-                To: $WorkingDirectory/DF/hack_temp,
+                FileName: /bin/chmod,
+                Arguments: +x dfhack libs/Dwarf_Fortress,
+                WorkingDirectory: $WorkingDirectory/DF
+            );
+
+            Deploy-Artifact test-scripts
+            (
+                To: $WorkingDirectory/DF/hack/scripts/test,
                 TransferAll: true,
                 DoNotClearTarget: true,
                 Verbose: true,
                 OverwriteReadOnly: true
             );
-
-            InedoCore::Exec
-            (
-                FileName: /bin/tar,
-                Arguments: "xf hack_temp/*",
-                WorkingDirectory: $WorkingDirectory/DF
-            );
         }
-
-        InedoCore::Exec
-        (
-            FileName: /bin/chmod,
-            Arguments: +x dfhack libs/Dwarf_Fortress,
-            WorkingDirectory: $WorkingDirectory/DF
-        );
-
-        Deploy-Artifact test-scripts
-        (
-            To: $WorkingDirectory/DF/hack/scripts/test,
-            TransferAll: true,
-            DoNotClearTarget: true,
-            Verbose: true,
-            OverwriteReadOnly: true
-        );
 
         for directory $WorkingDirectory/DF
         {
