@@ -37,9 +37,9 @@ if $PluginTagged && ($ApplicationName == df-ai || $ApplicationName == weblegends
 
         if $DFAIRelease != "" && $WeblegendsRelease != ""
         {
-            set @DFAIPackages = @PackagesInRelease($DFAIRelease, df-ai, active, Publish);
+            set @DFAIPackages = @BuildsInRelease($DFAIRelease, df-ai, active, Publish);
 
-            set @WeblegendsPackages = @PackagesInRelease($WeblegendsRelease, weblegends, active, Publish);
+            set @WeblegendsPackages = @BuildsInRelease($WeblegendsRelease, weblegends, active, Publish);
 
             if $ListCount(@DFAIPackages) == 1 && $ListCount(@WeblegendsPackages) == 1
             {
