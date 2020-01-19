@@ -207,7 +207,7 @@ module Publish-DFHack-Release
 
             set $SHA1Checksum = $Trim($SHEval(sha1sum -b "$WorkingDirectory/df-docker-staging/$DFHackArchive" | cut -f 1 -d " "));
 
-            InedoCore::Apply-Template DFHack::docker-dfhack
+            InedoCore::Apply-Template dfhack-raft::docker-dfhack
             (
                 OutputFile: df-docker/dfhack/Dockerfile,
                 NewLines: Linux

@@ -97,7 +97,7 @@ if $PluginTagged && ($ApplicationName == df-ai || $ApplicationName == weblegends
 
                     set $WeblegendsArchiveSHA1 = $Trim($SHEval(sha1sum -b "$WorkingDirectory/df-docker-staging/weblegends/$WeblegendsArchive" | cut -f 1 -d " "));
 
-                    InedoCore::Apply-Template docker-df-ai
+                    InedoCore::Apply-Template dfhack-raft::docker-df-ai
                     (
                         OutputFile: df-docker/df-ai/Dockerfile,
                         NewLines: Linux
